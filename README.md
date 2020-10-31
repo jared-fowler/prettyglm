@@ -3,6 +3,8 @@
 
 # prettyglm
 
+# overviewR <img src='man/figures/logo.png' align="right" height="139" />
+
 <!-- badges: start -->
 
 <!-- badges: end -->
@@ -76,6 +78,9 @@ survival_model <- stats::glm(Survived ~ Pclass + Sex + Age + Fare + Embarked + S
 ``` r
 pretty_coefficients(survival_model, type_iii = 'Wald')
 ```
+
 <p align="center">
-  <img src= './man/figures/result.png' height="1000" align="center"/>
+
+<img src= './man/figures/result.png' height="1000" align="center"/>
+
 </p>
