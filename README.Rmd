@@ -74,3 +74,4 @@ survival_model <- stats::glm(Survived ~ Pclass + Sex + Age + Fare + Embarked + S
 pretty_coefficients(survival_model, type_iii = 'Wald')
 ```
 
+

@@ -77,5 +77,5 @@ survival_model <- stats::glm(Survived ~ Pclass + Sex + Age + Fare + Embarked + S
 pretty_coefficients(survival_model, type_iii = 'Wald')
 ```
 <p align="center">
-  <img src= './man/figures/result.png' height="800" align="center"/>
+  <img src= './man/figures/result.png' height="1000" align="center"/>
 </p>
