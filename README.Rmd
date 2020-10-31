@@ -40,8 +40,8 @@ survival_model <- stats::glm(Survived ~ Pclass + Sex + Age + Fare + Embarked + S
 
 ## Create pretty table of model coefficients with `pretty_coefficients()`
 
-`pretty_coefficients()` allows you to create a pretty table of model coefficients, including categorical base levels.
+`pretty_coefficients()` allows you to create a pretty table of model coefficients, including categorical base levels. You can also complete a type III test on the coefficients by specifying a `type_iii` argument.
 
 ```{r visualise coefficients, echo=TRUE}
-pretty_coefficients(survival_model)
+# pretty_coefficients(survival_model, type_iii = 'Wald')
 ```
