@@ -1,0 +1,47 @@
+---
+output: github_document
+---
+
+## Introduction
+
+When working with Generalized Linear Models it is often useful to create informative and beautiful summaries of the fitted model coefficients. The `prettyglm` package includes the `pretty_coefficients()` function to easily create these summaries.
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(prettyglm)
+library(tidymodels)
+data('titanic')
+```
+
+## Pre-processing
+
+A critical step for this package to work well is to **set all categorical predictors as factors**.
+
+```{r preprocessing, echo=TRUE}
+# Easiest way to convert multiple columns to a factor.
+columns_to_factor <- c('Pclass',
+                       'Sex',
+                       'Cabin', 
+                       'Embarked',
+                       'Cabintype')
+titanic  <- titanic  %>%
+  dplyr::mutate_at(columns_to_factor, list(~factor(.)))
+```
+
+
+## Building a glm
+
+```{r build model, echo=TRUE}
+survival_model <- stats::glm(Survived ~ Pclass + Sex + Age + Fare + Embarked + SibSp + Parch + Cabintype, 
+                             data = titanic, 
+                             family = binomial(link = 'logit'))
+```
+
+
+## Create pretty table of model coefficients with `pretty_coefficients()`
+
+`pretty_coefficients()` allows you to create a pretty table of model coefficients, including categorical base levels.
+
+```{r visualise coefficients, echo=TRUE}
+pretty_coefficients(survival_model)
+```
