@@ -30,17 +30,7 @@ they survived.
 
 ``` r
 library(prettyglm)
-#> Warning: replacing previous import 'utils::vi' by 'vip::vi' when loading
-#> 'prettyglm'
 library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 data("titanic")
 ```
 
@@ -81,28 +71,11 @@ survival_model <- stats::glm(Survived ~ Pclass + Sex + Age + Fare + Embarked + S
   - You can return the dataset instead of `kable` but setting
     `Return_Data = TRUE`
 
-<!-- # ```{r visualise coefficients type iii, echo=TRUE} -->
+<!-- end list -->
 
-<!-- # pretty_coefficients(survival_model, type_iii = 'Wald') -->
-
-<!-- # ``` -->
-
-<!-- What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so: -->
-
-<!-- ```{r cars} -->
-
-<!-- summary(cars) -->
-
-<!-- ``` -->
-
-<!-- You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. -->
-
-<!-- You can also embed plots, for example: -->
-
-<!-- ```{r pressure, echo = FALSE} -->
-
-<!-- plot(pressure) -->
-
-<!-- ``` -->
-
-<!-- In that case, don't forget to commit and push the resulting figure files, so they display on GitHub! -->
+``` r
+pretty_coefficients(survival_model, type_iii = 'Wald')
+```
+<p align="center">
+  <img src= './man/figures/result.png' height="800" align="center"/>
+</p>
