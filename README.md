@@ -1,9 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# prettyglm
-
-# overviewR <img src='man/figures/logo.png' align="right" height="139" />
+# prettyglm <img src='man/figures/logo.png' align="right" height="139" />
 
 <!-- badges: start -->
 
