@@ -11,9 +11,22 @@
 #' @return \link[knitr:kable]{knitr::kable()} if return_data = FALSE. \link[base:data.frame]{base::data.frame()} if return_data = TRUE.
 #'
 #' @examples
-#' \dontrun{
-
-#' }
+#' library(dplyr)
+#' library(prettyglm)
+#' data('titanic')
+#' columns_to_factor <- c('Pclass',
+#'                        'Sex',
+#'                        'Cabin',
+#'                        'Embarked',
+#'                        'Cabintype',
+#'                        'Survived')
+#' titanic  <- titanic  %>%
+#'   dplyr::mutate_at(columns_to_factor, list(~factor(.)))
+#' survival_model <- stats::glm(Survived ~ Pclass + Sex + Age + Fare + Embarked + SibSp + Parch + Cabintype,
+#'                              data = titanic,
+#'                              family = binomial(link = 'logit'))
+#' pretty_coefficients(survival_model)
+#'
 #' @export
 #' @importFrom tibble "tibble"
 #' @importFrom broom "tidy"
@@ -26,7 +39,6 @@
 #' @importFrom kableExtra "collapse_rows"
 #' @importFrom kableExtra "footnote"
 #' @importFrom formattable "normalize_bar"
-#' @importFrom workflows "pull_workflow_fit"
 #' @importFrom car "Anova"
 #' @import dplyr
 #'

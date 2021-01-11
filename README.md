@@ -70,7 +70,7 @@ survival_model <- stats::glm(Survived ~ Pclass + Sex + Age + Fare + Embarked + S
     levels.
   - You complete a type III test on the coefficients by specifying a
     `type_iii` argument.
-  - You can return the dataset instead of `kable` but setting
+  - You can return the data set instead of `kable` but setting
     `Return_Data = TRUE`
 
 <!-- end list -->
@@ -82,5 +82,27 @@ pretty_coefficients(survival_model, type_iii = 'Wald')
 <p align="center">
 
 <img src= './man/figures/result.png' height="1000" align="center"/>
+
+</p>
+
+### Create plots of the model relativities with `pretty_relativities()`
+
+  - A model relativity is a transform of the model estimate. By default
+    `pretty_relativities()` uses ‘exp(estimate)-1’ which is useful for
+    GLM’s which use a log or logit link function.
+  - `pretty_relativities()` automatically extracts the training data
+    from the model objects and plots the relativities and the number of
+    records in the same plot.
+
+<!-- end list -->
+
+``` r
+pretty_relativities(feature_to_plot = 'Embarked',
+                    model_object = survival_model)
+```
+
+<p align="center">
+
+<img src= './man/figures/rel_plot1.png' height="500" align="center"/>
 
 </p>

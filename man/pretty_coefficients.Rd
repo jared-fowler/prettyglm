@@ -30,6 +30,20 @@ pretty_coefficients(
 Creates a pretty kable of model coefficients including coefficient base levels.
 }
 \examples{
-\dontrun{
-}
+library(dplyr)
+library(prettyglm)
+data('titanic')
+columns_to_factor <- c('Pclass',
+                       'Sex',
+                       'Cabin',
+                       'Embarked',
+                       'Cabintype',
+                       'Survived')
+titanic  <- titanic  \%>\%
+  dplyr::mutate_at(columns_to_factor, list(~factor(.)))
+survival_model <- stats::glm(Survived ~ Pclass + Sex + Age + Fare + Embarked + SibSp + Parch + Cabintype,
+                             data = titanic,
+                             family = binomial(link = 'logit'))
+pretty_coefficients(survival_model)
+
 }

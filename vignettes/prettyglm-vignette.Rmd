@@ -53,6 +53,8 @@ titanic  <- titanic  %>%
 
 ## Building a glm
 
+For this vignette we will use `stats::glm()` but `prettyglm`  also supports `parsnip` and `workflow` model objects which use the `glm` model engine.
+
 ```{r build model, echo=TRUE}
 survival_model <- stats::glm(Survived ~ Pclass + Sex + Age + Fare + Embarked + SibSp + Parch + Cabintype, 
                              data = titanic, 
@@ -76,12 +78,11 @@ pretty_coefficients(survival_model, type_iii = 'Wald')
 
 or return a dataframe by setting `return_data` to `TRUE`.
 
-`pretty_coefficients()` also supports parsnip and workflow model objects which use the `glm` model engine.
-
 
 <!-- ## Building a tidymodel -->
 
-<!-- ### parsnip model -->
+<!-- ### parsnip model object -->
+
 <!-- ```{r build tidymodel} -->
 <!-- # parsnip model -->
 <!-- pasnip_model <- linear_reg() %>% -->
@@ -90,7 +91,7 @@ or return a dataframe by setting `return_data` to `TRUE`.
 <!-- ``` -->
 
 
-<!-- ### workflow model -->
+<!-- ### workflow model  -->
 
 <!-- ```{r workflow} -->
 <!-- # workflow object -->
