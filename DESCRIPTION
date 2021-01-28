@@ -1,10 +1,10 @@
 Package: prettyglm
 Type: Package
-Title: Easily Make Pretty Summaries of GLM coefficients.
+Title: Easily make pretty summaries of Generalized Linear Model coefficients.
 Version: 0.1.0
 Authors@R: c(person("Jared", "Fowler", email = "jared.fowler8@gmail.com", role = c("cre","aut")))
 Maintainer: Jared Fowler <jared.fowler8@gmail.com>
-Description: The package provides a set of tools to create pretty summary tables and plots of glm coefficients.
+Description: The package provides a set of tools to create pretty summary tables and plots of glm coefficients
 License: Public
 Encoding: UTF-8
 LazyData: true
