@@ -13,13 +13,14 @@
 #' @author Jared Fowler
 #'
 #' @export
-#' @importFrom magrittr "%>%"
 #' @importFrom tidycat "factor_regex"
+#' @importFrom tibble "enframe"
 #' @importFrom vip "vi"
 #' @importFrom stringr "str_remove"
 #' @importFrom forcats "fct_inorder"
 #' @importFrom tidycat "factor_regex"
 #' @import utils
+#' @import dplyr
 
 clean_coefficients <- function(d = NULL, m  = NULL){
 
