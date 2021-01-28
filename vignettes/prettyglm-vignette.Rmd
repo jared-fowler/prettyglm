@@ -21,7 +21,7 @@ When working with Generalized Linear Models it is often useful to create informa
 ```{r setup, include=FALSE}
 library(dplyr)
 library(prettyglm)
-library(tidymodels)
+#library(tidymodels)
 ```
 
 ## Data: titanic
