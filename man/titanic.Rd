@@ -3,7 +3,7 @@
 \docType{data}
 \name{titanic}
 \alias{titanic}
-\title{Data}
+\title{Titanic Data}
 \format{
 An object of class \code{"data.frame"}
 \describe{
@@ -31,8 +31,8 @@ In this challenge, we ask you to build a predictive model that answers the quest
 }
 \examples{
 
-data(toydata)
-head(toydata)
+data(titanic)
+head(titanic)
 }
 \references{
 This data set sourced from https://www.kaggle.com/c/titanic/data?select=train.csv

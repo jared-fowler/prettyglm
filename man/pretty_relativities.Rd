@@ -2,7 +2,7 @@
 % Please edit documentation in R/pretty_relativities.R
 \name{pretty_relativities}
 \alias{pretty_relativities}
-\title{pretty_relativities()}
+\title{pretty_relativities}
 \usage{
 pretty_relativities(
   feature_to_plot,
@@ -17,7 +17,7 @@ pretty_relativities(
 )
 }
 \arguments{
-\item{feature_to_plot}{Model object to create coefficient table for. Must be of type: \link[stats:glm]{stats::glm()}, \link[stats:lm]{stats::lm()},  \link[parsnip:linear_reg()]{parsnip::linear_reg()}, \link[parsnip:logistic_reg()]{parsnip::logistic_reg()} or  \link[poissonreg:poisson_reg()]{poissonreg::poisson_reg()}}
+\item{feature_to_plot}{A string of the variable to plot.}
 
 \item{model_object}{Model object to create coefficient table for. Must be of type: \link[stats:glm]{stats::glm()}, \link[stats:lm]{stats::lm()},  \link[parsnip:linear_reg()]{parsnip::linear_reg()}, \link[parsnip:logistic_reg()]{parsnip::logistic_reg()} or  \link[poissonreg:poisson_reg()]{poissonreg::poisson_reg()}}
 
@@ -33,7 +33,7 @@ pretty_relativities(
 
 \item{height}{Height of plot}
 
-\item{return_data}{Set to TRUE to return dataset instead of plot}
+\item{return_data}{Set to TRUE to return data set instead of plot}
 }
 \value{
 \link[knitr:kable]{knitr::kable()} if return_data = FALSE. \link[base:data.frame]{base::data.frame()} if return_data = TRUE.

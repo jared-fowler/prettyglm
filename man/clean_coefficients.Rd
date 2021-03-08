@@ -17,11 +17,11 @@ Expanded \link[tibble:tibble]{tibble::tibble()} from the version passed to `d` i
 \item{level}{The level of the categorical variable that the regression term belongs to. Will be an the term name for numeric variables.}
 }
 \description{
-Processing to split out base levels and add variable importance to each term. Inspired by tidycat::tidy_categorical, modified for prettyglm.
+Processing to split out base levels and add variable importance to each term. Directly inspired by `tidycat::tidy_categorical()`, modified for use in prettyglm.
 }
 \seealso{
 \link[broom:tidy.lm]{broom::tidy.lm()}
 }
 \author{
-Jared Fowler
+Jared Fowler, Guy J. Abel
 }

@@ -1,6 +1,6 @@
 #' @title clean_coefficients
 #'
-#' @description Processing to split out base levels and add variable importance to each term. Inspired by tidycat::tidy_categorical, modified for prettyglm.
+#' @description Processing to split out base levels and add variable importance to each term. Directly inspired by `tidycat::tidy_categorical()`, modified for use in prettyglm.
 #'
 #' @param d A data frame \link[tibble:tibble]{tibble::tibble()} output from \link[broom:tidy.lm]{broom::tidy.lm()}; with one row for each term in the regression, including column `term`
 #' @param m A model object \link[stats:glm]{glm()}
@@ -10,10 +10,9 @@
 #' \item{level}{The level of the categorical variable that the regression term belongs to. Will be an the term name for numeric variables.}
 #' @seealso \link[broom:tidy.lm]{broom::tidy.lm()}
 #'
-#' @author Jared Fowler
+#' @author Jared Fowler, Guy J. Abel
 #'
 #' @export
-#' @importFrom tidycat "factor_regex"
 #' @importFrom tibble "enframe"
 #' @importFrom vip "vi"
 #' @importFrom stringr "str_remove"
