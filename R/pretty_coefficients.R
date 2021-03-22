@@ -2,13 +2,13 @@
 #'
 #' @description Creates a pretty kable of model coefficients including coefficient base levels.
 #'
-#' @param model_object Model object to create coefficient table for. Must be of type: \code{\link[stats:glm]{stats::glm()}}, \code{\link[stats:lm]{stats::lm()}},  \code{\link[parsnip:linear_reg()]{parsnip::linear_reg()}}, \code{\link[parsnip:logistic_reg()]{parsnip::logistic_reg()}} or  \code{\link[poissonreg:poisson_reg()]{poissonreg::poisson_reg()}}
+#' @param model_object Model object to create coefficient table for. Must be of type: \code{\link[stats]{glm}}, \code{\link[stats]{lm}},  \code{\link[parsnip]{linear_reg}} or \code{\link[parsnip]{logistic_reg}}
 #' @param conf.int Set to TRUE to include confidence intervals in summary table. Warning, can be computationally expensive.
 #' @param relativity_transform String of the function to be applied to the model estimate to calculate the relativity, for example: 'exp(estimate)-1'. Default is for relativity to be excluded from output.
-#' @param type_iii Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \link[car:Anova()]{car::Anova()}
-#' @param return_data Set to TRUE to return \code{\link[base:data.frame]{base::data.frame()}} instead of creating \code{\link[knitr:kable]{knitr::kable()}}.
+#' @param type_iii Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \code{\link[car]{Anova}}
+#' @param return_data Set to TRUE to return \code{\link[base]{data.frame}} instead of creating \code{\link[knitr]{kable}}.
 #'
-#' @return \code{\link[knitr:kable]{knitr::kable()}} if return_data = FALSE. \code{\link[base:data.frame]{base::data.frame()}} if return_data = TRUE.
+#' @return \code{\link[knitr]{kable}} if return_data = FALSE. \code{\link[base]{data.frame}} if return_data = TRUE.
 #'
 #' @examples
 #' library(dplyr)

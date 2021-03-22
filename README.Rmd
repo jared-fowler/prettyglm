@@ -37,6 +37,7 @@ To explore the functionality of prettyglm we will use a data set sourced from ht
 ```{r example, message=FALSE, warning=FALSE}
 library(prettyglm)
 library(dplyr)
+library(Hmisc)
 data("bank")
 ```
 

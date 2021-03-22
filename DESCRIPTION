@@ -28,5 +28,6 @@ Imports:
     knitr,
     stringr,
     tidycat,
+    tidyr,
     tidyselect,
     vip

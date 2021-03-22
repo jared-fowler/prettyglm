@@ -7,12 +7,12 @@
 clean_coefficients(d = NULL, m = NULL)
 }
 \arguments{
-\item{d}{A data frame \code{\link[tibble:tibble]{tibble::tibble()}} output from \code{\link[broom:tidy.lm]{broom::tidy.lm()}}; with one row for each term in the regression, including column `term`}
+\item{d}{A data frame \code{\link[tibble]{tibble}} output from \code{\link[broom]{tidy.lm}}; with one row for each term in the regression, including column `term`}
 
-\item{m}{A model object \code{\link[stats:glm]{glm()}}}
+\item{m}{A model object \code{\link[stats]{glm}}}
 }
 \value{
-Expanded \code{\link[tibble:tibble]{tibble::tibble()}} from the version passed to `d` including additional columns:
+Expanded \code{\link[tibble]{tibble}} from the version passed to `d` including additional columns:
 \item{variable}{The name of the variable that the regression term belongs to.}
 \item{level}{The level of the categorical variable that the regression term belongs to. Will be an the term name for numeric variables.}
 }
@@ -20,7 +20,7 @@ Expanded \code{\link[tibble:tibble]{tibble::tibble()}} from the version passed t
 Processing to split out base levels and add variable importance to each term. Directly inspired by `tidycat::tidy_categorical()`, modified for use in prettyglm.
 }
 \seealso{
-\code{\link[broom:tidy.lm]{broom::tidy.lm()}}
+\code{\link[broom]{tidy.lm}}
 }
 \author{
 Jared Fowler, Guy J. Abel

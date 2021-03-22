@@ -11,16 +11,14 @@ columns_to_factor <- c('job',
                        'housing',
                        'loan')
 bank_data  <- bank_data  %>%
-  dplyr::mutate_at(columns_to_factor, list(~factor(.))) %>% # multiple columns to factor
-  dplyr::mutate(age_cat = cut3(age, g=30, levels.mean=TRUE)) #cut age variable into categories
+  dplyr::mutate_at(columns_to_factor, list(~factor(.))) # multiple columns to factor
 
 # Build model
 deposit_model <- stats::glm(y ~ job +
                               marital +
                               education +
                               default +
-                              loan +
-                              age_cat,
+                              loan,
                             data = bank_data,
                             family = binomial)
 

@@ -13,18 +13,18 @@ pretty_coefficients(
 )
 }
 \arguments{
-\item{model_object}{Model object to create coefficient table for. Must be of type: \code{\link[stats:glm]{stats::glm()}}, \code{\link[stats:lm]{stats::lm()}},  \code{\link[parsnip:linear_reg()]{parsnip::linear_reg()}}, \code{\link[parsnip:logistic_reg()]{parsnip::logistic_reg()}} or  \code{\link[poissonreg:poisson_reg()]{poissonreg::poisson_reg()}}}
+\item{model_object}{Model object to create coefficient table for. Must be of type: \code{\link[stats]{glm}}, \code{\link[stats]{lm}},  \code{\link[parsnip]{linear_reg}} or \code{\link[parsnip]{logistic_reg}}}
 
 \item{relativity_transform}{String of the function to be applied to the model estimate to calculate the relativity, for example: 'exp(estimate)-1'. Default is for relativity to be excluded from output.}
 
-\item{type_iii}{Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \link[car:Anova()]{car::Anova()}}
+\item{type_iii}{Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \code{\link[car]{Anova}}}
 
 \item{conf.int}{Set to TRUE to include confidence intervals in summary table. Warning, can be computationally expensive.}
 
-\item{return_data}{Set to TRUE to return \code{\link[base:data.frame]{base::data.frame()}} instead of creating \code{\link[knitr:kable]{knitr::kable()}}.}
+\item{return_data}{Set to TRUE to return \code{\link[base]{data.frame}} instead of creating \code{\link[knitr]{kable}}.}
 }
 \value{
-\code{\link[knitr:kable]{knitr::kable()}} if return_data = FALSE. \code{\link[base:data.frame]{base::data.frame()}} if return_data = TRUE.
+\code{\link[knitr]{kable}} if return_data = FALSE. \code{\link[base]{data.frame}} if return_data = TRUE.
 }
 \description{
 Creates a pretty kable of model coefficients including coefficient base levels.
@@ -41,7 +41,15 @@ columns_to_factor <- c('Pclass',
                        'Survived')
 titanic  <- titanic  \%>\%
   dplyr::mutate_at(columns_to_factor, list(~factor(.)))
-survival_model <- stats::glm(Survived ~ Pclass + Sex + Age + Fare + Embarked + SibSp + Parch + Cabintype,
+survival_model <- stats::glm(Survived ~
+                              Pclass +
+                              Sex +
+                              Age +
+                              Fare +
+                              Embarked +
+                              SibSp +
+                              Parch +
+                              Cabintype,
                              data = titanic,
                              family = binomial(link = 'logit'))
 pretty_coefficients(survival_model)

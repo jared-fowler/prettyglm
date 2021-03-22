@@ -19,15 +19,15 @@ pretty_relativities(
 \arguments{
 \item{feature_to_plot}{A string of the variable to plot.}
 
-\item{model_object}{Model object to create coefficient table for. Must be of type: \link[stats:glm]{stats::glm()}, \link[stats:lm]{stats::lm()},  \link[parsnip:linear_reg()]{parsnip::linear_reg()}, \link[parsnip:logistic_reg()]{parsnip::logistic_reg()} or  \link[poissonreg:poisson_reg()]{poissonreg::poisson_reg()}}
+\item{model_object}{Model object to create coefficient table for. Must be of type: \link[stats]{glm}, \link[stats]{lm},  \link[parsnip]{linear_reg} or \link[parsnip]{logistic_reg}}
 
 \item{plot_approx_ci}{Set to TRUE to include confidence intervals in summary table. Warning, can be computationally expensive.}
 
 \item{relativity_transform}{String of the function to be applied to the model estimate to calculate the relativity, for example: 'exp(estimate)'. Default is for relativity to be 'exp(estimate)-1'.}
 
-\item{ordering}{Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \link[car:Anova()]{car::Anova()}}
+\item{ordering}{Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \link[car]{Anova}}
 
-\item{plot_factor_as_numeric}{Set to TRUE to return \link[base:data.frame]{base::data.frame()} instead of creating \link[knitr:kable]{knitr::kable()}.}
+\item{plot_factor_as_numeric}{Set to TRUE to return \link[base]{data.frame} instead of creating \link[knitr]{kable}.}
 
 \item{width}{Width of plot}
 
@@ -36,7 +36,7 @@ pretty_relativities(
 \item{return_data}{Set to TRUE to return data set instead of plot}
 }
 \value{
-\link[knitr:kable]{knitr::kable()} if return_data = FALSE. \link[base:data.frame]{base::data.frame()} if return_data = TRUE.
+\link[knitr]{kable} if return_data = FALSE. \link[base]{data.frame} if return_data = TRUE.
 }
 \description{
 Creates a pretty html plot of model relativities including base Levels.
@@ -53,7 +53,15 @@ columns_to_factor <- c('Pclass',
                        'Survived')
 titanic  <- titanic  \%>\%
   dplyr::mutate_at(columns_to_factor, list(~factor(.)))
-survival_model <- stats::glm(Survived ~ Pclass + Sex + Age + Fare + Embarked + SibSp + Parch + Cabintype,
+survival_model <- stats::glm(Survived ~
+                              Pclass +
+                              Sex +
+                              Age +
+                              Fare +
+                              Embarked +
+                              SibSp +
+                              Parch +
+                              Cabintype,
                              data = titanic,
                              family = binomial(link = 'logit'))
 pretty_relativities(feature_to_plot = 'Pclass',

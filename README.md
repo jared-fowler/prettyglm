@@ -39,6 +39,7 @@ agreed to place the deposit after the phone call.
 ``` r
 library(prettyglm)
 library(dplyr)
+library(Hmisc)
 data("bank")
 ```
 

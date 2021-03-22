@@ -2,13 +2,13 @@
 #'
 #' @description Processing to split out base levels and add variable importance to each term. Directly inspired by `tidycat::tidy_categorical()`, modified for use in prettyglm.
 #'
-#' @param d A data frame \code{\link[tibble:tibble]{tibble::tibble()}} output from \code{\link[broom:tidy.lm]{broom::tidy.lm()}}; with one row for each term in the regression, including column `term`
-#' @param m A model object \code{\link[stats:glm]{glm()}}
+#' @param d A data frame \code{\link[tibble]{tibble}} output from \code{\link[broom]{tidy.lm}}; with one row for each term in the regression, including column `term`
+#' @param m A model object \code{\link[stats]{glm}}
 #'
-#' @return Expanded \code{\link[tibble:tibble]{tibble::tibble()}} from the version passed to `d` including additional columns:
+#' @return Expanded \code{\link[tibble]{tibble}} from the version passed to `d` including additional columns:
 #' \item{variable}{The name of the variable that the regression term belongs to.}
 #' \item{level}{The level of the categorical variable that the regression term belongs to. Will be an the term name for numeric variables.}
-#' @seealso \code{\link[broom:tidy.lm]{broom::tidy.lm()}}
+#' @seealso \code{\link[broom]{tidy.lm}}
 #'
 #' @author Jared Fowler, Guy J. Abel
 #'
