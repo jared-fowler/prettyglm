@@ -4,6 +4,7 @@
 #'
 #' @param x description
 #' @param cuts description
+#' @param m description
 #' @param g description
 #' @param levels.mean description
 #' @param digits description
@@ -30,8 +31,9 @@
 #'
 #' @author F. Harrell
 #'
+#' @importFrom stats "approx"
 #' @export
-#'
+
 cut3 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
                  oneval=TRUE, onlycuts=FALSE, formatfun = format, ...)
 {

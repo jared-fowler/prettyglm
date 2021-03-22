@@ -13,7 +13,7 @@ pretty_coefficients(
 )
 }
 \arguments{
-\item{model_object}{Model object to create coefficient table for. Must be of type: \link[stats:glm]{stats::glm()}, \link[stats:lm]{stats::lm()},  \link[parsnip:linear_reg()]{parsnip::linear_reg()}, \link[parsnip:logistic_reg()]{parsnip::logistic_reg()} or  \link[poissonreg:poisson_reg()]{poissonreg::poisson_reg()}}
+\item{model_object}{Model object to create coefficient table for. Must be of type: \code{\link[stats:glm]{stats::glm()}}, \code{\link[stats:lm]{stats::lm()}},  \code{\link[parsnip:linear_reg()]{parsnip::linear_reg()}}, \code{\link[parsnip:logistic_reg()]{parsnip::logistic_reg()}} or  \code{\link[poissonreg:poisson_reg()]{poissonreg::poisson_reg()}}}
 
 \item{relativity_transform}{String of the function to be applied to the model estimate to calculate the relativity, for example: 'exp(estimate)-1'. Default is for relativity to be excluded from output.}
 
@@ -21,10 +21,10 @@ pretty_coefficients(
 
 \item{conf.int}{Set to TRUE to include confidence intervals in summary table. Warning, can be computationally expensive.}
 
-\item{return_data}{Set to TRUE to return \link[base:data.frame]{base::data.frame()} instead of creating \link[knitr:kable]{knitr::kable()}.}
+\item{return_data}{Set to TRUE to return \code{\link[base:data.frame]{base::data.frame()}} instead of creating \code{\link[knitr:kable]{knitr::kable()}}.}
 }
 \value{
-\link[knitr:kable]{knitr::kable()} if return_data = FALSE. \link[base:data.frame]{base::data.frame()} if return_data = TRUE.
+\code{\link[knitr:kable]{knitr::kable()}} if return_data = FALSE. \code{\link[base:data.frame]{base::data.frame()}} if return_data = TRUE.
 }
 \description{
 Creates a pretty kable of model coefficients including coefficient base levels.

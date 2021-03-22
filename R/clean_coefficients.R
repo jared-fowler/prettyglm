@@ -2,13 +2,13 @@
 #'
 #' @description Processing to split out base levels and add variable importance to each term. Directly inspired by `tidycat::tidy_categorical()`, modified for use in prettyglm.
 #'
-#' @param d A data frame \link[tibble:tibble]{tibble::tibble()} output from \link[broom:tidy.lm]{broom::tidy.lm()}; with one row for each term in the regression, including column `term`
-#' @param m A model object \link[stats:glm]{glm()}
+#' @param d A data frame \code{\link[tibble:tibble]{tibble::tibble()}} output from \code{\link[broom:tidy.lm]{broom::tidy.lm()}}; with one row for each term in the regression, including column `term`
+#' @param m A model object \code{\link[stats:glm]{glm()}}
 #'
-#' @return Expanded \link[tibble:tibble]{tibble::tibble()} from the version passed to `d` including additional columns:
+#' @return Expanded \code{\link[tibble:tibble]{tibble::tibble()}} from the version passed to `d` including additional columns:
 #' \item{variable}{The name of the variable that the regression term belongs to.}
 #' \item{level}{The level of the categorical variable that the regression term belongs to. Will be an the term name for numeric variables.}
-#' @seealso \link[broom:tidy.lm]{broom::tidy.lm()}
+#' @seealso \code{\link[broom:tidy.lm]{broom::tidy.lm()}}
 #'
 #' @author Jared Fowler, Guy J. Abel
 #'
@@ -18,7 +18,6 @@
 #' @importFrom stringr "str_remove"
 #' @importFrom forcats "fct_inorder"
 #' @importFrom tidycat "factor_regex"
-#' @import utils
 #' @import dplyr
 
 clean_coefficients <- function(d = NULL, m  = NULL){

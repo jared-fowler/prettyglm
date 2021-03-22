@@ -23,6 +23,8 @@ cut3(
 
 \item{cuts}{description}
 
+\item{m}{description}
+
 \item{g}{description}
 
 \item{levels.mean}{description}
