@@ -1,6 +1,6 @@
 Package: prettyglm
 Type: Package
-Title: Easily make pretty summaries of Generalized Linear Model coefficients
+Title: Pretty summaries of Generalized Linear Model coefficients
 Version: 0.1.0
 Authors@R: c(person("Jared", "Fowler", email = "jared.fowler8@gmail.com", role = c("cre","aut")))
 Maintainer: Jared Fowler <jared.fowler8@gmail.com>
@@ -19,11 +19,9 @@ Imports:
     dplyr,
     plotly,
     tibble,
-    utils,
     broom,
     car,
     forcats,
-    formattable,
     kableExtra,
     knitr,
     stringr,

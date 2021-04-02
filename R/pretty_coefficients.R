@@ -46,7 +46,7 @@
 #' @importFrom kableExtra "cell_spec"
 #' @importFrom kableExtra "collapse_rows"
 #' @importFrom kableExtra "footnote"
-#' @importFrom formattable "normalize_bar"
+#' @importFrom kableExtra "spec_plot"
 #' @importFrom car "Anova"
 #' @import dplyr
 #'
@@ -151,15 +151,25 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, type_
     # Create a nice kable output of coefficients
     kable_df <- tidy_coef
     kable_df$P.Value = kableExtra::cell_spec(base::round(kable_df$P.Value,5), background  = ifelse(is.na(kable_df$P.Value) |  kable_df$P.Value < 0.05, "#black", "#F08080"))
-    kable_df$Importance <- formattable::normalize_bar(color  = "lightgrey")(base::round(kable_df$Importance,1))
-    kable_df$Importance <- stringr::str_replace(kable_df$Importance, 'rtl;', 'ltr;')
+    use_it <- base::lapply(base::as.list(tidy_coef$Importance), function(x) base::as.vector(base::cbind(0,x))) #importance in list for bar plot
     if(is.null(type_iii)){
-      kable_table <- knitr::kable(kable_df,
-                                  escape = F,
-                                  booktabs = T,
-                                  #caption='Model estimates and p-values',
-                                  align = c("l","l","l","r", "r", "r", "r", "r"))%>%
+      kable_table <- kable_df %>%
+        mutate(Importance = "") %>%
+        knitr::kable(. ,
+                     escape = F,
+                     booktabs = T,
+                     align = c("l","l","l","r", "r", "r", "r", "r"))%>%
         kableExtra::kable_styling() %>%
+        kableExtra::column_spec(3, image = kableExtra::spec_plot(x = use_it,
+                                                                 y = rep(list(c(1,1)),base::nrow(tidy_coef)),
+                                                                 same_lim = TRUE,
+                                                                 lwd = 10,
+                                                                 type='l',
+                                                                 pch=0,
+                                                                 cex = 0,
+                                                                 ann = T,
+                                                                 xlim = c(0,base::max(tidy_coef$Importance)),
+                                                                 ylim = c(1,1))) %>%
         kableExtra::collapse_rows(columns = 1) %>%
         kableExtra::footnote(general = base::paste(' AIC:',
                                                    base::round(aic_print,1),
@@ -170,15 +180,25 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, type_
                              general_title = 'Goodness-of-Fit:',
                              footnote_as_chunk = T,
                              title_format = c("italic", "underline"))
-
     } else{
       kable_df$Type.III.P.Value = kableExtra::cell_spec(base::round(kable_df$Type.III.P.Value,5), background  = ifelse(is.na(kable_df$Type.III.P.Value) |  kable_df$Type.III.P.Value < 0.05, "#black", "#F08080"))
-      kable_table <- knitr::kable(kable_df,
-                                  escape = F,
-                                  booktabs = T,
-                                  #caption='Model estimates and p-values',
-                                  align = c("l","l","l","r", "r", "r", "r", "r", "r"))%>%
+      kable_table <- kable_df %>%
+        mutate(Importance = "") %>%
+        knitr::kable(. ,
+                     escape = F,
+                     booktabs = T,
+                     align = c("l","l","l","r", "r", "r", "r", "r"))%>%
         kableExtra::kable_styling() %>%
+        kableExtra::column_spec(3, image = kableExtra::spec_plot(x = use_it,
+                                                                 y = rep(list(c(1,1)),base::nrow(tidy_coef)),
+                                                                 same_lim = TRUE,
+                                                                 lwd = 10,
+                                                                 type='l',
+                                                                 pch=0,
+                                                                 cex = 0,
+                                                                 ann = T,
+                                                                 xlim = c(0,base::max(tidy_coef$Importance)),
+                                                                 ylim = c(1,1))) %>%
         kableExtra::collapse_rows(columns = c(1, base::ncol(kable_df)), target = 1) %>%
         kableExtra::footnote(general = base::paste(' AIC:',
                                                    base::round(aic_print,1),
