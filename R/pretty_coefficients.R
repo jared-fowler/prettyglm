@@ -55,6 +55,18 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, type_
 
   #TODO: fix NA in goodness of fit metrics
 
+  # Fix for global variables
+  conf.low <- NULL
+  conf.high <- NULL
+  variable <- NULL
+  level <- NULL
+  Importance <- NULL
+  relativity <- NULL
+  p.value <- NULL
+  estimate <- NULL
+  std.error <- NULL
+  . <- NULL
+
   # if model object is a workflow, pull the model fit
   if (any(class(model_object) == 'workflow') == TRUE){
     model_object <- model_object$fit$fit$fit

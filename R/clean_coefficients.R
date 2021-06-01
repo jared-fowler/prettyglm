@@ -21,6 +21,17 @@
 #' @import dplyr
 
 clean_coefficients <- function(d = NULL, m  = NULL){
+  # Global varaible notes fix
+  name <- NULL
+  level <- NULL
+  variable <- NULL
+  Importance <- NULL
+  Sign <- NULL
+  est <- NULL
+  effect <- NULL
+  estimate <- NULL
+  std.error <- NULL
+  relativity <- NULL
 
   # Extract model object if parsnip object
   if (any(class(m) == 'model_fit') == TRUE) m <- m$fit else m <- m
@@ -31,7 +42,9 @@ clean_coefficients <- function(d = NULL, m  = NULL){
   # Load model training data into global environment if it does not already exist
   data_already_existed <- base::exists(as.character(m$call$data))
   if (data_already_existed == FALSE) {
-    base::assign(x = as.character(m$call$data), value = m$data, envir = .GlobalEnv)
+    name_to_use <- as.character(m$call$data)
+    value_to_use <- m$data
+    base::assign(x = name_to_use, value = value_to_use, envir = .GlobalEnv)
   }
 
   #Split terms and get base levels
@@ -49,7 +62,7 @@ clean_coefficients <- function(d = NULL, m  = NULL){
 
   # Remove data set if it was not already loaded
   if (data_already_existed == FALSE) {
-    base::rm(list = as.character(m$call$data), envir = .GlobalEnv)
+    base::rm(list = name_to_use, envir = .GlobalEnv)
   }
 
   # Re-create term field for join

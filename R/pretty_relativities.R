@@ -49,6 +49,17 @@
 
 pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = F){
 
+  # Fix for global variables
+  tidy_workflow <- NULL
+  Variable <- NULL
+  Relativity <- NULL
+  relativity <- NULL
+  Std.error <- NULL
+  Approx_Upper_95CI <- NULL
+  Approx_Lower_95CI <- NULL
+  name <- NULL
+  number_of_records <- NULL
+
   # Create relativity function from input
   base::eval(base::parse(text = base::paste('relativity <- function(estimate) { return(' , relativity_transform , ')}', sep='')))
 
