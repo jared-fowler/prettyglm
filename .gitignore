@@ -17,3 +17,4 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 .Renviron
+.DS_Store
