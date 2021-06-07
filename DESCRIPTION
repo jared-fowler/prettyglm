@@ -1,6 +1,6 @@
 Type: Package
 Package: prettyglm
-Title: Pretty summaries of Generalized Linear Model coefficients
+Title: Pretty Summaries of Generalized Linear Model Coefficients
 Version: 0.1.0
 Authors@R: 
     person(given = "Jared",

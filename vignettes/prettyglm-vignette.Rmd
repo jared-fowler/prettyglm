@@ -79,6 +79,19 @@ pretty_coefficients(survival_model, type_iii = 'Wald')
 or return a data frame by setting `return_data` to `TRUE`.
 
 
+## Create beautiful plots of variable relativities with `pretty_relativities()`
+
+`pretty_relativities()` creates an interactive duel axis plot (via plotly), which plots the fitted relativity and the number of records in that category.
+
+
+```{r visualise rels, echo=TRUE}
+pretty_relativities(feature_to_plot= 'Embarked',
+                    model_object = survival_model)
+```
+
+
+
+
 <!-- ## Building a tidymodel -->
 
 <!-- ### parsnip model object -->
