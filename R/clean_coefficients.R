@@ -40,12 +40,12 @@ clean_coefficients <- function(d = NULL, m  = NULL){
   if (any(class(m) == 'workflow') == TRUE) m <- m$fit$fit$fit else m <- m
 
   # Load model training data into global environment if it does not already exist
-  data_already_existed <- base::exists(as.character(m$call$data))
-  if (data_already_existed == FALSE) {
-    name_to_use <- as.character(m$call$data)
-    value_to_use <- m$data
-    base::assign(x = name_to_use, value = value_to_use, envir = .GlobalEnv)
-  }
+  # data_already_existed <- base::exists(as.character(m$call$data))
+  # if (data_already_existed == FALSE) {
+  #   name_to_use <- as.character(m$call$data)
+  #   value_to_use <- m$data
+  #   base::assign(x = name_to_use, value = value_to_use, envir = .GlobalEnv)
+  # }
 
   #Split terms and get base levels
   x <- m %>%
@@ -61,9 +61,9 @@ clean_coefficients <- function(d = NULL, m  = NULL){
                       yes = "interaction", no = "main"))
 
   # Remove data set if it was not already loaded
-  if (data_already_existed == FALSE) {
-    base::rm(list = name_to_use, envir = .GlobalEnv)
-  }
+  # if (data_already_existed == FALSE) {
+  #   base::rm(list = name_to_use, envir = .GlobalEnv)
+  # }
 
   # Re-create term field for join
   term_record <- vector(mode = "list", length = length(x$variable))

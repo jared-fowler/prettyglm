@@ -9,7 +9,7 @@ Authors@R:
            email = "jared.fowler8@gmail.com")
 Maintainer: Jared Fowler <jared.fowler8@gmail.com>
 Description: One of the main advantages of using Generalised
-    Linear Models is their interpretability.  The goal of prettyglm is to
+    Linear Models is their interpretability.  The goal of 'prettyglm' is to
     provide a set of functions which easily create beautiful coefficient
     summaries which can readily be shared and explained.
 License: GPL-3

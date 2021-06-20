@@ -2,7 +2,7 @@
 #'
 #' @description Creates a pretty kable of model coefficients including coefficient base levels.
 #'
-#' @param model_object Model object to create coefficient table for. Must be of type: \code{\link[stats]{glm}}, \code{\link[stats]{lm}},  \code{\link[parsnip]{linear_reg}} or \code{\link[parsnip]{logistic_reg}}
+#' @param model_object Model object to create coefficient table for. Must be of type: \code{\link[stats]{glm}}, \code{\link[stats]{lm}},  \code{\link[parsnip]{linear_reg}} or \code{\link[parsnip]{logistic_reg}}. The training data for the model must also be loaded in the global environment. If it is not refer to second example for how to load it back into the environment.
 #' @param conf.int Set to TRUE to include confidence intervals in summary table. Warning, can be computationally expensive.
 #' @param relativity_transform String of the function to be applied to the model estimate to calculate the relativity, for example: 'exp(estimate)-1'. Default is for relativity to be excluded from output.
 #' @param type_iii Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \code{\link[car]{Anova}}
@@ -53,8 +53,6 @@
 
 pretty_coefficients <- function(model_object, relativity_transform = NULL, type_iii = NULL, conf.int = FALSE, return_data = FALSE){
 
-  #TODO: fix NA in goodness of fit metrics
-
   # Fix for global variables
   conf.low <- NULL
   conf.high <- NULL
@@ -92,7 +90,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, type_
   }
 
   # confidence interval and relativity formatting
-  if (conf.int == T){
+  if (conf.int == TRUE){
     tidy_coef <- tidy_coef %>%
       dplyr::mutate(conf.low = ifelse(is.na(conf.low), 0, conf.low),
                     conf.high = ifelse(is.na(conf.high), 0, conf.high))
@@ -138,7 +136,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, type_
   }
 
   # add type III test
-  if (is.null(type_iii) == F){
+  if (is.null(type_iii) == FALSE){
     if(!(type_iii %in% c('Wald', 'LR'))) {stop('type_iii must be either: "Wald" or "LR"')}
       term_p_values <- broom::tidy(car::Anova(model_object, type = 'III', test.statistic=type_iii)) %>%
         dplyr::select(c('term', 'p.value')) %>%
@@ -147,7 +145,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, type_
   }
 
   # return desired output
-  if (return_data == F){
+  if (return_data == FALSE){
 
     # Extract goodness of fit metrics
     if (any(class(model_object) == 'model_fit') == TRUE){
@@ -168,8 +166,8 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, type_
       kable_table <- kable_df %>%
         mutate(Importance = "") %>%
         knitr::kable(. ,
-                     escape = F,
-                     booktabs = T,
+                     escape = FALSE,
+                     booktabs = TRUE,
                      align = c("l","l","l","r", "r", "r", "r", "r"))%>%
         kableExtra::kable_styling() %>%
         kableExtra::column_spec(3, image = kableExtra::spec_plot(x = use_it,
@@ -190,15 +188,15 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, type_
                                                    ', Null Devience: ',
                                                    base::round(null_deviance_print,1)),
                              general_title = 'Goodness-of-Fit:',
-                             footnote_as_chunk = T,
+                             footnote_as_chunk = TRUE,
                              title_format = c("italic", "underline"))
     } else{
       kable_df$Type.III.P.Value = kableExtra::cell_spec(base::round(kable_df$Type.III.P.Value,5), background  = ifelse(is.na(kable_df$Type.III.P.Value) |  kable_df$Type.III.P.Value < 0.05, "#black", "#F08080"))
       kable_table <- kable_df %>%
         mutate(Importance = "") %>%
         knitr::kable(. ,
-                     escape = F,
-                     booktabs = T,
+                     escape = FALSE,
+                     booktabs = TRUE,
                      align = c("l","l","l","r", "r", "r", "r", "r"))%>%
         kableExtra::kable_styling() %>%
         kableExtra::column_spec(3, image = kableExtra::spec_plot(x = use_it,
@@ -208,7 +206,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, type_
                                                                  type='l',
                                                                  pch=0,
                                                                  cex = 0,
-                                                                 ann = T,
+                                                                 ann = TRUE,
                                                                  xlim = c(0,base::max(tidy_coef$Importance)),
                                                                  ylim = c(1,1))) %>%
         kableExtra::collapse_rows(columns = c(1, base::ncol(kable_df)), target = 1) %>%
@@ -219,7 +217,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, type_
                                                    ', Null Devience: ',
                                                    base::round(null_deviance_print,1)),
                              general_title = 'Goodness-of-Fit:',
-                             footnote_as_chunk = T,
+                             footnote_as_chunk = TRUE,
                              title_format = c("italic", "underline"))
     }
     return(kable_table)

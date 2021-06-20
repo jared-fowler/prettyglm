@@ -47,7 +47,7 @@
 #' @import plotly
 #'
 
-pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = F){
+pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = FALSE){
 
   # Fix for global variables
   tidy_workflow <- NULL
@@ -103,7 +103,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
     }
 
     # Change ordering if specified --------------------------------------------------------------
-    if (base::is.null(ordering) ==  F){
+    if (base::is.null(ordering) ==  FALSE){
       if (base::length(ordering) >1){
         order_option <- ordering
         plot_data <- plot_data %>%
@@ -143,19 +143,15 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
     # Create plots  --------------------------------------------------------------------------------
     p_return <- plot_data %>%
         dplyr::mutate(number_of_records = base::ifelse(name == 'Relativity', number_of_records, 0)) %>%
-        plotly::plot_ly(#color = ~name,
-          #linetype = ~name,
-          colors = if(plot_approx_ci == T) c('grey', 'grey', 'black') else c('black'),
-          linetypes = if(plot_approx_ci == T) c('dash', 'dash', 'solid')else c('solid'),
-          #colors = c('grey', 'grey', 'black') ,
-          #linetypes = c('dash', 'dash', 'solid'),
-          height = height,
-          width = width) %>%
+        plotly::plot_ly(colors = if(plot_approx_ci == TRUE) c('grey', 'grey', 'black') else c('black'),
+                        linetypes = if(plot_approx_ci == TRUE) c('dash', 'dash', 'solid')else c('solid'),
+                        height = height,
+                        width = width) %>%
         plotly::add_markers(x = ~Level,
                             y = ~value,
                             color = ~name,
                             type = "scatter",
-                            showlegend = F) %>%
+                            showlegend = FALSE) %>%
         plotly::add_lines(x = ~Level,
                           y = ~value,
                           linetype = ~name,
@@ -167,29 +163,21 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
           marker = list(color = '#dddddd',
                         line = list(width=0,
                                     color='black')),
-          showlegend = F
-          # transforms = list(
-          #   list(
-          #     type = 'filter',
-          #     target = ~name,
-          #     operation = '!=',
-          #     value = 'relativity'
-          #   )
-          # )
+          showlegend = FALSE
         ) %>%
         plotly::layout(title = base::paste('Relativities for', feature_to_plot),
                        yaxis2 = list(side = 'right',
                                      title = 'Number of Records',
-                                     showgrid = F),
+                                     showgrid = FALSE),
                        yaxis = list(overlaying='y2',
                                     side = 'left',
                                     title = 'Relativity',
-                                    showgrid = T),
+                                    showgrid = TRUE),
                        legend = list(orientation = "h",
                                      xanchor = "center",
                                      x=0.5,
                                      y=-0.2),
-                       autosize = T,
+                       autosize = TRUE,
                        margin = list(b = 50, l = 50, r=80))
     return(p_return)
   }
