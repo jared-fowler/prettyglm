@@ -11,6 +11,7 @@
 #' @param width Width of plot
 #' @param height Height of plot
 #' @param return_data Set to TRUE to return data set instead of plot
+#' @param ylabel Label for yaxis of relativity plot, some users may prefer to refer to this as log odds
 #'
 #' @return \link[knitr]{kable} if return_data = FALSE. \link[base]{data.frame} if return_data = TRUE.
 #'
@@ -47,7 +48,7 @@
 #' @import plotly
 #'
 
-pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = FALSE){
+pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = FALSE, ylabel = 'Relativity'){
 
   # Fix for global variables
   tidy_workflow <- NULL
@@ -171,7 +172,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                                      showgrid = FALSE),
                        yaxis = list(overlaying='y2',
                                     side = 'left',
-                                    title = 'Relativity',
+                                    title = ylabel,
                                     showgrid = TRUE),
                        legend = list(orientation = "h",
                                      xanchor = "center",

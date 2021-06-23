@@ -2,7 +2,7 @@
 #'
 #' @description Creates a pretty kable of model coefficients including coefficient base levels.
 #'
-#' @param model_object Model object to create coefficient table for. Must be of type: \code{\link[stats]{glm}}, \code{\link[stats]{lm}},  \code{\link[parsnip]{linear_reg}} or \code{\link[parsnip]{logistic_reg}}. The training data for the model must also be loaded in the global environment. If it is not refer to second example for how to load it back into the environment.
+#' @param model_object Model object to create coefficient table for. Must be of type: \code{\link[stats]{glm}}, \code{\link[stats]{lm}},  \code{\link[parsnip]{linear_reg}} or \code{\link[parsnip]{logistic_reg}}.
 #' @param conf.int Set to TRUE to include confidence intervals in summary table. Warning, can be computationally expensive.
 #' @param relativity_transform String of the function to be applied to the model estimate to calculate the relativity, for example: 'exp(estimate)-1'. Default is for relativity to be excluded from output.
 #' @param type_iii Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \code{\link[car]{Anova}}

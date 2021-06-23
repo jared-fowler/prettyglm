@@ -13,7 +13,7 @@ pretty_coefficients(
 )
 }
 \arguments{
-\item{model_object}{Model object to create coefficient table for. Must be of type: \code{\link[stats]{glm}}, \code{\link[stats]{lm}},  \code{\link[parsnip]{linear_reg}} or \code{\link[parsnip]{logistic_reg}}}
+\item{model_object}{Model object to create coefficient table for. Must be of type: \code{\link[stats]{glm}}, \code{\link[stats]{lm}},  \code{\link[parsnip]{linear_reg}} or \code{\link[parsnip]{logistic_reg}}.}
 
 \item{relativity_transform}{String of the function to be applied to the model estimate to calculate the relativity, for example: 'exp(estimate)-1'. Default is for relativity to be excluded from output.}
 

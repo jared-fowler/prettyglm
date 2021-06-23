@@ -13,7 +13,8 @@ pretty_relativities(
   plot_factor_as_numeric = FALSE,
   width = 800,
   height = 500,
-  return_data = F
+  return_data = FALSE,
+  ylabel = "Relativity"
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ pretty_relativities(
 \item{height}{Height of plot}
 
 \item{return_data}{Set to TRUE to return data set instead of plot}
+
+\item{ylabel}{Label for yaxis of relativity plot, some users may prefer to refer to this as log odds}
 }
 \value{
 \link[knitr]{kable} if return_data = FALSE. \link[base]{data.frame} if return_data = TRUE.
