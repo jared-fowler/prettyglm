@@ -5,10 +5,12 @@
 
 <!-- badges: start -->
 
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/prettyglm)](https://cran.r-project.org/package=prettyglm)
+[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/prettyglm)](https://cran.r-project.org/package=prettyglm)
 [![R build
 status](https://github.com/jared-fowler/prettyglm/workflows/R-CMD-check/badge.svg)](https://github.com/jared-fowler/prettyglm/actions)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 <!-- badges: end -->
 
 One of the main advantages of using Generalised Linear Models is their
@@ -98,7 +100,7 @@ pretty_coefficients(deposit_model, type_iii = 'Wald')
 
 <p align="center">
 
-<img src= './man/figures/full_table.png' height="1200" width = "600" align="center"/>
+<img src= './man/figures/full_table_3.png' height="1200" width = "600" align="center"/>
 
 </p>
 
@@ -135,3 +137,8 @@ pretty_relativities(feature_to_plot = 'age_cat',
 <img src= './man/figures/age_rels.png' height="500" align="center"/>
 
 </p>
+
+### Support My Work
+
+[![“Buy Me A
+Coffee”](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/tictap)
