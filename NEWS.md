@@ -1,7 +1,7 @@
 # prettyglm 0.1.1
 
 * Added `pretty_relativities()`
-* Documented exmaple data sets.
+* Documented example data sets.
 
 ---
 

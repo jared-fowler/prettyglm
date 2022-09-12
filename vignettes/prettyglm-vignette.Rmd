@@ -1,11 +1,23 @@
 ---
-title: "prettyglm-vignette"
-output: rmarkdown::html_vignette
+title: 'prettyglm: Beautiful Visualisations for Generalized Linear Models'
+author:
+- name: Jared Fowler
+output:
+  html_document: 
+    toc: yes
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    toc_depth: 3
+    number_sections: no
 vignette: >
-  %\VignetteIndexEntry{prettyglm-vignette}
+  %\VignetteIndexEntry{prettyglm: Beautiful Visualisations for Generalized Linear Models}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+<img src='../man/figures/logo.png' align="right" height="139" />
+
 
 ```{r include=FALSE}
 # knitr::opts_chunk$set(
@@ -14,33 +26,51 @@ vignette: >
 # )
 ```
 
-# Introduction to prettyglm
+## Introduction 
 
-When working with Generalized Linear Models it is often useful to create informative and beautiful summaries of the fitted model coefficients.This document introduces prettyglms’s main sets of functions, and shows you how to apply them.
+When working with Generalized Linear Models it is often useful to create informative and beautiful summaries of the fitted model coefficients. The goal of `prettyglm` is to provide a set of functions to visualize the Generalized Linear Models coefficients and performance in interactive plots which can easily be embedded in rmarkdown reports or seperatly exported and shared with stakeholders. This document introduces `prettyglm`’s main sets of functions, and shows you how to apply them.
 
-```{r setup, include=FALSE}
+If you don't find the function you are looking for in `prettyglm` consider checking out some other great packages which help visualize the output from glms:
+
+  * `tidycat` 
+  
+  * `jtools`
+  
+## Installation
+
+You can install the latest CRAN release with:
+
+``` r
+install.packages('prettyglm')
+```
+
+You can install the development version from [GitHub](https://github.com/) with:
+
+``` r
+devtools::install_github("jared-fowler/prettyglm")
+```
+
+## Worked Example: titanic survival 
+
+To explore the functionality of `prettyglm` we will use the titanic data set to perform logistic regression. This data set was sourced from https://www.kaggle.com/c/titanic/data and contains information about passengers aboard the titanic, and a target variable which indicates if they survived. 
+
+```{r load data, echo=TRUE, message=FALSE, warning=FALSE}
 library(dplyr)
 library(prettyglm)
-#library(tidymodels)
-```
-
-## Data: titanic
-
-To explore the functionality of prettyglm we will use the titanic data set to perform logistic regression. This data set was sourced from https://www.kaggle.com/c/titanic/data and contains information about passengers aboard the titanic, and a target variable which indicates if they survived. 
-
-```{r load data, echo=TRUE}
 data('titanic')
 head(titanic) %>%
-  knitr::kable(table.attr = "style='width:30%;'" ) %>% 
-  kableExtra::kable_classic(full_width = T, position = "center")
+  select(-c(PassengerId)) %>% 
+  knitr::kable(table.attr = "style='width:10%;'" ) %>%
+  kableExtra::kable_styling()
+
 ```
 
-## Pre-processing
+### Pre-processing
 
-A critical step for this package to work well is to **set all categorical predictors as factors**.
+A critical step for this package to work is to **set all categorical predictors as factors**. 
 
-```{r preprocessing, echo=TRUE}
-# Easiest way to convert multiple columns to a factor.
+```{r preprocessing, echo=TRUE, message=FALSE, warning=FALSE}
+# Easy way to convert multiple columns to a factor.
 columns_to_factor <- c('Pclass',
                        'Sex',
                        'Cabin', 
@@ -51,26 +81,33 @@ titanic  <- titanic  %>%
 ```
 
 
-## Building a glm
+### Building a glm
 
-For this vignette we will use `stats::glm()` but `prettyglm`  also supports `parsnip` and `workflow` model objects which use the `glm` model engine.
+For this vignette we will use `stats::glm()` to build a logistic regression model. Currently working on support for `parsnip` and `workflow` model objects which use the `glm` model engine.
 
 ```{r build model, echo=TRUE}
-survival_model <- stats::glm(Survived ~ Pclass + Sex + Age + Fare + Embarked + SibSp + Parch + Cabintype, 
+survival_model <- stats::glm(Survived ~ Pclass + 
+                                        Sex + 
+                                        Age + 
+                                        Fare +
+                                        Embarked + 
+                                        SibSp + 
+                                        Parch +
+                                        Cabintype, 
                              data = titanic, 
                              family = binomial(link = 'logit'))
 ```
 
 
-## Create pretty table of model coefficients with `pretty_coefficients()`
+### Create pretty table of model coefficients with `pretty_coefficients()`
 
-`pretty_coefficients()` allows you to create a pretty table of model coefficients, including categorical base levels.
+The function `pretty_coefficients()` allows you to create a pretty table of model coefficients, which by default includes categorical base levels.
 
-```{r visualise coefficients, echo=TRUE}
+```{r visualise coefficients, echo=TRUE, message=FALSE, warning=FALSE}
 pretty_coefficients(survival_model)
 ```
 
-You can also complete a type III test on the coefficients by specifying a `type_iii` argument.
+You can also complete a type III test on the coefficients by specifying a `type_iii` argument. Warning `Wald` type III tests will fail if there are aliased coefficients in the model.
 
 ```{r visualise coefficients type iii, echo=TRUE}
 pretty_coefficients(survival_model, type_iii = 'Wald')
@@ -78,21 +115,38 @@ pretty_coefficients(survival_model, type_iii = 'Wald')
 
 or return a data frame by setting `return_data` to `TRUE`.
 
+### Create beautiful plots of fitted coefficients using `pretty_relativities()`
 
-## Create beautiful plots of variable relativities with `pretty_relativities()`
+#### Categorical Variables
 
-`pretty_relativities()` creates an interactive duel axis plot (via plotly), which plots the fitted relativity and the number of records in that category.
+`pretty_relativities()` creates an interactive duel axis plot, which plots the fitted relativity on one y axis, and the number of records in that category on the other y axis. 
+
+* A model relativity is a transform of the model estimate. By default `pretty_relativities()` uses 'exp(estimate)-1' which is useful for GLM's which use a log or logit link function.
+  
+* The term 'relativity' is some times referred to as "odds-ratio" or "Likelihood". You can customize the label with the `relativity_label` input.
 
 
-```{r visualise rels, echo=TRUE}
+```{r visualise rels, echo=TRUE, message=FALSE, warning=FALSE}
 pretty_relativities(feature_to_plot= 'Embarked',
-                    model_object = survival_model)
+                    model_object = survival_model,
+                    relativity_label = 'Liklihood of Survival'
+                    )
 ```
 
+#### Bucketed Continous Variables
 
-### Support My Work
+If the variable you are plotting is a continuous variable which has been split into buckets, you can set `plot_factor_as_numeric` equal to `TRUE` to plot the x axis on a numerical scale. In this case there is no bucketed variable fitted, but we can illustrate the functionality with the Pclass variable.
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/tictap)
+```{r visualise rels 2, echo=TRUE}
+pretty_relativities(feature_to_plot= 'Pclass',
+                    model_object = survival_model,
+                    relativity_label = 'Liklihood of Survival',
+                    plot_factor_as_numeric = T)
+```
+
+<!-- ### Support My Work -->
+
+<!-- [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/tictap) -->
 
 
 <!-- ## Building a tidymodel -->

@@ -9,12 +9,12 @@ pretty_relativities(
   model_object,
   plot_approx_ci = TRUE,
   relativity_transform = "exp(estimate)-1",
+  relativity_label = "Relativity",
   ordering = NULL,
   plot_factor_as_numeric = FALSE,
   width = 800,
   height = 500,
-  return_data = FALSE,
-  ylabel = "Relativity"
+  return_data = FALSE
 )
 }
 \arguments{
@@ -26,7 +26,9 @@ pretty_relativities(
 
 \item{relativity_transform}{String of the function to be applied to the model estimate to calculate the relativity, for example: 'exp(estimate)'. Default is for relativity to be 'exp(estimate)-1'.}
 
-\item{ordering}{Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \link[car]{Anova}}
+\item{relativity_label}{String of label to give to relativity column if you want to change the title to your use case, some users may prefer to refer to this as odds ratio.}
+
+\item{ordering}{Option to change the ordering of categories on the x axis, only for discrete categories. Default to the ordering of the fitted factor. Other options are: 'alphabetical', 'Number of records', 'Average Value'}
 
 \item{plot_factor_as_numeric}{Set to TRUE to return \link[base]{data.frame} instead of creating \link[knitr]{kable}.}
 
@@ -35,11 +37,9 @@ pretty_relativities(
 \item{height}{Height of plot}
 
 \item{return_data}{Set to TRUE to return data set instead of plot}
-
-\item{ylabel}{Label for yaxis of relativity plot, some users may prefer to refer to this as log odds}
 }
 \value{
-\link[knitr]{kable} if return_data = FALSE. \link[base]{data.frame} if return_data = TRUE.
+plotly plot of fitted relativities. \link[base]{data.frame} if return_data = TRUE.
 }
 \description{
 Creates a pretty html plot of model relativities including base Levels.

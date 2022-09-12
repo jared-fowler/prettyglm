@@ -18,7 +18,25 @@ interpretability. The goal of prettyglm is to provide a set of functions
 which easily create beautiful coefficient summaries which can readily be
 shared and explained.
 
+## Forword
+
+`prettyglm` was created to solve some common faced when building
+Generalised Linear Models, such as displaying categorical base levels,
+and visualizing the number of records in each category on a duel axis.
+Since then a number of other functions which are useful when fitting
+glms have been added.
+
+If you don’t find the function you are looking for here consider
+checking out some other great packages which help visualize the output
+from glms: - `tidycat` - `jtools`
+
 ## Installation
+
+You can install the latest CRAN release with:
+
+``` r
+install.packages('prettyglm')
+```
 
 You can install the development version from
 [GitHub](https://github.com/) with:
@@ -83,12 +101,18 @@ deposit_model <- stats::glm(y ~ job +
                              family = binomial)
 ```
 
-### Create table of model coefficients with `pretty_coefficients()`
+### Visualising Fitted Model Coefficients
+
+#### Create table of model coefficients with `pretty_coefficients()`
 
   - `pretty_coefficients()` automatically includes categorical variable
     base levels.
   - You can complete a type III test on the coefficients by specifying a
     `type_iii` argument.
+  - You can include a “relativity” column in the output by including a
+    `relativity_transform` input. (Note “relativity” is sometimes
+    referred to as “likelihood” or “odds-ratio”, you can change the
+    title of this column with the `relativity_label` input.)
   - You can return the data set instead of `kable` but setting
     `Return_Data = TRUE`
 
@@ -104,14 +128,17 @@ pretty_coefficients(deposit_model, type_iii = 'Wald')
 
 </p>
 
-### Create plots of the model relativities with `pretty_relativities()`
+#### Create plots of the model relativities with `pretty_relativities()`
 
   - A model relativity is a transform of the model estimate. By default
     `pretty_relativities()` uses ‘exp(estimate)-1’ which is useful for
     GLM’s which use a log or logit link function.
   - `pretty_relativities()` automatically extracts the training data
-    from the model objects and plots the relativities and the number of
-    records in the same plot.
+    from the model object and plots th number of records on the second y
+    axis.
+  - If the variable you are plotting is a continuous variable which has
+    been split into buckets, you can set `plot_factor_as_numeric` equal
+    to `TRUE` to plot the x axis on a numerical scale.
 
 <!-- end list -->
 
@@ -137,6 +164,10 @@ pretty_relativities(feature_to_plot = 'age_cat',
 <img src= './man/figures/age_rels.png' height="500" align="center"/>
 
 </p>
+
+### Model Performance
+
+#### Plot one-way actual vs expected with \`\`
 
 ### Support My Work
 

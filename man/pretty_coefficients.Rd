@@ -7,9 +7,11 @@
 pretty_coefficients(
   model_object,
   relativity_transform = NULL,
+  relativity_label = "relativity",
   type_iii = NULL,
   conf.int = FALSE,
-  return_data = FALSE
+  return_data = FALSE,
+  vimethod = "model"
 )
 }
 \arguments{
@@ -17,11 +19,15 @@ pretty_coefficients(
 
 \item{relativity_transform}{String of the function to be applied to the model estimate to calculate the relativity, for example: 'exp(estimate)-1'. Default is for relativity to be excluded from output.}
 
+\item{relativity_label}{String of label to give to relativity column if you want to change the title to your use case.}
+
 \item{type_iii}{Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \code{\link[car]{Anova}}}
 
 \item{conf.int}{Set to TRUE to include confidence intervals in summary table. Warning, can be computationally expensive.}
 
 \item{return_data}{Set to TRUE to return \code{\link[base]{data.frame}} instead of creating \code{\link[knitr]{kable}}.}
+
+\item{vimethod}{Variable importance method to pass to method of \code{\link[vi]{vip}}. Defaults to "model"}
 }
 \value{
 \code{\link[knitr]{kable}} if return_data = FALSE. \code{\link[base]{data.frame}} if return_data = TRUE.

@@ -5,8 +5,10 @@
 #' @param model_object Model object to create coefficient table for. Must be of type: \code{\link[stats]{glm}}, \code{\link[stats]{lm}},  \code{\link[parsnip]{linear_reg}} or \code{\link[parsnip]{logistic_reg}}.
 #' @param conf.int Set to TRUE to include confidence intervals in summary table. Warning, can be computationally expensive.
 #' @param relativity_transform String of the function to be applied to the model estimate to calculate the relativity, for example: 'exp(estimate)-1'. Default is for relativity to be excluded from output.
+#' @param relativity_label String of label to give to relativity column if you want to change the title to your use case.
 #' @param type_iii Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \code{\link[car]{Anova}}
 #' @param return_data Set to TRUE to return \code{\link[base]{data.frame}} instead of creating \code{\link[knitr]{kable}}.
+#' @param vimethod Variable importance method to pass to method of \code{\link[vi]{vip}}. Defaults to "model"
 #'
 #' @return \code{\link[knitr]{kable}} if return_data = FALSE. \code{\link[base]{data.frame}} if return_data = TRUE.
 #'
@@ -51,7 +53,7 @@
 #' @import dplyr
 #'
 
-pretty_coefficients <- function(model_object, relativity_transform = NULL, type_iii = NULL, conf.int = FALSE, return_data = FALSE){
+pretty_coefficients <- function(model_object, relativity_transform = NULL, relativity_label = 'relativity', type_iii = NULL, conf.int = FALSE, return_data = FALSE, vimethod = 'model'){
 
   # Fix for global variables
   conf.low <- NULL
@@ -77,7 +79,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, type_
 
   # tidy coefficients
   model_tidy_df <- broom::tidy(model_object, conf.int=conf.int)
-  tidy_coef <- prettyglm::clean_coefficients(d=model_tidy_df, m=model_object)
+  tidy_coef <- prettyglm::clean_coefficients(d=model_tidy_df, m=model_object, vimethod = vimethod)
 
   # replace NAs with 0
   tidy_coef <- tidy_coef %>%  dplyr::mutate(estimate = ifelse(is.na(estimate), 0, estimate),
@@ -86,7 +88,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, type_
   if (base::is.null(relativity_transform) != TRUE){
     base::eval(base::parse(text = base::paste('relativity <- function(estimate) { return(' , relativity_transform , ')}', sep='')))
     tidy_coef <- tidy_coef %>%
-      dplyr::mutate(relativity = (relativity(estimate)))
+      dplyr::mutate(relativity = (relativity(estimate))) #relativity_label
   }
 
   # confidence interval and relativity formatting
@@ -142,6 +144,11 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, type_
         dplyr::select(c('term', 'p.value')) %>%
         dplyr::rename('Type.III.P.Value' = 'p.value')
       tidy_coef <- dplyr::inner_join(tidy_coef, term_p_values, by = c('Variable' = 'term'))
+  }
+
+  # rename relativity column if new label given
+  if (relativity_label != 'relativity'){
+    names(tidy_coef)[names(tidy_coef) == "Relativity"] <- relativity_label
   }
 
   # return desired output
@@ -222,7 +229,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, type_
     }
     return(kable_table)
   } else{
-    # If kable false, return dataframe
+    # If kable false, return data frame
     return(tidy_coef)
   }
 }

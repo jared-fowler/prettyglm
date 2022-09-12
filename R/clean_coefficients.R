@@ -20,7 +20,7 @@
 #' @importFrom tidycat "factor_regex"
 #' @import dplyr
 
-clean_coefficients <- function(d = NULL, m  = NULL){
+clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model'){
   # Global varaible notes fix
   name <- NULL
   level <- NULL
@@ -95,7 +95,7 @@ clean_coefficients <- function(d = NULL, m  = NULL){
   x$term <- base::unlist(term_record)
 
   # Calculate variable importance and add to summary
-  v <- vip::vi(m)
+  v <- vip::vi(m, method = vimethod)
   x <- dplyr::left_join(x, v, by = c('term' = 'Variable')) %>%
     dplyr::mutate(Importance = base::ifelse(is.na(Importance), 0 , Importance),
                   Sign = base::ifelse(is.na(Sign), 'NEU' , Sign))
