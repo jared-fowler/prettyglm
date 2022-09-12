@@ -12,6 +12,8 @@
 #' @param width Width of plot
 #' @param height Height of plot
 #' @param return_data Set to TRUE to return data set instead of plot
+#' @param iteractionplottype If plotting the relativity for an interaction variable you can "facet" or "colour" by one of the interaction variables. Defaults to null.
+#' @param facetorcolourtby If iteractionplottype is not Null, then this is the variable in the interaction you want to colour or facet by.
 #'
 #' @return plotly plot of fitted relativities. \link[base]{data.frame} if return_data = TRUE.
 #'
@@ -48,7 +50,7 @@
 #' @import plotly
 #'
 
-pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', relativity_label = 'Relativity', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = FALSE){
+pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', relativity_label = 'Relativity', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = FALSE, iteractionplottype = NULL, facetorcolourtby = NULL){
 
   # Fix for global variables
   tidy_workflow <- NULL
@@ -172,7 +174,8 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
     }
 
     # Create plots  --------------------------------------------------------------------------------
-    p_return <- plot_data %>%
+    if (base::is.null(iteractionplottype) == T){
+      p_return <- plot_data %>%
         dplyr::mutate(number_of_records = base::ifelse(name == 'Relativity', number_of_records, 0)) %>%
         plotly::plot_ly(colors = if(plot_approx_ci == TRUE) c('grey', 'grey', 'black') else c('black'),
                         linetypes = if(plot_approx_ci == TRUE) c('dash', 'dash', 'solid') else c('solid'),
@@ -210,7 +213,137 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                                      y=-0.2),
                        autosize = TRUE,
                        margin = list(b = 50, l = 50, r=80))
-    return(p_return)
+      return(p_return)
+    } else if (iteractionplottype == 'facet'){
+      # add columns of the variable names
+      plot_data[, base::unlist(base::strsplit(factor_name, ':'))[1]] <- base::unlist(base::lapply(base::strsplit(plot_data$Level, ':'), `[[`, 1))
+      plot_data[, base::unlist(base::strsplit(factor_name, ':'))[2]] <- base::unlist(base::lapply(base::strsplit(plot_data$Level, ':'), `[[`, 2))
+
+      numberoffacets <- base::length(base::unique(dplyr::pull(dplyr::select(plot_data, dplyr::all_of(facetorcolourtby)))))
+
+      l <- 1
+      plotlist <- list()
+      while (l <= numberoffacets){
+        facettoplot <- base::unique(dplyr::pull(dplyr::select(plot_data, dplyr::all_of(facetorcolourtby))))[l]
+        xaxisvariable <- stringr::str_remove(stringr::str_remove(factor_name, facetorcolourtby),":")
+
+        plotlist[[l]] <- plot_data %>%
+          dplyr::filter(get(facetorcolourtby) == facettoplot) %>%
+          dplyr::mutate(number_of_records = base::ifelse(name == 'Relativity', number_of_records, 0)) %>%
+          plotly::plot_ly(colors = if(plot_approx_ci == TRUE) c('grey', 'grey', 'black') else c('black'),
+                          linetypes = if(plot_approx_ci == TRUE) c('dash', 'dash', 'solid') else c('solid'),
+                          height = height,
+                          width = width,
+                          showlegend = base::ifelse(l==1,T,F)) %>%
+          plotly::add_markers(x = ~get(xaxisvariable),
+                              y = ~value,
+                              color = ~name,
+                              type = "scatter",
+                              showlegend = FALSE) %>%
+          plotly::add_lines(x = ~get(xaxisvariable),
+                            y = ~value,
+                            linetype = ~name,
+                            color = ~name) %>%
+          plotly::add_bars(
+            x = ~get(xaxisvariable),
+            y = ~number_of_records,
+            yaxis = 'y2',
+            marker = list(color = '#dddddd',
+                          line = list(width=0,
+                                      color='black')),
+            showlegend = FALSE
+          ) %>%
+          plotly::layout(title = base::paste(facettoplot),
+                         yaxis2 = list(side = 'right',
+                                       title = 'Number of Records',
+                                       showgrid = FALSE),
+                         yaxis = list(overlaying='y2',
+                                      side = 'left',
+                                      title = relativity_label, #relativity_label
+                                      showgrid = TRUE),
+                         xaxis = list(title = xaxisvariable),
+                         legend = list(orientation = "h",
+                                       xanchor = "center",
+                                       x=0.5,
+                                       y=-0.2),
+                         autosize = TRUE,
+                         margin = list(b = 50, l = 50, r=80)) %>%
+          plotly::add_annotations(
+            x= 0.5,
+            y= 1,
+            xref = "paper",
+            yref = "paper",
+            text = base::paste0('<b>',facettoplot, '<b>'),#"<b>paper reference = [0.5, 1]</b>",
+            showarrow = F
+          )
+        l <- l + 1
+
+      }
+      p_return <- plotly::subplot(plotlist,
+                                  #nrows = numberoffacets, # can make this an input
+                                  titleY = T,
+                                  titleX = T,
+                                  margin = 0.05
+        ) %>%
+        plotly::layout(title = base::paste(relativity_label, 'for', factor_name, 'interaction', 'faceted by', facetorcolourtby))
+      return(p_return)
+    } else if (iteractionplottype == 'colour'){
+      # add columns of the variable names
+      plot_data[, base::unlist(base::strsplit(factor_name, ':'))[1]] <- base::unlist(base::lapply(base::strsplit(plot_data$Level, ':'), `[[`, 1))
+      plot_data[, base::unlist(base::strsplit(factor_name, ':'))[2]] <- base::unlist(base::lapply(base::strsplit(plot_data$Level, ':'), `[[`, 2))
+
+      # aggregate the number of records
+      xaxisvariable <- stringr::str_remove(stringr::str_remove(factor_name, facetorcolourtby),":")
+      agg_number_to_plot <- plot_data %>%
+        dplyr::group_by_at(xaxisvariable) %>%
+        dplyr::summarise(number_of_records = sum(number_of_records), .groups = 'drop')
+
+      plot_datafacet <- plot_data %>%
+        dplyr::filter(name == 'Relativity') %>%
+        dplyr::select(-('number_of_records')) %>%
+        dplyr::left_join(agg_number_to_plot, by = xaxisvariable)
+
+      p_return <- plot_datafacet %>%
+        dplyr::mutate(number_of_records = base::ifelse(name == 'Relativity', number_of_records, 0)) %>%
+        plotly::plot_ly(#colors = if(plot_approx_ci == TRUE) c('grey', 'grey', 'black') else c('black'),
+          height = height,
+          width = width,
+          showlegend = T) %>%
+        plotly::add_markers(x = ~get(xaxisvariable),
+                            y = ~value,
+                            color = ~get(facetorcolourtby),
+                            type = "scatter",
+                            showlegend = FALSE) %>%
+        plotly::add_lines(x = ~get(xaxisvariable),
+                          y = ~value,
+                          color = ~get(facetorcolourtby)
+        ) %>%
+        plotly::add_bars(
+          x = ~get(xaxisvariable),
+          y = ~number_of_records,
+          yaxis = 'y2',
+          marker = list(color = '#dddddd',
+                        line = list(width=0,
+                                    color='black')),
+          showlegend = FALSE
+        ) %>%
+        plotly::layout(title = base::paste(relativity_label, 'for', factor_name, 'interaction', 'coloured by', facetorcolourtby),
+                       yaxis2 = list(side = 'right',
+                                     title = 'Number of Records',
+                                     showgrid = FALSE),
+                       yaxis = list(overlaying='y2',
+                                    side = 'left',
+                                    title = relativity_label, #relativity_label
+                                    showgrid = TRUE),
+                       xaxis = list(title = xaxisvariable),
+                       legend = list(orientation = "h",
+                                     xanchor = "center",
+                                     x=0.5,
+                                     y=-0.2),
+                       autosize = TRUE,
+                       margin = list(b = 50, l = 50, r=80))
+      return(p_return)
+    }
   }
   # Add Continuous Variables?
 

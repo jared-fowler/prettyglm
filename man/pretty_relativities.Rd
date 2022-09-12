@@ -14,7 +14,9 @@ pretty_relativities(
   plot_factor_as_numeric = FALSE,
   width = 800,
   height = 500,
-  return_data = FALSE
+  return_data = FALSE,
+  iteractionplottype = NULL,
+  facetorcolourtby = NULL
 )
 }
 \arguments{
@@ -37,6 +39,10 @@ pretty_relativities(
 \item{height}{Height of plot}
 
 \item{return_data}{Set to TRUE to return data set instead of plot}
+
+\item{iteractionplottype}{If plotting the relativity for an interaction variable you can "facet" or "colour" by one of the interaction variables. Defaults to null.}
+
+\item{facetorcolourtby}{If iteractionplottype is not Null, then this is the variable in the interaction you want to colour or facet by.}
 }
 \value{
 plotly plot of fitted relativities. \link[base]{data.frame} if return_data = TRUE.
