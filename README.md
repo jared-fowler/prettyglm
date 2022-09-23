@@ -7,8 +7,7 @@
 
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/prettyglm)](https://cran.r-project.org/package=prettyglm)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/prettyglm)](https://cran.r-project.org/package=prettyglm)
-[![R build
-status](https://github.com/jared-fowler/prettyglm/workflows/R-CMD-check/badge.svg)](https://github.com/jared-fowler/prettyglm/actions)
+<!-- [![R build status](https://github.com/jared-fowler/prettyglm/workflows/R-CMD-check/badge.svg)](https://github.com/jared-fowler/prettyglm/actions) -->
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 <!-- badges: end -->
@@ -28,7 +27,7 @@ glms have been added.
 
 If you don’t find the function you are looking for here consider
 checking out some other great packages which help visualize the output
-from glms: - `tidycat` - `jtools`
+from glms:`tidycat`, `jtools` or `GGally`
 
 ## Installation
 
