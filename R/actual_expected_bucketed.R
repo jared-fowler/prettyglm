@@ -9,6 +9,9 @@
 #' @param mywidth Plotly plot width in pixels.
 #' @param myheight Plotly plot height in pixels.
 #' @param Return_data Logical to return cleaned dataset instead of plot.
+#' @param first_colour First colour to plot, usually the colour of actual.
+#' @param second_colour Second colour to plot, usually the colour of predicted.
+#'
 
 #' @return plot
 #' Plotly plot by defualt.
@@ -32,45 +35,24 @@
 #'
 
 
-prediction_rank_plot <- function(Target_Variable, Model_Object, Data_Set, number_of_buckets = 25, plotlyplot = T, mywidth = 800, myheight = 500, Return_data=F){
-
-  # Check if model is a parsnip / tidymodel object --------------------------------------------
-  if (any(class(Model_Object) == 'workflow') | any(class(Model_Object) == 'model_fit')){
-    parsnip_model <- T
-  } else{
-    parsnip_model <- F
-  }
-
-  # Set up dataset and make predictions --------------------------------------------------------
-  # Make sure data is a dataframe not a tibble
-  Data_Set <- as.data.frame(Data_Set)
-
-  # Make approprite predictions
-  Actual_Values <- dplyr::pull(dplyr::select(Data_Set, tidyselect::all_of(c(Target_Variable))))
-  if(class(Actual_Values) == 'factor'){
-    Actual_Values <- base::as.numeric(as.character(Actual_Values))
-  }
-
-  # if object is a parsnip, then make prediction that way
-  if (parsnip_model == T){
-    if (Model_Object$fit$actions$model$spec$mode == "classification"){
-      Predicted_Values <- dplyr::pull(dplyr::select(predict(object = Model_Object, new_data = Data_Set, type='prob'), '.pred_1'))
-    } else{
-      Predicted_Values <- dplyr::pull(predict(Model_Object, dplyr::select(Data_Set, -c(Target_Variable)), type='numeric'))
-    }
-  } else{
-    Predicted_Values <- base::as.numeric(stats::predict(Model_Object, Data_Set, type='response'))
-  }
-  Residual_Values <- ((base::as.numeric(Actual_Values))-Predicted_Values)
+actual_expected_bucketed <- function(Target_Variable, Model_Object, Data_Set, number_of_buckets = 25, plotlyplot = T, mywidth = 800, myheight = 500, Return_data=F, first_colour = 'black', second_colour = '#f185f2'){
+  # add defualt to training data if no dataset provided
+  # make predictions on data set --------------------------------------------------------------
+  # add ability for user to be able to use custom predict function or input a dataset of predictions and actuals
+  predicted_dataset <- prettyglm::predict_outcome(target = Target_Variable,
+                                                  model_object = Model_Object,
+                                                  dataset = Data_Set)
 
   # tidy data for rank plot --------------------------------------------------------------------
   # Create tidy data to plot
-  Plot_data <- dplyr::bind_cols(list(Data_Set, data.frame(Actual_Values=Actual_Values), data.frame(Predicted_Values=Predicted_Values)))  %>%
+  Plot_data <- dplyr::bind_cols(list(Data_Set, predicted_dataset)) %>% #data.frame(Actual_Values=Actual_Values), data.frame(Predicted_Values=Predicted_Values)))  %>%
     dplyr::mutate(Actual_Values = (as.numeric(Actual_Values))) # check if this needs to be made more generic
   Plot_data$Rank <- Plot_data %>%  dplyr::select(Predicted_Values) %>% dplyr::pull() %>% dplyr::ntile(25)
   Plot_data <- Plot_data %>%
     dplyr::mutate(Rank = Rank/25) %>%
-    tidyr::pivot_longer(c(Actual_Values, Predicted_Values), names_to = 'Data_Type', values_to = 'value') %>%
+    dplyr::rename(Actual = Actual_Values) %>%
+    dplyr::rename(Predicted = Predicted_Values) %>%
+    tidyr::pivot_longer(c(Actual, Predicted), names_to = 'Data_Type', values_to = 'value') %>%
     dplyr::group_by(Rank, Data_Type) %>%
     dplyr::summarise(Average_value = mean(value)) %>%
     ungroup()
@@ -80,7 +62,7 @@ prediction_rank_plot <- function(Target_Variable, Model_Object, Data_Set, number
     ggplot2::ggplot(aes(x=Rank, y=Average_value, col=Data_Type)) +
     ggplot2::geom_line(size=1) +
     ggplot2::theme_minimal() +
-    ggplot2::scale_color_manual(values = c('black', '#00d158')) +
+    ggplot2::scale_color_manual(values = c(first_colour, second_colour)) + #c('black', '#00d158')) +
     ggplot2::ggtitle("Actual vs Predicted by Predicted Band") +
     ggplot2::xlab('Percentile') +
     ggplot2::ylab('Target') +
@@ -89,13 +71,13 @@ prediction_rank_plot <- function(Target_Variable, Model_Object, Data_Set, number
                    axis.title.y = ggplot2::element_text(vjust=0.5, hjust=0.5, size=12),
                    #axis.text.x = ggplot2::element_text(angle=90),
                    legend.position="bottom",
-                   legend.title = ggplot2::element_blank())
+                   legend.title=element_blank())
 
   # Create plotly
   if  (plotlyplot == T){
     p_return <- plotly::ggplotly(p, width = mywidth, height = myheight, dynamicTicks = T, tooltip = c('x', 'y')) %>%
       plotly::layout(autosize=TRUE,
-                     legend = list(orientation = "h", y = -0.3, x=0.5, xanchor = "center"))
+                     legend = list(orientation = "h", y = -0.3, x=0.5, xanchor = "center", title = ''))
   } else{
     p_return <- p
   }

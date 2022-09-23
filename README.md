@@ -78,7 +78,8 @@ columns_to_factor <- c('job',
                        'loan')
 bank_data  <- bank_data  %>%
   dplyr::mutate_at(columns_to_factor, list(~factor(.))) %>% # multiple columns to factor
-  dplyr::mutate(age_cat = Hmisc::cut2(age, g=30, levels.mean=T)) #cut age variable into categories
+  dplyr::mutate(age_cat = Hmisc::cut2(age, g=30, levels.mean=T)) %>% #cut age variable into categories
+  dplyr::mutate(T_DEPOSIT = as.factor(base::ifelse(y=='yes',1,0))) #convert target to 0 and 1 for performance plots
 ```
 
 ### Building a glm
@@ -91,7 +92,7 @@ Note the point of this README is not to create the best model, but to
 highlight the features of this package.
 
 ``` r
-deposit_model <- stats::glm(y ~ job +
+deposit_model <- stats::glm(T_DEPOSIT ~ job +
                                 marital +
                                 education +
                                 default +
@@ -167,7 +168,19 @@ pretty_relativities(feature_to_plot = 'age_cat',
 
 ### Model Performance
 
-#### Plot one-way actual vs expected with \`\`
+#### Plot overall actual vs expected by predicted band with (still in development) `actual_expected_bucketed`
+
+``` r
+actual_expected_bucketed(Target_Variable = 'T_DEPOSIT',
+                         Model_Object = deposit_model,
+                         Data_Set = bank_data)
+```
+
+<p align="center">
+
+<img src= './man/figures/bank_overall_ave.png' height="500" align="center"/>
+
+</p>
 
 ### Support My Work
 

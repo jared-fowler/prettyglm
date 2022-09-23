@@ -37,12 +37,14 @@ predict_outcome <- function(target, model_object, dataset, prediction_type = NUL
   # If prediction_type is NULL, set a sensible default ----------------------------------------
   # if parsnip and
   if (is.null(prediction_type) == T){
-    if (parsnip_model == T & model_mode == 'classification'){
-      prediction_type <- 'prob'
-    } else if(parsnip_model == T & model_mode == 'classification'){
-      prediction_type <- 'numeric'
+    if (parsnip_model == T){
+      if (model_mode == 'classification'){
+        prediction_type <- 'prob'
+      } else if (model_mode == 'regression'){
+        prediction_type <- 'numeric'
+      }
     } else if(parsnip_model == F){
-      print("Warning: No prediction_type set, defaulting to 'response'")
+      warning("Warning: No prediction_type set, defaulting to 'response'")
       prediction_type <- 'response'
     }
   }
@@ -50,7 +52,7 @@ predict_outcome <- function(target, model_object, dataset, prediction_type = NUL
   # Extract actual values ---------------------------------------------------------------------
   # Make sure dataset is a dataframe not a tibble
   dataset <- base::as.data.frame(dataset)
-  Actual_Values <- dplyr::pull(dplyr::select(dataset, tidyselect::all_of(c(Target_Variable))))
+  Actual_Values <- dplyr::pull(dplyr::select(dataset, tidyselect::all_of(c(target))))
   if(class(Actual_Values) == 'factor'){
     Actual_Values <- base::as.numeric(as.character(Actual_Values))
   }
@@ -61,7 +63,7 @@ predict_outcome <- function(target, model_object, dataset, prediction_type = NUL
     if (model_mode == "classification"){
       Predicted_Values <- dplyr::pull(dplyr::select(predict(object = model_object, new_data = dataset, type=prediction_type), '.pred_1'))
     } else{
-      Predicted_Values <- dplyr::pull(predict(model_object, dplyr::select(dataset, -c(Target_Variable)), type=prediction_type))
+      Predicted_Values <- dplyr::pull(predict(model_object, dplyr::select(dataset, -c(target)), type=prediction_type))
     }
   } else{
     Predicted_Values <- base::as.numeric(stats::predict(model_object, dataset, type=prediction_type))
@@ -70,6 +72,6 @@ predict_outcome <- function(target, model_object, dataset, prediction_type = NUL
 
 
   # Return a dataframe of actual and predicted values ------------------------------------------
-  return(base::data.frame(Actual = Actual_Values,
-                          Predicted = Predicted_Values))
+  return(base::data.frame(Actual_Values = Actual_Values,
+                          Predicted_Values = Predicted_Values))
 }
