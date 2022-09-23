@@ -28,7 +28,8 @@ Imports:
     tidycat,
     tidyr,
     tidyselect,
-    vip
+    vip,
+    ggplot2
 Suggests: 
     rmarkdown,
     testthat
