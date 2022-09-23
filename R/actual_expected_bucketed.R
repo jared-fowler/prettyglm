@@ -23,12 +23,9 @@
 #' }
 #' @export
 #' @importFrom tibble "tibble"
-#' @importFrom broom "tidy"
 #' @importFrom plotly "ggplotly"
-#' @importFrom plotly "add_bars"
 #' @importFrom plotly "layout"
 #' @importFrom tidyselect "all_of"
-#' @importFrom lubridate "floor_date"
 #' @importFrom tidyr "pivot_longer"
 #' @import dplyr
 #' @import ggplot2
