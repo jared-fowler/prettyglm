@@ -9,11 +9,15 @@ one_way_ave(
   model_object,
   target_variable,
   data_set,
-  plot_factor_as_numeric,
-  ordering,
-  width,
-  height,
-  return_data
+  Plot_Type = "predictions",
+  plot_factor_as_numeric = FALSE,
+  ordering = NULL,
+  plotlyplot = TRUE,
+  mywidth = 800,
+  myheight = 500,
+  Return_data = F,
+  predict_function = NULL,
+  number_of_buckets = NULL
 )
 }
 \arguments{
@@ -36,7 +40,7 @@ one_way_ave(
 \item{return_data}{Set to TRUE to return data set instead of plot}
 }
 \value{
-plotly plot of one_way_ave. \link[base]{data.frame} if return_data = TRUE.
+plotly plot of one way actual vs expected \link[base]{data.frame} if return_data = TRUE.
 }
 \description{
 Creates a pretty html plot of one way actual vs expected by specified predictor.

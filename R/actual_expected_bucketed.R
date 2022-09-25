@@ -32,17 +32,39 @@
 #'
 
 
-actual_expected_bucketed <- function(Target_Variable, Model_Object, Data_Set, number_of_buckets = 25, plotlyplot = T, mywidth = 800, myheight = 500, Return_data=F, first_colour = 'black', second_colour = '#f185f2'){
-  # add defualt to training data if no dataset provided
-  # make predictions on data set --------------------------------------------------------------
+actual_expected_bucketed <- function(Target_Variable, Model_Object, Data_Set = NULL, number_of_buckets = 25, plotlyplot = T, mywidth = 800, myheight = 500, Return_data=F, first_colour = 'black', second_colour = '#f185f2', predict_function = NULL){
+
   # add ability for user to be able to use custom predict function or input a dataset of predictions and actuals
-  predicted_dataset <- prettyglm::predict_outcome(target = Target_Variable,
-                                                  model_object = Model_Object,
-                                                  dataset = Data_Set)
+
+  # make predictions on data set --------------------------------------------------------------
+
+  # if provided dataset is null then use the training data from model object
+  if (is.null(Data_Set)==T){
+    # Extract training data from model object
+    if (base::any(class(model_object) == 'workflow')){
+      # Workflow model objects here
+      Data_Set <- tidy_workflow$fit$fit$fit$data
+    } else if(base::any(class(model_object) == 'model_fit')){
+      # pasnip model objects here
+      Data_Set <- model_object$fit$data
+    } else{
+      #stats::glm objects here
+      Data_Set <- model_object$data
+    }
+  }
+
+  # make predictions
+  if (is.null(predict_function) == T){
+    predicted_dataset <- prettyglm::predict_outcome(target = Target_Variable,
+                                                    model_object = Model_Object,
+                                                    dataset = Data_Set)
+  } else{
+    base::simpleError('Functionality for custom predict function not avaliable yet')
+  }
 
   # tidy data for rank plot --------------------------------------------------------------------
   # Create tidy data to plot
-  Plot_data <- dplyr::bind_cols(list(Data_Set, predicted_dataset)) %>% #data.frame(Actual_Values=Actual_Values), data.frame(Predicted_Values=Predicted_Values)))  %>%
+  Plot_data <- dplyr::bind_cols(list(Data_Set, predicted_dataset)) %>%
     dplyr::mutate(Actual_Values = (as.numeric(Actual_Values))) # check if this needs to be made more generic
   Plot_data$Rank <- Plot_data %>%  dplyr::select(Predicted_Values) %>% dplyr::pull() %>% dplyr::ntile(25)
   Plot_data <- Plot_data %>%

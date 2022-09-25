@@ -7,14 +7,15 @@
 actual_expected_bucketed(
   Target_Variable,
   Model_Object,
-  Data_Set,
+  Data_Set = NULL,
   number_of_buckets = 25,
   plotlyplot = T,
   mywidth = 800,
   myheight = 500,
   Return_data = F,
   first_colour = "black",
-  second_colour = "#f185f2"
+  second_colour = "#f185f2",
+  predict_function = NULL
 )
 }
 \arguments{
