@@ -32,7 +32,7 @@
 #'
 
 
-actual_expected_bucketed <- function(Target_Variable, Model_Object, Data_Set = NULL, number_of_buckets = 25, plotlyplot = T, mywidth = 800, myheight = 500, Return_data=F, first_colour = 'black', second_colour = '#f185f2', predict_function = NULL){
+actual_expected_bucketed <- function(Target_Variable, Model_Object, Data_Set = NULL, number_of_buckets = 25, plotlyplot = T, mywidth = 800, myheight = 500, Return_data=F, first_colour = 'black', second_colour = '#cc4678', predict_function = NULL){
 
   # add ability for user to be able to use custom predict function or input a dataset of predictions and actuals
 

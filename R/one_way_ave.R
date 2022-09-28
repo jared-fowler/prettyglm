@@ -47,10 +47,11 @@
 #' @import plotly
 #'
 
-one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set, Plot_Type = 'predictions', plot_factor_as_numeric = FALSE, ordering = NULL, plotlyplot = TRUE, mywidth = 800, myheight = 500, Return_data=F, predict_function = NULL, number_of_buckets = NULL){
-
+one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set, Plot_Type = 'predictions', plot_factor_as_numeric = FALSE, ordering = NULL, plotlyplot = TRUE, mywidth = 800, myheight = 500, Return_data=F, number_of_buckets = NULL, first_colour = 'black', second_colour = '#cc4678', variable_to_facet_by = NULL, predict_function = NULL){
+# add package of density function stats????
   # add ability for user to be able to use custom predict function or input a dataset of predictions and actuals
   # make sure to document
+  # change the myheight and my width to height and width
 
   # Extract the actual and expected values -------------------------------------------
   # if provided dataset is null then use the training data from model object
@@ -142,7 +143,7 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
       ggplot2::geom_point(size=2) +
       ggplot2::geom_line() +
       ggplot2::theme_minimal() +
-      ggplot2::scale_color_manual(values = c('black', '#00d158')) +
+      ggplot2::scale_color_manual(values = c(first_colour, second_colour)) +
       ggplot2::scale_shape_manual(values = c(15, 19)) +
       #scale_color_manual(values=c(viridis(2, alpha = 1, begin = 0.3, end = 0.7, option = "D"))) +
       ggplot2::ggtitle(Plottitle) +
@@ -186,7 +187,7 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
       p_return <- p
     }
   } else{
-    # continuous logic -------------------------------------------------------------------------
+    # continuous logic  -------------------------------------------------------------------------
     if (base::length(base::which(base::is.na(Plot_data$Predicted_Values))) > 0) Plot_data <- Plot_data[-base::which(base::is.na(Plot_data$Predicted_Values)),]
     # default number of buckets for continuous variables is 30
     if(base::is.null(number_of_buckets) == T){
@@ -194,92 +195,183 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
     }
     # prep the data
     Plot_data[,base::paste0(feature_to_plot,'_cat')] = Hmisc::cut2(dplyr::pull(dplyr::select(Plot_data, feature_to_plot)), g = number_of_buckets, levels.mean = T)
-    Plot_data <- Plot_data %>%
-      dplyr::mutate(Actual_Values = (as.numeric(Actual_Values))) %>%
-      dplyr::rename(Actual = Actual_Values) %>%
-      dplyr::rename(Predicted = Predicted_Values) %>%
-      tidyr::pivot_longer(c(Actual, Predicted), names_to = 'Data_Type', values_to = 'value') %>%
-      dplyr::group_by_at(c(base::paste0(feature_to_plot,'_cat'),'Data_Type')) %>%
-      dplyr::summarise(Average_value = mean(value),
-                       Number_of_Records = n(),
-                       .groups = 'drop') %>%
-      dplyr::ungroup()
+    if (is.null(variable_to_facet_by)==F){
+      # faceted code ---------------------------------------------------------------------------
+      numberoffacets <- base::length(base::unique(dplyr::pull(dplyr::select(Plot_data, dplyr::all_of(variable_to_facet_by)))))
+      l <- 1
+      plotlist <- list()
+      while (l <= numberoffacets){
+        facettoplot <- base::unique(dplyr::pull(dplyr::select(Plot_data, dplyr::all_of(variable_to_facet_by))))[l]
+        print(facettoplot)
 
-    if (Plot_Type == 'residuals'){
-      Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Residual_Values')
-      ylabeltext <- 'Residual'
-      Plottitle <- paste('Residuals for',feature_to_plot)
-    } else if (Plot_Type == 'predictions'){
-      Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual_Values')
-      ylabeltext <- target_variable
-      Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
-    } else if (Plot_Type == 'actuals'){
-      Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Actual_Values')
-      ylabeltext <- target_variable
-      Plottitle <- paste('Actual for',feature_to_plot)
+        # prep the data
+        Plot_data_inside <- Plot_data %>%
+          dplyr::filter(get(variable_to_facet_by) == facettoplot) %>%
+          dplyr::mutate(Actual_Values = (as.numeric(Actual_Values))) %>%
+          dplyr::rename(Actual = Actual_Values) %>%
+          dplyr::rename(Predicted = Predicted_Values) %>%
+          tidyr::pivot_longer(c(Actual, Predicted), names_to = 'Data_Type', values_to = 'value') %>%
+          dplyr::group_by_at(c(base::paste0(feature_to_plot,'_cat'),'Data_Type')) %>%
+          dplyr::summarise(Average_value = mean(value),
+                           Number_of_Records = n(),
+                           .groups = 'drop') %>%
+          dplyr::ungroup()
+
+        if (Plot_Type == 'residuals'){
+          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type == 'Residual_Values')
+          ylabeltext <- 'Residual'
+          Plottitle <- paste('Residuals for',feature_to_plot)
+        } else if (Plot_Type == 'predictions'){
+          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type != 'Residual_Values')
+          ylabeltext <- target_variable
+          Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
+        } else if (Plot_Type == 'actuals'){
+          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type == 'Actual_Values')
+          ylabeltext <- target_variable
+          Plottitle <- paste('Actual for',feature_to_plot)
+        } else{
+          print("Plot_Type must be one of: 'residuals', 'predictions' or 'actuals'")
+        }
+
+        # plot factor as numeric is by default true
+        Plot_data_to_plot <- Plot_data_to_plot %>% dplyr::mutate_at(dplyr::vars(tidyselect::all_of(base::paste0(feature_to_plot,'_cat'))), ~ as.numeric(as.character(dplyr::pull(dplyr::select(Plot_data_to_plot, tidyselect::all_of(base::paste0(feature_to_plot,'_cat')))))))
+
+        # try the plotly plot!!!!!! --------------------------------------------------------------------
+        density_data <- dplyr::bind_cols(list(data_set, predicted_dataset)) %>%
+          dplyr::filter(get(variable_to_facet_by) == facettoplot)
+        fit <- density(dplyr::pull(dplyr::select(density_data, all_of(feature_to_plot))))
+        plotlist[[l]] <- Plot_data_to_plot %>%
+          plotly::plot_ly(colors = c(first_colour, second_colour),
+                          height = myheight,
+                          width = mywidth,
+                          showlegend = base::ifelse(l==1,T,F)) %>%
+          plotly::add_trace(x = ~get(base::paste0(feature_to_plot,'_cat')),
+                            y = ~Average_value,
+                            type="scatter",
+                            mode="lines",
+                            color = ~Data_Type,
+                            yaxis = "y") %>%
+          plotly::add_trace(x = fit$x,
+                            y = fit$y,
+                            type = "scatter",
+                            mode = "lines",
+                            fill = "tozeroy",
+                            yaxis = "y2",
+                            name = "Density",
+                            fillcolor = 'rgba(221,221,221,0.5)',
+                            line  = list(color = 'rgba(221,221,221,0.7)')) %>%
+          plotly::layout(yaxis = list(side = 'left',
+                                      title = 'Value'),
+                         yaxis2 = list(side = 'right',
+                                       title = 'Density',
+                                       showgrid = F,
+                                       overlaying = base::paste0('y', as.character((l-1)*2 + 1))),
+                         legend = list(orientation = "h",
+                                       y = -0.2,
+                                       x = 0.32,
+                                       title = ''),
+                         xaxis = list(title = feature_to_plot),
+                         title = Plottitle,
+                         autosize = T,
+                         margin = list(b = 50, l = 50, r=80)) %>%
+          plotly::add_annotations(
+            x= 0.5,
+            y= 1.05,
+            xref = "paper",
+            yref = "paper",
+            text = base::paste0('<b>',facettoplot, '<b>'),#"<b>paper reference = [0.5, 1]</b>",
+            showarrow = F
+          )
+        l <- l + 1
+      }
+      p_return <- plotly::subplot(plotlist,
+                                  nrows = numberoffacets,
+                                  titleY = T,
+                                  titleX = T,
+                                  margin = 0.07,
+                                  shareY = F,
+                                  shareX = T
+      )
+
     } else{
-      print("Plot_Type must be one of: 'residuals', 'predictions' or 'actuals'")
-    }
+      # non faceted code -----------------------------------------------------------------------
+      Plot_data <- Plot_data %>%
+        dplyr::mutate(Actual_Values = (as.numeric(Actual_Values))) %>%
+        dplyr::rename(Actual = Actual_Values) %>%
+        dplyr::rename(Predicted = Predicted_Values) %>%
+        tidyr::pivot_longer(c(Actual, Predicted), names_to = 'Data_Type', values_to = 'value') %>%
+        dplyr::group_by_at(c(base::paste0(feature_to_plot,'_cat'),'Data_Type')) %>%
+        dplyr::summarise(Average_value = mean(value),
+                         Number_of_Records = n(),
+                         .groups = 'drop') %>%
+        dplyr::ungroup()
 
-    # plot factor as numeric is by default true
-    Plot_data_to_plot <- Plot_data_to_plot %>% dplyr::mutate_at(dplyr::vars(tidyselect::all_of(base::paste0(feature_to_plot,'_cat'))), ~ as.numeric(as.character(dplyr::pull(dplyr::select(Plot_data_to_plot, tidyselect::all_of(base::paste0(feature_to_plot,'_cat')))))))
+      if (Plot_Type == 'residuals'){
+        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Residual_Values')
+        ylabeltext <- 'Residual'
+        Plottitle <- paste('Residuals for',feature_to_plot)
+      } else if (Plot_Type == 'predictions'){
+        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual_Values')
+        ylabeltext <- target_variable
+        Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
+      } else if (Plot_Type == 'actuals'){
+        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Actual_Values')
+        ylabeltext <- target_variable
+        Plottitle <- paste('Actual for',feature_to_plot)
+      } else{
+        print("Plot_Type must be one of: 'residuals', 'predictions' or 'actuals'")
+      }
 
-    # Create plot ----------------------------------------------------------------------------------
-    p <- Plot_data_to_plot %>%
-      ggplot2::ggplot(ggplot2::aes_string(x=base::paste0(feature_to_plot,'_cat'), y='Average_value', col='Data_Type', group='Data_Type', shape='Data_Type')) +
-      ggplot2::geom_point(size=2) +
-      ggplot2::geom_line() +
-      ggplot2::theme_minimal() +
-      ggplot2::scale_color_manual(values = c('black', '#00d158')) +
-      ggplot2::scale_shape_manual(values = c(15, 19)) +
-      #scale_color_manual(values=c(viridis(2, alpha = 1, begin = 0.3, end = 0.7, option = "D"))) +
-      ggplot2::ggtitle(Plottitle) +
-      ggplot2::xlab(feature_to_plot) +
-      ggplot2::ylab(ylabeltext) +
-      ggplot2::theme(plot.title = ggplot2::element_text(hjust=0.5),
-                     axis.title.x = ggplot2::element_text(vjust=0.5, hjust=0.5, size=12),
-                     axis.title.y = ggplot2::element_text(vjust=0.5, hjust=0.5, size=12),
-                     axis.text.x = ggplot2::element_text(angle=90),
-                     legend.position="bottom",
-                     legend.title = ggplot2::element_blank())
+      # plot factor as numeric is by default true
+      Plot_data_to_plot <- Plot_data_to_plot %>% dplyr::mutate_at(dplyr::vars(tidyselect::all_of(base::paste0(feature_to_plot,'_cat'))), ~ as.numeric(as.character(dplyr::pull(dplyr::select(Plot_data_to_plot, tidyselect::all_of(base::paste0(feature_to_plot,'_cat')))))))
 
-    if (plotlyplot == TRUE){
-      fit <- density(dplyr::pull(dplyr::select(dplyr::bind_cols(list(data_set, predicted_dataset)), all_of(feature_to_plot))))
-      p_return <- plotly::ggplotly(p, width = mywidth, height = myheight, dynamicTicks = T, tooltip=c('x','y')) %>%
-        plotly::add_trace(x = fit$x,
-                          y = fit$y,
-                          type = "scatter",
-                          mode = "lines",
-                          fill = "tozeroy",
-                          yaxis = "y2",
-                          name = "Density",
-                          fillcolor = 'rgba(221,221,221,0.5)',
-                          line  = list(color = 'rgba(221,221,221,0.7)')) %>%
-        #marker = list(color = 'rgba(221,221,221,0.5)')) %>%
-        plotly::layout(yaxis = list(side = 'left',
-                                    showgrid = T),
-                       yaxis2 = list(overlaying = 'y',
-                                     side = 'right',
-                                     title = 'Density',
-                                     showgrid = F),
-                       legend = list(orientation = "h",
-                                     y = -0.35,
-                                     x = 0.2,
-                                     title = ''),
-                       autosize = T,
-                       margin = list(b = 50, l = 50, r=80))
-    } else{
-      p_return <- p
+      # Create plot ----------------------------------------------------------------------------------
+      p <- Plot_data_to_plot %>%
+        ggplot2::ggplot(ggplot2::aes_string(x=base::paste0(feature_to_plot,'_cat'), y='Average_value', col='Data_Type', group='Data_Type', shape='Data_Type')) +
+        ggplot2::geom_point(size=2) +
+        ggplot2::geom_line() +
+        ggplot2::theme_minimal() +
+        ggplot2::scale_color_manual(values = c(first_colour, second_colour)) +
+        ggplot2::scale_shape_manual(values = c(15, 19)) +
+        ggplot2::ggtitle(Plottitle) +
+        ggplot2::xlab(feature_to_plot) +
+        ggplot2::ylab(ylabeltext) +
+        ggplot2::theme(plot.title = ggplot2::element_text(hjust=0.5),
+                       axis.title.x = ggplot2::element_text(vjust=0.5, hjust=0.5, size=12),
+                       axis.title.y = ggplot2::element_text(vjust=0.5, hjust=0.5, size=12),
+                       axis.text.x = ggplot2::element_text(angle=90),
+                       legend.position="bottom",
+                       legend.title = ggplot2::element_blank())
+
+      if (plotlyplot == TRUE){
+        fit <- density(dplyr::pull(dplyr::select(dplyr::bind_cols(list(data_set, predicted_dataset)), all_of(feature_to_plot))))
+        p_return <- plotly::ggplotly(p, width = mywidth, height = myheight, dynamicTicks = T, tooltip=c('x','y')) %>%
+          plotly::add_trace(x = fit$x,
+                            y = fit$y,
+                            type = "scatter",
+                            mode = "lines",
+                            fill = "tozeroy",
+                            yaxis = "y2",
+                            name = "Density",
+                            fillcolor = 'rgba(221,221,221,0.5)',
+                            line  = list(color = 'rgba(221,221,221,0.7)')) %>%
+          plotly::layout(yaxis2 = list(side = 'left',
+                                       showgrid = T),
+                         yaxis = list(overlaying = 'y2',
+                                      side = 'right',
+                                      title = 'Density',
+                                      showgrid = F),
+                         legend = list(orientation = "h",
+                                       y = -0.35,
+                                       x = 0.2,
+                                       title = ''),
+                         autosize = T,
+                         margin = list(b = 50, l = 50, r=80))
+      } else{
+        p_return <- p
+      }
     }
   }
   return(p_return)
 }
-
-
-
-
-
-
-
-
 
