@@ -14,7 +14,7 @@ actual_expected_bucketed(
   myheight = 500,
   Return_data = F,
   first_colour = "black",
-  second_colour = "#f185f2",
+  second_colour = "#cc4678",
   predict_function = NULL
 )
 }

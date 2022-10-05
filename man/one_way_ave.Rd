@@ -13,11 +13,14 @@ one_way_ave(
   plot_factor_as_numeric = FALSE,
   ordering = NULL,
   plotlyplot = TRUE,
-  mywidth = 800,
-  myheight = 500,
+  width = 800,
+  height = 500,
   Return_data = F,
-  predict_function = NULL,
-  number_of_buckets = NULL
+  number_of_buckets = NULL,
+  first_colour = "black",
+  second_colour = "#cc4678",
+  variable_to_facet_by = NULL,
+  predict_function = NULL
 )
 }
 \arguments{

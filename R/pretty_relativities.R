@@ -51,6 +51,8 @@
 #'
 
 pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', relativity_label = 'Relativity', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = FALSE, iteractionplottype = NULL, facetorcolourtby = NULL){
+  # fix colouring to add trace markers and lines
+
 
   # Fix for global variables
   tidy_workflow <- NULL
@@ -235,32 +237,41 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                           height = height,
                           width = width,
                           showlegend = base::ifelse(l==1,T,F)) %>%
-          plotly::add_markers(x = ~get(xaxisvariable),
-                              y = ~value,
-                              color = ~name,
-                              type = "scatter",
-                              showlegend = FALSE) %>%
-          plotly::add_lines(x = ~get(xaxisvariable),
+          plotly::add_trace(x = ~get(xaxisvariable),
                             y = ~value,
+                            type="scatter",
+                            mode="lines+markers",
+                            color = ~name,
                             linetype = ~name,
-                            color = ~name) %>%
+                            yaxis = "y2") %>%
+          # plotly::add_markers(x = ~get(xaxisvariable),
+          #                     y = ~value,
+          #                     color = ~name,
+          #                     type = "scatter",
+          #                     showlegend = FALSE) %>%
+          # plotly::add_lines(x = ~get(xaxisvariable),
+          #                   y = ~value,
+          #                   linetype = ~name,
+          #                   color = ~name) %>%
           plotly::add_bars(
             x = ~get(xaxisvariable),
             y = ~number_of_records,
-            yaxis = 'y2',
+            yaxis = 'y',
             marker = list(color = '#dddddd',
                           line = list(width=0,
                                       color='black')),
             showlegend = FALSE
           ) %>%
           plotly::layout(title = base::paste(facettoplot),
-                         yaxis2 = list(side = 'right',
-                                       title = 'Number of Records',
-                                       showgrid = FALSE),
-                         yaxis = list(overlaying='y2',
-                                      side = 'left',
-                                      title = relativity_label, #relativity_label
-                                      showgrid = TRUE),
+                         yaxis = list(#overlaying='y2',
+                                      side = 'right',
+                                      title = 'Number of Records', #relativity_label
+                                      showgrid = TRUE
+                                      ),
+                         yaxis2 = list(side = 'left',
+                                       title = relativity_label,
+                                       showgrid = FALSE,
+                                       overlaying = base::paste0('y', as.character((l-1)*2 + 1))),
                          xaxis = list(title = xaxisvariable),
                          legend = list(orientation = "h",
                                        xanchor = "center",
@@ -279,12 +290,20 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
         l <- l + 1
 
       }
-      p_return <- plotly::subplot(plotlist,
-                                  #nrows = numberoffacets, # can make this an input
-                                  titleY = T,
-                                  titleX = T,
-                                  margin = 0.05
-        ) %>%
+      p_return <-
+        plotly::subplot(plotlist,
+                        nrows = numberoffacets,
+                        titleY = T,
+                        titleX = T,
+                        margin = 0.07,
+                        shareY = F,
+                        shareX = T) %>%
+        # plotly::subplot(plotlist,
+        #                           #nrows = numberoffacets, # can make this an input
+        #                           titleY = T,
+        #                           titleX = T,
+        #                           margin = 0.05
+        # )
         plotly::layout(title = base::paste(relativity_label, 'for', factor_name, 'interaction', 'faceted by', facetorcolourtby))
       return(p_return)
     } else if (iteractionplottype == 'colour'){
@@ -309,15 +328,23 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
           height = height,
           width = width,
           showlegend = T) %>%
-        plotly::add_markers(x = ~get(xaxisvariable),
-                            y = ~value,
-                            color = ~get(facetorcolourtby),
-                            type = "scatter",
-                            showlegend = FALSE) %>%
-        plotly::add_lines(x = ~get(xaxisvariable),
+        plotly::add_trace(x = ~get(xaxisvariable),
                           y = ~value,
+                          type="scatter",
+                          mode="lines+markers",
                           color = ~get(facetorcolourtby)
-        ) %>%
+                          #linetype = ~name,
+                          #yaxis = "y2"
+                          ) %>%
+        # plotly::add_markers(x = ~get(xaxisvariable),
+        #                     y = ~value,
+        #                     color = ~get(facetorcolourtby),
+        #                     type = "scatter",
+        #                     showlegend = FALSE) %>%
+        # plotly::add_lines(x = ~get(xaxisvariable),
+        #                   y = ~value,
+        #                   color = ~get(facetorcolourtby)
+        # ) %>%
         plotly::add_bars(
           x = ~get(xaxisvariable),
           y = ~number_of_records,
