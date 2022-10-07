@@ -14,6 +14,7 @@
 #' @param return_data Set to TRUE to return data set instead of plot
 #' @param iteractionplottype If plotting the relativity for an interaction variable you can "facet" or "colour" by one of the interaction variables. Defaults to null.
 #' @param facetorcolourtby If iteractionplottype is not Null, then this is the variable in the interaction you want to colour or facet by.
+#' @param percentile_to_cut For continuous variables what percentile to cut off each end of the distribution. Defaults to 0.01. Cutting off some of the distribution can help the views if outliers are present in the training data.
 #'
 #' @return plotly plot of fitted relativities. \link[base]{data.frame} if return_data = TRUE.
 #'
@@ -50,8 +51,11 @@
 #' @import plotly
 #'
 
-pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', relativity_label = 'Relativity', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = FALSE, iteractionplottype = NULL, facetorcolourtby = NULL){
+pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', relativity_label = 'Relativity', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = FALSE, iteractionplottype = NULL, facetorcolourtby = NULL, percentile_to_cut = 0.01){
   # fix colouring to add trace markers and lines
+  # interacted cts varas, all combos of interaction variable
+  # all types in interacted variable with splines
+  # Check maths behind just chucking the relativity in there multiplicative for cts variables
 
 
   # Fix for global variables
@@ -244,15 +248,6 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                             color = ~name,
                             linetype = ~name,
                             yaxis = "y2") %>%
-          # plotly::add_markers(x = ~get(xaxisvariable),
-          #                     y = ~value,
-          #                     color = ~name,
-          #                     type = "scatter",
-          #                     showlegend = FALSE) %>%
-          # plotly::add_lines(x = ~get(xaxisvariable),
-          #                   y = ~value,
-          #                   linetype = ~name,
-          #                   color = ~name) %>%
           plotly::add_bars(
             x = ~get(xaxisvariable),
             y = ~number_of_records,
@@ -298,12 +293,6 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                         margin = 0.07,
                         shareY = F,
                         shareX = T) %>%
-        # plotly::subplot(plotlist,
-        #                           #nrows = numberoffacets, # can make this an input
-        #                           titleY = T,
-        #                           titleX = T,
-        #                           margin = 0.05
-        # )
         plotly::layout(title = base::paste(relativity_label, 'for', factor_name, 'interaction', 'faceted by', facetorcolourtby))
       return(p_return)
     } else if (iteractionplottype == 'colour'){
@@ -324,10 +313,9 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
 
       p_return <- plot_datafacet %>%
         dplyr::mutate(number_of_records = base::ifelse(name == 'Relativity', number_of_records, 0)) %>%
-        plotly::plot_ly(#colors = if(plot_approx_ci == TRUE) c('grey', 'grey', 'black') else c('black'),
-          height = height,
-          width = width,
-          showlegend = T) %>%
+        plotly::plot_ly(height = height,
+                        width = width,
+                        showlegend = T) %>%
         plotly::add_trace(x = ~get(xaxisvariable),
                           y = ~value,
                           type="scatter",
@@ -336,15 +324,6 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                           #linetype = ~name,
                           #yaxis = "y2"
                           ) %>%
-        # plotly::add_markers(x = ~get(xaxisvariable),
-        #                     y = ~value,
-        #                     color = ~get(facetorcolourtby),
-        #                     type = "scatter",
-        #                     showlegend = FALSE) %>%
-        # plotly::add_lines(x = ~get(xaxisvariable),
-        #                   y = ~value,
-        #                   color = ~get(facetorcolourtby)
-        # ) %>%
         plotly::add_bars(
           x = ~get(xaxisvariable),
           y = ~number_of_records,
@@ -371,9 +350,54 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                        margin = list(b = 50, l = 50, r=80))
       return(p_return)
     }
-  }
-  # Add Continuous Variables?
+  } else{
+  # change to esle if based on iteraction and spline variables
+  # Continuous Variables -----------------------------------------------------
+  # prep the data
+  plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-percentile_to_cut), na.rm = T),length.out =100),
+                              relativity_value = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot), 'Relativity'))) %>%
+    dplyr::mutate(feature_relativity = var_range*relativity_value)
 
+  fit <- stats::density(dplyr::pull(dplyr::select(training_data, all_of(feature_to_plot))))
+  p_return <- plotly::plot_ly(plot_data,
+                       height = height,
+                       width = width) %>%
+    plotly::add_trace(x = ~var_range,
+                      y = ~feature_relativity,
+                      type="scatter",
+                      mode="lines",
+                      name = relativity_label,
+                      line = list(color = 'black', width = 4),
+                      yaxis = "y2") %>%
+    plotly::add_trace(x = fit$x,
+                      y = fit$y,
+                      type = "scatter",
+                      mode = "lines",
+                      fill = "tozeroy",
+                      yaxis = "y",
+                      name = "Density",
+                      fillcolor = 'rgba(221,221,221,0.5)',
+                      line  = list(color = 'rgba(221,221,221,0.7)')) %>%
+    plotly::layout(yaxis = list(side = 'right',
+                                title = 'Density',
+                                zeroline = FALSE),
+                   yaxis2 = list(side = 'left',
+                                 title = relativity_label,
+                                 showgrid = F,
+                                 zeroline = FALSE,
+                                 overlaying = 'y'),#base::paste0('y', as.character((l-1)*2 + 1))),
+                   legend = list(orientation = "h",
+                                 y = -0.2,
+                                 x = 0.32,
+                                 title = ''),
+                   xaxis = list(title = feature_to_plot,
+                                zeroline = FALSE),
+                   title = base::paste(relativity_label, 'for', feature_to_plot),
+                   autosize = T,
+                   margin = list(b = 50, l = 50, r=80))
+  # Add Continuous Variables?
+  return(p_return)
+  }
   # Add Splined Variables???
 }
 
