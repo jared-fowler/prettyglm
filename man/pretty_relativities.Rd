@@ -16,7 +16,8 @@ pretty_relativities(
   height = 500,
   return_data = FALSE,
   iteractionplottype = NULL,
-  facetorcolourtby = NULL
+  facetorcolourtby = NULL,
+  percentile_to_cut = 0.01
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ pretty_relativities(
 \item{iteractionplottype}{If plotting the relativity for an interaction variable you can "facet" or "colour" by one of the interaction variables. Defaults to null.}
 
 \item{facetorcolourtby}{If iteractionplottype is not Null, then this is the variable in the interaction you want to colour or facet by.}
+
+\item{percentile_to_cut}{For continuous variables what percentile to cut off each end of the distribution. Defaults to 0.01. Cutting off some of the distribution can help the views if outliers are present in the training data.}
 }
 \value{
 plotly plot of fitted relativities. \link[base]{data.frame} if return_data = TRUE.

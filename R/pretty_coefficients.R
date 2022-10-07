@@ -98,7 +98,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
                     conf.high = ifelse(is.na(conf.high), 0, conf.high))
     if (base::is.null(relativity_transform) != TRUE){
       tidy_coef <- tidy_coef %>%
-        dplyr::select(c(variable, level, Importance, estimate, std.error, conf.low, conf.high, relativity, p.value)) %>%
+        dplyr::select(c(variable, level, Importance, estimate, std.error, conf.low, conf.high, relativity, p.value, term, effect)) %>%
         dplyr::rename(Variable = variable,
                       Level = level,
                       Estimate = estimate,
@@ -106,34 +106,42 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
                       Conf.low = conf.low,
                       Conf.high = conf.high,
                       Relativity = relativity,
-                      P.Value= p.value)
+                      P.Value= p.value,
+                      Term = term,
+                      Effect = effect)
     } else{
       tidy_coef <- tidy_coef %>%
-        dplyr::select(c(variable, level, Importance, estimate, std.error, conf.low, conf.high, p.value)) %>%
+        dplyr::select(c(variable, level, Importance, estimate, std.error, conf.low, conf.high, p.value, term, effect)) %>%
         dplyr::rename(Variable = variable,
                       Level = level,
                       Estimate = estimate,
                       Std.Error = std.error,
                       Conf.low = conf.low,
                       Conf.high = conf.high,
-                      P.Value= p.value)
+                      P.Value= p.value,
+                      Term = term,
+                      Effect = effect)
       }
   } else {
     if (base::is.null(relativity_transform) != TRUE){
-      tidy_coef <- tidy_coef %>% dplyr::select(c(variable, level, Importance, estimate, std.error, relativity, p.value)) %>%
+      tidy_coef <- tidy_coef %>% dplyr::select(c(variable, level, Importance, estimate, std.error, relativity, p.value, term, effect)) %>%
         dplyr::rename(Variable = variable,
                       Level = level,
                       Estimate = estimate,
                       Std.error = std.error,
                       Relativity = relativity,
-                      P.Value= p.value)
+                      P.Value= p.value,
+                      Term = term,
+                      Effect = effect)
     } else {
-      tidy_coef <- tidy_coef %>% dplyr::select(c(variable, level, Importance, estimate, std.error, p.value)) %>%
+      tidy_coef <- tidy_coef %>% dplyr::select(c(variable, level, Importance, estimate, std.error, p.value, term, effect)) %>%
         dplyr::rename(Variable = variable,
                       Level = level,
                       Estimate = estimate,
                       Std.error = std.error,
-                      P.Value= p.value)
+                      P.Value= p.value,
+                      Term = term,
+                      Effect = effect)
     }
   }
 
@@ -166,7 +174,8 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
     }
 
     # Create a nice kable output of coefficients
-    kable_df <- tidy_coef
+    kable_df <- tidy_coef %>%
+      dplyr::select(-c(Term, Effect))
     kable_df$P.Value = kableExtra::cell_spec(base::round(kable_df$P.Value,5), background  = ifelse(is.na(kable_df$P.Value) |  kable_df$P.Value < 0.05, "#black", "#F08080"))
     use_it <- base::lapply(base::as.list(tidy_coef$Importance), function(x) base::as.vector(base::cbind(0,x))) #importance in list for bar plot
     if(is.null(type_iii)){

@@ -21,6 +21,8 @@
 #' @import dplyr
 
 clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model'){
+  # add Mat Ls formula fix
+
   # Global varaible notes fix
   name <- NULL
   level <- NULL
@@ -39,14 +41,6 @@ clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model'){
   # Extract model object if workflow object
   if (any(class(m) == 'workflow') == TRUE) m <- m$fit$fit$fit else m <- m
 
-  # Load model training data into global environment if it does not already exist
-  # data_already_existed <- base::exists(as.character(m$call$data))
-  # if (data_already_existed == FALSE) {
-  #   name_to_use <- as.character(m$call$data)
-  #   value_to_use <- m$data
-  #   base::assign(x = name_to_use, value = value_to_use, envir = .GlobalEnv)
-  # }
-
   #Split terms and get base levels
   x <- m %>%
     stats::dummy.coef() %>%
@@ -58,28 +52,50 @@ clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model'){
       level = stringr::str_remove(string = level, pattern = "^[.]"),
       level = forcats::fct_inorder(level),
       effect = ifelse(test = stringr::str_detect(string = variable, pattern = ":"),
-                      yes = "interaction", no = "main"))
+                      yes = base::ifelse(stringr::str_detect(string = level, pattern = ":", negate = TRUE),
+                                         yes = "factorandctsinteraction",
+                                         no = "otherinteraction"),
+                      no = "main"))
 
-  # Remove data set if it was not already loaded
-  # if (data_already_existed == FALSE) {
-  #   base::rm(list = name_to_use, envir = .GlobalEnv)
-  # }
+  # count rows to to help categorise effects
+  number_of_rows <- x %>%  dplyr::group_by(variable) %>% dplyr::summarise(number_of_rows=dplyr::n(), .groups = "drop")
+  x <- x %>%
+    dplyr::left_join(number_of_rows, by = "variable") %>%
+    dplyr::mutate(effect = base::ifelse(effect == 'otherinteraction',
+                                        yes = base::ifelse(number_of_rows == 1,
+                                                           yes = 'ctsctsinteraction',
+                                                           no = 'factorfactorinteraction'),
+                                        no = effect)) %>%
+    dplyr::mutate(effect = base::ifelse(effect == 'main',
+                                        yes = base::ifelse(variable == level,
+                                                           yes = 'ctsmain',
+                                                           no = 'factormain'),
+                                        no = effect))
 
   # Re-create term field for join
   term_record <- vector(mode = "list", length = length(x$variable))
   for(i in 1:length(x$variable)){
     if (x$variable[i] == '(Intercept)'){
       term_record[[i]] <- '(Intercept)'
-    } else if (grepl(x = x$variable[i], pattern=':', fixed = TRUE)){
+    } else if (base::grepl(x = x$variable[i], pattern=':', fixed = TRUE)){
       # Re-create term name for any number of interacted variables
       termname <- ''
-      for (k in 1:base::length(base::unlist(base::strsplit(as.character(x$level[i]), ':')))){
-        lev <- base::unlist(base::strsplit(as.character(x$level[i]), ':'))[k]
-        var <- base::unlist(base::strsplit(x$variable[i], ':'))[k]
-        if (base::nchar(termname)==0){
-          termname <- paste0(termname, var, lev)
-        } else{
-          termname <- paste0(termname, ':', var, lev)
+      if (x$effect[i] == 'factorandctsinteraction'){
+        # factors and cts need to be handled different
+        # not built for more than one interaction
+        lev <- base::unlist(base::strsplit(as.character(x$level[i]), ':'))
+        var1 <- base::unlist(base::strsplit(x$variable[i], ':'))[1] #hopefully always factor 1
+        var2 <- base::unlist(base::strsplit(x$variable[i], ':'))[2]
+        termname <- base::paste0(var1,lev, ':', var2)
+      } else{
+        for (k in 1:base::length(base::unlist(base::strsplit(as.character(x$level[i]), ':')))){
+          lev <- base::unlist(base::strsplit(as.character(x$level[i]), ':'))[k]
+          var <- base::unlist(base::strsplit(x$variable[i], ':'))[k]
+          if (base::nchar(termname)==0){
+            termname <- base::paste0(termname, var, lev)
+          } else{
+            termname <- base::paste0(termname, ':', var, lev)
+          }
         }
       }
       # Assign term name to correct value in a list
@@ -93,6 +109,10 @@ clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model'){
     }
   }
   x$term <- base::unlist(term_record)
+  x <- x %>%
+    dplyr::mutate(term = base::ifelse(effect == 'ctsctsinteraction',
+                                      yes = variable,
+                                      no = term))
 
   # Calculate variable importance and add to summary
   v <- vip::vi(m, method = vimethod)
@@ -104,7 +124,7 @@ clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model'){
   x <- x %>%
     dplyr::select(-name, -est) %>%
     dplyr::left_join(d, by = "term") %>%
-    dplyr::select(-variable, -level, -effect, dplyr::everything(), variable, level, effect)
+    dplyr::select(c(term, variable, level, effect, Importance, Sign, estimate, std.error, statistic, p.value))
 
   return(x)
 }
