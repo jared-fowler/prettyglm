@@ -127,15 +127,27 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
   })
 
   # Discrete relativities ------------------------------------------------------------
-  if (base::nrow(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot)) !=1) {
+  if (base::unique(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot)$Effect) == "factormain") {
+    # Filter to the variable we are plotting
     plot_data <- complete_factor_summary_df %>%
       dplyr::filter(Variable == feature_to_plot)
 
+    # Get the number of records in each category
+    factor_name <- base::unique(dplyr::pull(dplyr::select(plot_data, Variable)))
+    count_df <- dplyr::select(training_data, tidyselect::all_of(factor_name)) %>%
+      dplyr::group_by_at(tidyselect::all_of(factor_name)) %>%
+      dplyr::summarise(number_of_records = dplyr::n(), .groups = 'drop') %>%
+      dplyr::ungroup()
+    count_df <- count_df %>% dplyr::mutate(Variable = base::rep(factor_name, base::nrow(count_df))) %>%
+      dplyr::rename(Level = factor_name)
+    plot_data <- dplyr::left_join(plot_data, count_df, by = c('Level' = 'Level', 'Variable' = 'Variable'))
+
+    # Change the variable to numeric for plotting if needed
     if (plot_factor_as_numeric == TRUE){
       plot_data <- plot_data %>% dplyr::mutate_at(dplyr::vars(tidyselect::all_of('Level')), ~ as.numeric(as.character(dplyr::pull(dplyr::select(plot_data, tidyselect::all_of('Level'))))))
     }
 
-    # Change ordering if specified --------------------------------------------------------------
+    # Change ordering if specified
     if (base::is.null(ordering) ==  FALSE){
       if (base::length(ordering) >1){
         order_option <- ordering
@@ -149,9 +161,8 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
         } else if (ordering == 'pvalue'){
           order_option <- 'P.Value'
         } else{
-          base::print('You have entered an incorrect ordering option. Please enter: alphabetical, relativity, pvalue or a vector of Level names')
+          base::warning('You have entered an incorrect ordering option. Please enter: alphabetical, relativity, pvalue or a vector of level names')
         }
-
         plot_data <- plot_data %>%
           dplyr::arrange(get(order_option)) %>%
           dplyr::mutate_at(.vars = c('Level'), .funs = ~base::factor(., base::unique(.)))
@@ -166,22 +177,18 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
       }
     }
 
-    # add confidence interval of 2* the standard error --------------------------------------------
+    # add confidence interval of 2* the standard error
     plot_data <- plot_data %>%
       dplyr::mutate(Approx_Upper_95CI = (Relativity + 2*relativity(Std.error)),
                     Approx_Lower_95CI = (Relativity - 2*relativity(Std.error)))  %>%
-      # removed 10* stderror rule
-      # dplyr::mutate(Approx_Upper_95CI = base::ifelse(base::abs(Relativity + 2*relativity(Std.error)) > 10, base::sign((Relativity + 2*relativity(Std.error)))*10, (Relativity + 2*relativity(Std.error))),
-      #               Approx_Lower_95CI = base::ifelse(base::abs(Relativity - 2*relativity(Std.error)) > 10, base::sign((Relativity - 2*relativity(Std.error)))*10, (Relativity - 2*relativity(Std.error)))) %>%
       tidyr::pivot_longer(cols = c(Relativity, Approx_Upper_95CI, Approx_Lower_95CI))
 
     if (plot_approx_ci == FALSE){
       plot_data <- plot_data %>% dplyr::filter(name == 'relativity')
     }
 
-    # Create plots  --------------------------------------------------------------------------------
-    if (base::is.null(iteractionplottype) == T){
-      p_return <- plot_data %>%
+    # Create plot
+    p_return <- plot_data %>%
         dplyr::mutate(number_of_records = base::ifelse(name == 'Relativity', number_of_records, 0)) %>%
         plotly::plot_ly(colors = if(plot_approx_ci == TRUE) c('grey', 'grey', 'black') else c('black'),
                         linetypes = if(plot_approx_ci == TRUE) c('dash', 'dash', 'solid') else c('solid'),
@@ -220,7 +227,9 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                        autosize = TRUE,
                        margin = list(b = 50, l = 50, r=80))
       return(p_return)
-    } else if (iteractionplottype == 'facet'){
+
+    # Put this in an interaction plot if statemtent
+    if (iteractionplottype == 'facet'){
       # add columns of the variable names
       plot_data[, base::unlist(base::strsplit(factor_name, ':'))[1]] <- base::unlist(base::lapply(base::strsplit(plot_data$Level, ':'), `[[`, 1))
       plot_data[, base::unlist(base::strsplit(factor_name, ':'))[2]] <- base::unlist(base::lapply(base::strsplit(plot_data$Level, ':'), `[[`, 2))
@@ -350,14 +359,15 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                        margin = list(b = 50, l = 50, r=80))
       return(p_return)
     }
-  } else{
-  # change to esle if based on iteraction and spline variables
+  } else if (base::unique(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot)$Effect) == "ctsmain"){
   # Continuous Variables -----------------------------------------------------
+  # Add Splined Variables???
   # prep the data
   plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-percentile_to_cut), na.rm = T),length.out =100),
                               relativity_value = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot), 'Relativity'))) %>%
     dplyr::mutate(feature_relativity = var_range*relativity_value)
 
+  # plot density and relativity
   fit <- stats::density(dplyr::pull(dplyr::select(training_data, all_of(feature_to_plot))))
   p_return <- plotly::plot_ly(plot_data,
                        height = height,
@@ -385,7 +395,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                                  title = relativity_label,
                                  showgrid = F,
                                  zeroline = FALSE,
-                                 overlaying = 'y'),#base::paste0('y', as.character((l-1)*2 + 1))),
+                                 overlaying = 'y'),
                    legend = list(orientation = "h",
                                  y = -0.2,
                                  x = 0.32,
@@ -395,9 +405,35 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                    title = base::paste(relativity_label, 'for', feature_to_plot),
                    autosize = T,
                    margin = list(b = 50, l = 50, r=80))
-  # Add Continuous Variables?
   return(p_return)
+  } else if (base::unique(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot)$Effect) == "factorfactorinteraction"){
+    # Filter to the ineraction we are plotting
+    plot_data <- complete_factor_summary_df %>%
+      dplyr::filter(Variable == feature_to_plot)
+
+    # Get the number of records in each category
+    factor_name <- base::unique(dplyr::pull(dplyr::select(plot_data, Variable)))
+
+    # up to here remove if statemnts and change to plot data
+    if (base::grepl(":", factor_name) == T){
+      ivariable1 <- base::unlist(base::strsplit(factor_name, ':'))[1]
+      ivariable2 <- base::unlist(base::strsplit(factor_name, ':'))[2]
+      # For categorical categorical
+      if ((class(dplyr::pull(dplyr::select(training_data, ivariable1))) %in% c('factor', 'character')) & ((class(dplyr::pull(dplyr::select(training_data, ivariable2))) %in% c('factor', 'character')))){
+        count_df <- dplyr::select(training_data, c(ivariable1,ivariable2)) %>%
+          dplyr::group_by_at(c(ivariable1,ivariable2)) %>%
+          dplyr::summarise(number_of_records = dplyr::n(), .groups = 'drop') %>%
+          dplyr::ungroup()
+        count_df <- count_df %>%
+          dplyr::mutate(Variable = factor_name) %>%
+          dplyr::mutate(Level = base::paste0(base::get(ivariable1),':',base::get(ivariable2))) %>%
+          dplyr::select(.,c('Level', 'number_of_records', 'Variable'))
+        count_df_all <- base::rbind(count_df_all,count_df)
+      }
+
+  } else if (base::unique(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot)$Effect) == "factorandctsinteraction"){
+    #cts cts interaction???? maybe same as continous but we need to fiddle with the density????
   }
-  # Add Splined Variables???
+  # cts
 }
 
