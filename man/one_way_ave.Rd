@@ -40,6 +40,16 @@ one_way_ave(
 
 \item{height}{Height of plot}
 
+\item{number_of_buckets}{Number of buckets for continuous variable plots}
+
+\item{first_colour}{First colour to plot, usually the colour of actual.}
+
+\item{second_colour}{Second colour to plot, usually the colour of predicted.}
+
+\item{variable_to_facet_by}{Variable to facet the actual vs expect plots by.}
+
+\item{predict_function}{to use. Still in development.}
+
 \item{return_data}{Set to TRUE to return data set instead of plot}
 }
 \value{

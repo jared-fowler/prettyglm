@@ -5,13 +5,12 @@
 \title{actual_expected_bucketed}
 \usage{
 actual_expected_bucketed(
-  Target_Variable,
-  Model_Object,
-  Data_Set = NULL,
+  target_variable,
+  model_object,
+  data_set = NULL,
   number_of_buckets = 25,
-  plotlyplot = T,
-  mywidth = 800,
-  myheight = 500,
+  width = 800,
+  height = 500,
   Return_data = F,
   first_colour = "black",
   second_colour = "#cc4678",
@@ -19,17 +18,15 @@ actual_expected_bucketed(
 )
 }
 \arguments{
-\item{Target_Variable}{String of target variable name.}
+\item{target_variable}{String of target variable name.}
 
-\item{Model_Object}{GLM model object.}
+\item{model_object}{GLM model object.}
 
-\item{Data_Set}{Training data used when building the model. This is used to plot the number in each class as a barchart if plotly is TRUE.}
+\item{data_set}{Training data used when building the model. This is used to plot the number in each class as a barchart if plotly is TRUE.}
 
-\item{plotlyplot}{Logical if returned plot should be a plotly with number of records as a second axis.}
+\item{width}{Plotly plot width in pixels.}
 
-\item{mywidth}{Plotly plot width in pixels.}
-
-\item{myheight}{Plotly plot height in pixels.}
+\item{height}{Plotly plot height in pixels.}
 
 \item{Return_data}{Logical to return cleaned dataset instead of plot.}
 
