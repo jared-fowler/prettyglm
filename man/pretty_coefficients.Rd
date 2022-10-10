@@ -11,7 +11,8 @@ pretty_coefficients(
   type_iii = NULL,
   conf.int = FALSE,
   return_data = FALSE,
-  vimethod = "model"
+  vimethod = "model",
+  spline_seperator = NULL
 )
 }
 \arguments{

@@ -33,6 +33,8 @@
 actual_expected_bucketed <- function(target_variable, model_object, data_set = NULL, number_of_buckets = 25, width = 800, height = 500, return_data=F, first_colour = 'black', second_colour = '#cc4678', predict_function = NULL, facetby = NULL){
   # add ability to facet???
   # add ability for user to be able to use custom predict function or input a dataset of predictions and actuals
+  # Fix global variable issues and tidy all formatting
+  # add splines
 
   # make predictions on data set --------------------------------------------------------------
 

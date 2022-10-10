@@ -20,7 +20,7 @@
 #' @importFrom tidycat "factor_regex"
 #' @import dplyr
 
-clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model'){
+clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model', spline_seperator = NULL){
   # add Mat Ls formula fix
 
   # Global varaible notes fix
@@ -51,7 +51,7 @@ clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model'){
       level = stringr::str_remove(string = name, pattern = tidycat::factor_regex(m)),
       level = stringr::str_remove(string = level, pattern = "^[.]"),
       level = forcats::fct_inorder(level),
-      effect = ifelse(test = stringr::str_detect(string = variable, pattern = ":"),
+      effect = base::ifelse(test = stringr::str_detect(string = variable, pattern = ":"),
                       yes = base::ifelse(stringr::str_detect(string = level, pattern = ":", negate = TRUE),
                                          yes = "factorandctsinteraction",
                                          no = "otherinteraction"),
@@ -113,6 +113,17 @@ clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model'){
     dplyr::mutate(term = base::ifelse(effect == 'ctsctsinteraction',
                                       yes = variable,
                                       no = term))
+
+  # Tag splines if seperator is not null
+  if (is.null(spline_seperator) == F){
+    x <- x %>%
+      dplyr::mutate(effect = base::ifelse((effect == 'ctsmain') & (stringr::str_detect(string = variable, pattern = spline_seperator) == T),
+                                                      yes = 'ctsspline',
+                                                      no = effect)) %>%
+      dplyr::mutate(effect = base::ifelse((effect == 'factorandctsinteraction') & (stringr::str_detect(string = variable, pattern = spline_seperator) == T),
+                                          yes = 'factorandctsinteractionspline',
+                                          no = effect))
+  }
 
   # Calculate variable importance and add to summary
   v <- vip::vi(m, method = vimethod)

@@ -11,10 +11,11 @@ actual_expected_bucketed(
   number_of_buckets = 25,
   width = 800,
   height = 500,
-  Return_data = F,
+  return_data = F,
   first_colour = "black",
   second_colour = "#cc4678",
-  predict_function = NULL
+  predict_function = NULL,
+  facetby = NULL
 )
 }
 \arguments{
@@ -22,23 +23,25 @@ actual_expected_bucketed(
 
 \item{model_object}{GLM model object.}
 
-\item{data_set}{Training data used when building the model. This is used to plot the number in each class as a barchart if plotly is TRUE.}
+\item{data_set}{Data to score the model on. This can be training or test data, as long as the data is in a form where the model object can make predictions. Currently developing ability to provide custom prediction functions, currently implementation defaults to `stats::predict`}
 
-\item{width}{Plotly plot width in pixels.}
+\item{width}{plotly plot width in pixels.}
 
-\item{height}{Plotly plot height in pixels.}
+\item{height}{plotly plot height in pixels.}
 
-\item{Return_data}{Logical to return cleaned dataset instead of plot.}
+\item{return_data}{Logical to return cleaned data set instead of plot.}
 
 \item{first_colour}{First colour to plot, usually the colour of actual.}
 
 \item{second_colour}{Second colour to plot, usually the colour of predicted.}
+
+\item{facetby}{variable user wants to facet by.}
 }
 \value{
 plot
 Plotly plot by defualt.
 ggplot if plotlyplot = F.
-Tibble if Return_data = T.
+Tibble if return_data = T.
 }
 \description{
 Provides a rank plot of the actual and predicted.

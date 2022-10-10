@@ -53,7 +53,10 @@
 #' @import dplyr
 #'
 
-pretty_coefficients <- function(model_object, relativity_transform = NULL, relativity_label = 'relativity', type_iii = NULL, conf.int = FALSE, return_data = FALSE, vimethod = 'model'){
+pretty_coefficients <- function(model_object, relativity_transform = NULL, relativity_label = 'relativity', type_iii = NULL, conf.int = FALSE, return_data = FALSE, vimethod = 'model', spline_seperator = NULL){
+  # add other options in the if statemnt for splines
+  # document
+  # also aggregate for returning data?/?
 
   # Fix for global variables
   conf.low <- NULL
@@ -79,7 +82,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
 
   # tidy coefficients
   model_tidy_df <- broom::tidy(model_object, conf.int=conf.int)
-  tidy_coef <- prettyglm::clean_coefficients(d=model_tidy_df, m=model_object, vimethod = vimethod)
+  tidy_coef <- prettyglm::clean_coefficients(d=model_tidy_df, m=model_object, vimethod = vimethod, spline_seperator = spline_seperator)
 
   # replace NAs with 0
   tidy_coef <- tidy_coef %>%  dplyr::mutate(estimate = ifelse(is.na(estimate), 0, estimate),
@@ -174,6 +177,10 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
     }
 
     # Create a nice kable output of coefficients
+    tidy_coef <- tidy_coef %>%
+      dplyr::mutate(Variable = base::ifelse(Effect %in% c('ctsspline'),
+                                            yes = stringr::str_extract(tidy_coef$Variable, "[^_]+")),
+                                            no = Variable)
     kable_df <- tidy_coef %>%
       dplyr::select(-c(Term, Effect))
     kable_df$P.Value = kableExtra::cell_spec(base::round(kable_df$P.Value,5), background  = ifelse(is.na(kable_df$P.Value) |  kable_df$P.Value < 0.05, "#black", "#F08080"))

@@ -4,7 +4,12 @@
 \alias{clean_coefficients}
 \title{clean_coefficients}
 \usage{
-clean_coefficients(d = NULL, m = NULL, vimethod = "model")
+clean_coefficients(
+  d = NULL,
+  m = NULL,
+  vimethod = "model",
+  spline_seperator = NULL
+)
 }
 \arguments{
 \item{d}{A data frame \code{\link[tibble]{tibble}} output from \code{\link[broom]{tidy.lm}}; with one row for each term in the regression, including column `term`}
