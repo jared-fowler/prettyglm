@@ -85,8 +85,8 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
   tidy_coef <- prettyglm::clean_coefficients(d=model_tidy_df, m=model_object, vimethod = vimethod, spline_seperator = spline_seperator)
 
   # replace NAs with 0
-  tidy_coef <- tidy_coef %>%  dplyr::mutate(estimate = ifelse(is.na(estimate), 0, estimate),
-                                            std.error = ifelse(is.na(std.error), 0, std.error))
+  tidy_coef <- tidy_coef %>%  dplyr::mutate(estimate = base::ifelse(is.na(estimate), 0, estimate),
+                                            std.error = base::ifelse(is.na(std.error), 0, std.error))
   # add relativity
   if (base::is.null(relativity_transform) != TRUE){
     base::eval(base::parse(text = base::paste('relativity <- function(estimate) { return(' , relativity_transform , ')}', sep='')))
@@ -97,8 +97,8 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
   # confidence interval and relativity formatting
   if (conf.int == TRUE){
     tidy_coef <- tidy_coef %>%
-      dplyr::mutate(conf.low = ifelse(is.na(conf.low), 0, conf.low),
-                    conf.high = ifelse(is.na(conf.high), 0, conf.high))
+      dplyr::mutate(conf.low = base::ifelse(is.na(conf.low), 0, conf.low),
+                    conf.high = base::ifelse(is.na(conf.high), 0, conf.high))
     if (base::is.null(relativity_transform) != TRUE){
       tidy_coef <- tidy_coef %>%
         dplyr::select(c(variable, level, Importance, estimate, std.error, conf.low, conf.high, relativity, p.value, term, effect)) %>%
@@ -162,6 +162,27 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
     names(tidy_coef)[names(tidy_coef) == "Relativity"] <- relativity_label
   }
 
+  # some cleaning for spline columns
+  tidy_coef <- tidy_coef %>%
+    dplyr::mutate(Variable = base::ifelse(Effect %in% c('ctsspline'),
+                                          yes = stringr::str_extract(tidy_coef$Variable, "[^_]+"),
+                                          no = Variable))
+
+  tidy_coef <- tidy_coef %>%
+    dplyr::mutate(Variable = base::ifelse(Effect %in% c('factorandctsinteractionspline'),
+                                          yes = base::paste0(stringr::word(tidy_coef$Term,1,sep = ":"),':',stringr::str_extract(stringr::word(tidy_coef$Variable,2,sep = ":"), "[^_]+")),
+                                          no = Variable))
+  tidy_coef_fc_spline <- tidy_coef %>%
+    dplyr::filter(Effect == 'factorandctsinteractionspline') %>%
+    dplyr::mutate(Level = as.factor(base::ifelse(Effect %in% c('factorandctsinteractionspline'),
+                                                 yes = stringr::word(Term,2,sep = ":"),
+                                                 no = as.character(Level)))) %>%
+    dplyr::arrange(Variable, Level)
+
+  tidy_coef <- tidy_coef %>%
+    dplyr::filter(Effect != 'factorandctsinteractionspline') %>%
+    dplyr::bind_rows(tidy_coef_fc_spline)
+
   # return desired output
   if (return_data == FALSE){
 
@@ -177,10 +198,6 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
     }
 
     # Create a nice kable output of coefficients
-    tidy_coef <- tidy_coef %>%
-      dplyr::mutate(Variable = base::ifelse(Effect %in% c('ctsspline'),
-                                            yes = stringr::str_extract(tidy_coef$Variable, "[^_]+")),
-                                            no = Variable)
     kable_df <- tidy_coef %>%
       dplyr::select(-c(Term, Effect))
     kable_df$P.Value = kableExtra::cell_spec(base::round(kable_df$P.Value,5), background  = ifelse(is.na(kable_df$P.Value) |  kable_df$P.Value < 0.05, "#black", "#F08080"))

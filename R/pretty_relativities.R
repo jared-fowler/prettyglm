@@ -56,7 +56,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
   # interacted cts varas, all combos of interaction variable
   # all types in interacted variable with splines
   # Check maths behind just chucking the relativity in there multiplicative for cts variables
-
+  # change name of approx upper and lower confidence intervals
 
   # Fix for global variables
   tidy_workflow <- NULL
