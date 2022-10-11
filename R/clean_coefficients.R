@@ -4,6 +4,8 @@
 #'
 #' @param d A data frame \code{\link[tibble]{tibble}} output from \code{\link[broom]{tidy.lm}}; with one row for each term in the regression, including column `term`
 #' @param m A model object \code{\link[stats]{glm}}
+#' @param vimethod Variable importance method. Still in development
+#' @param spline_seperator sting of the spline seperator. For example AGE_0_25 would be "_"
 #'
 #' @return Expanded \code{\link[tibble]{tibble}} from the version passed to `d` including additional columns:
 #' \item{variable}{The name of the variable that the regression term belongs to.}
@@ -22,18 +24,11 @@
 
 clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model', spline_seperator = NULL){
   # add Mat Ls formula fix
+  # remove tidycat dependecy???
+  # check all github notes and modify checks
 
-  # Global varaible notes fix
-  name <- NULL
-  level <- NULL
-  variable <- NULL
-  Importance <- NULL
-  Sign <- NULL
-  est <- NULL
-  effect <- NULL
-  estimate <- NULL
-  std.error <- NULL
-  relativity <- NULL
+  # Allow for global variables in function
+  utils::globalVariables(c("relativity", "std.error", "estimate", "effect", "est", "Sign", "Importance", "variable", "level", "name", "term", "statistic", "p.value"))
 
   # Extract model object if parsnip object
   if (any(class(m) == 'model_fit') == TRUE) m <- m$fit else m <- m

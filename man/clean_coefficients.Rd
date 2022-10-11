@@ -15,6 +15,10 @@ clean_coefficients(
 \item{d}{A data frame \code{\link[tibble]{tibble}} output from \code{\link[broom]{tidy.lm}}; with one row for each term in the regression, including column `term`}
 
 \item{m}{A model object \code{\link[stats]{glm}}}
+
+\item{vimethod}{Variable importance method. Still in development}
+
+\item{spline_seperator}{sting of the spline seperator. For example AGE_0_25 would be "_"}
 }
 \value{
 Expanded \code{\link[tibble]{tibble}} from the version passed to `d` including additional columns:

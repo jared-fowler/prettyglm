@@ -58,17 +58,8 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
   # document
   # also aggregate for returning data?/?
 
-  # Fix for global variables
-  conf.low <- NULL
-  conf.high <- NULL
-  variable <- NULL
-  level <- NULL
-  Importance <- NULL
-  relativity <- NULL
-  p.value <- NULL
-  estimate <- NULL
-  std.error <- NULL
-  . <- NULL
+  # Allow for global variables
+  utils::globalVariables(c("conf.low", "conf.high", "variable", "level", "Importance", "relativity", "p.value", "estimate", "std.error", ".", "term", "effect", "Effect", "Variable", "Term", "Level", "var_range", "relativity_value", "Level"))
 
   # if model object is a workflow, pull the model fit
   if (any(class(model_object) == 'workflow') == TRUE){

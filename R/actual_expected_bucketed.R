@@ -5,11 +5,13 @@
 #' @param target_variable String of target variable name.
 #' @param model_object GLM model object.
 #' @param data_set Data to score the model on. This can be training or test data, as long as the data is in a form where the model object can make predictions. Currently developing ability to provide custom prediction functions, currently implementation defaults to `stats::predict`
+#' @param number_of_buckets number of buckets for percentile
 #' @param width plotly plot width in pixels.
 #' @param height plotly plot height in pixels.
 #' @param return_data Logical to return cleaned data set instead of plot.
 #' @param first_colour First colour to plot, usually the colour of actual.
 #' @param second_colour Second colour to plot, usually the colour of predicted.
+#' @param predict_function prediction function to use. Still in development.
 #' @param facetby variable user wants to facet by.
 #'
 
