@@ -6,11 +6,11 @@
 #' @param model_object Model object to create coefficient table for. Must be of type: \link[stats]{glm}, \link[stats]{lm},  \link[parsnip]{linear_reg} or \link[parsnip]{logistic_reg}
 #' @param target_variable String of target variable name in dataset.
 #' @param data_set Data set to calculate the actual vs expected for. If no input default is to try and extract training data from model object.
+#' @param plot_type one of "Residual", "predictions" or "actuals" defaults to "predictions"
 #' @param plot_factor_as_numeric Set to TRUE to return \link[base]{data.frame} instead of creating \link[knitr]{kable}.
 #' @param ordering Option to change the ordering of categories on the x axis, only for discrete categories. Default to the ordering of the factor. Other options are: 'alphabetical', 'Number of records', 'Average Value'
 #' @param width Width of plot
 #' @param height Height of plot
-#' @param return_data Set to TRUE to return data set instead of plot
 #' @param number_of_buckets Number of buckets for continuous variable plots
 #' @param first_colour First colour to plot, usually the colour of actual.
 #' @param second_colour Second colour to plot, usually the colour of predicted.
@@ -19,7 +19,7 @@
 #'
 #'
 #'
-#' @return plotly plot of one way actual vs expected \link[base]{data.frame} if return_data = TRUE.
+#' @return plotly plot of one way actual vs expected.
 #'
 #' @examples
 #' library(dplyr)
@@ -56,13 +56,13 @@
 #' @import plotly
 #'
 
-one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set, Plot_Type = 'predictions', plot_factor_as_numeric = FALSE, ordering = NULL, plotlyplot = TRUE, width = 800, height = 500, Return_data=F, number_of_buckets = NULL, first_colour = 'black', second_colour = '#cc4678', variable_to_facet_by = NULL, predict_function = NULL){
+one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set, plot_type = 'predictions', plot_factor_as_numeric = FALSE, ordering = NULL, width = 800, height = 500, number_of_buckets = NULL, first_colour = 'black', second_colour = '#cc4678', variable_to_facet_by = NULL, predict_function = NULL){
   # add package of density function stats????
   # add ability for user to be able to use custom predict function or input a dataset of predictions and actuals
   # make sure to document
   # better value / target label / maybe user can choose????????
   # clean non - faceted code to also be in base plotly.... maybe work as a goal to remove dependancy on ggplot2 and make pacakges entirely plotly supported
-  # Make sure plots can handle residuals as a Plot_Type input
+  # Make sure plots can handle residuals as a plot_type input
 
   # Clean all code, update exmaples to include some interactions
   # add our own cut2 function to avoid Hmisc import
@@ -119,20 +119,20 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
                            .groups = 'drop') %>%
           dplyr::ungroup()
 
-        if (Plot_Type == 'residuals'){
+        if (plot_type == 'residuals'){
           Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type == 'Residual_Values')
           ylabeltext <- 'Residual'
           Plottitle <- paste('Residuals for',feature_to_plot)
-        } else if (Plot_Type == 'predictions'){
+        } else if (plot_type == 'predictions'){
           Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type != 'Residual_Values')
           ylabeltext <- target_variable
           Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
-        } else if (Plot_Type == 'actuals'){
+        } else if (plot_type == 'actuals'){
           Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type == 'Actual_Values')
           ylabeltext <- target_variable
           Plottitle <- paste('Actual for',feature_to_plot)
         } else{
-          print("Plot_Type must be one of: 'residuals', 'predictions' or 'actuals'")
+          print("plot_type must be one of: 'residuals', 'predictions' or 'actuals'")
         }
 
         if (plot_factor_as_numeric ==TRUE){
@@ -206,20 +206,20 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
         dplyr::ungroup()
 
       # Create plots --------------------------------------------------------------------------------
-      if (Plot_Type == 'residuals'){
+      if (plot_type == 'residuals'){
         Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Residual_Values')
         ylabeltext <- 'Residual'
         Plottitle <- paste('Residuals for',feature_to_plot)
-      } else if (Plot_Type == 'predictions'){
+      } else if (plot_type == 'predictions'){
         Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual_Values')
         ylabeltext <- target_variable
         Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
-      } else if (Plot_Type == 'actuals'){
+      } else if (plot_type == 'actuals'){
         Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Actual_Values')
         ylabeltext <- target_variable
         Plottitle <- paste('Actual for',feature_to_plot)
       } else{
-        print("Plot_Type must be one of: 'residuals', 'predictions' or 'actuals'")
+        print("plot_type must be one of: 'residuals', 'predictions' or 'actuals'")
       }
 
       if (plot_factor_as_numeric ==TRUE){
@@ -313,20 +313,20 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
                            .groups = 'drop') %>%
           dplyr::ungroup()
 
-        if (Plot_Type == 'residuals'){
+        if (plot_type == 'residuals'){
           Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type == 'Residual_Values')
           ylabeltext <- 'Residual'
           Plottitle <- paste('Residuals for',feature_to_plot)
-        } else if (Plot_Type == 'predictions'){
+        } else if (plot_type == 'predictions'){
           Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type != 'Residual_Values')
           ylabeltext <- target_variable
           Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
-        } else if (Plot_Type == 'actuals'){
+        } else if (plot_type == 'actuals'){
           Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type == 'Actual_Values')
           ylabeltext <- target_variable
           Plottitle <- paste('Actual for',feature_to_plot)
         } else{
-          print("Plot_Type must be one of: 'residuals', 'predictions' or 'actuals'")
+          print("plot_type must be one of: 'residuals', 'predictions' or 'actuals'")
         }
 
         # plot factor as numeric is by default true
@@ -402,20 +402,20 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
                          .groups = 'drop') %>%
         dplyr::ungroup()
 
-      if (Plot_Type == 'residuals'){
+      if (plot_type == 'residuals'){
         Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Residual_Values')
         ylabeltext <- 'Residual'
         Plottitle <- paste('Residuals for',feature_to_plot)
-      } else if (Plot_Type == 'predictions'){
+      } else if (plot_type == 'predictions'){
         Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual_Values')
         ylabeltext <- target_variable
         Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
-      } else if (Plot_Type == 'actuals'){
+      } else if (plot_type == 'actuals'){
         Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Actual_Values')
         ylabeltext <- target_variable
         Plottitle <- paste('Actual for',feature_to_plot)
       } else{
-        print("Plot_Type must be one of: 'residuals', 'predictions' or 'actuals'")
+        print("plot_type must be one of: 'residuals', 'predictions' or 'actuals'")
       }
 
       # plot factor as numeric is by default true

@@ -9,6 +9,7 @@
 #' @param type_iii Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \code{\link[car]{Anova}}
 #' @param return_data Set to TRUE to return \code{\link[base]{data.frame}} instead of creating \code{\link[knitr]{kable}}.
 #' @param vimethod Variable importance method to pass to method of \code{\link[vi]{vip}}. Defaults to "model"
+#' @param spline_seperator Seperator to look for to idendity a spline
 #'
 #' @return \code{\link[knitr]{kable}} if return_data = FALSE. \code{\link[base]{data.frame}} if return_data = TRUE.
 #'

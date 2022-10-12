@@ -29,6 +29,7 @@ utils::globalVariables(c("conf.low",
                          "Predicted",
                          "value",
                          "Data_Type",
-                         "density"
+                         "density",
+                         "Rank"
                          ))
 

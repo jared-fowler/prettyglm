@@ -29,6 +29,8 @@ pretty_coefficients(
 \item{return_data}{Set to TRUE to return \code{\link[base]{data.frame}} instead of creating \code{\link[knitr]{kable}}.}
 
 \item{vimethod}{Variable importance method to pass to method of \code{\link[vi]{vip}}. Defaults to "model"}
+
+\item{spline_seperator}{Seperator to look for to idendity a spline}
 }
 \value{
 \code{\link[knitr]{kable}} if return_data = FALSE. \code{\link[base]{data.frame}} if return_data = TRUE.

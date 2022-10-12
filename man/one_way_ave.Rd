@@ -9,13 +9,11 @@ one_way_ave(
   model_object,
   target_variable,
   data_set,
-  Plot_Type = "predictions",
+  plot_type = "predictions",
   plot_factor_as_numeric = FALSE,
   ordering = NULL,
-  plotlyplot = TRUE,
   width = 800,
   height = 500,
-  Return_data = F,
   number_of_buckets = NULL,
   first_colour = "black",
   second_colour = "#cc4678",
@@ -31,6 +29,8 @@ one_way_ave(
 \item{target_variable}{String of target variable name in dataset.}
 
 \item{data_set}{Data set to calculate the actual vs expected for. If no input default is to try and extract training data from model object.}
+
+\item{plot_type}{one of "Residual", "predictions" or "actuals" defaults to "predictions"}
 
 \item{plot_factor_as_numeric}{Set to TRUE to return \link[base]{data.frame} instead of creating \link[knitr]{kable}.}
 
@@ -49,11 +49,9 @@ one_way_ave(
 \item{variable_to_facet_by}{Variable to facet the actual vs expect plots by.}
 
 \item{predict_function}{to use. Still in development.}
-
-\item{return_data}{Set to TRUE to return data set instead of plot}
 }
 \value{
-plotly plot of one way actual vs expected \link[base]{data.frame} if return_data = TRUE.
+plotly plot of one way actual vs expected.
 }
 \description{
 Creates a pretty html plot of one way actual vs expected by specified predictor.
