@@ -17,8 +17,6 @@
 #' @param variable_to_facet_by Variable to facet the actual vs expect plots by.
 #' @param predict_function to use. Still in development.
 #'
-#'
-#'
 #' @return plotly plot of one way actual vs expected.
 #'
 #' @examples
@@ -291,7 +289,7 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
       number_of_buckets <- 30
     }
     # prep the data
-    Plot_data[,base::paste0(feature_to_plot,'_cat')] = Hmisc::cut2(dplyr::pull(dplyr::select(Plot_data, feature_to_plot)), g = number_of_buckets, levels.mean = T)
+    Plot_data[,base::paste0(feature_to_plot,'_cat')] = prettyglm::cut3(dplyr::pull(dplyr::select(Plot_data, feature_to_plot)), g = number_of_buckets, levels.mean = T)
     if (is.null(variable_to_facet_by)==F){
       # faceted code ---------------------------------------------------------------------------
       numberoffacets <- base::length(base::unique(dplyr::pull(dplyr::select(Plot_data, dplyr::all_of(variable_to_facet_by)))))

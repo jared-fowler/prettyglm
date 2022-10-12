@@ -2,6 +2,7 @@
 
 export(actual_expected_bucketed)
 export(clean_coefficients)
+export(cut3)
 export(one_way_ave)
 export(predict_outcome)
 export(pretty_coefficients)
