@@ -27,9 +27,6 @@ clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model', spline_s
   # remove tidycat dependecy???
   # check all github notes and modify checks
 
-  # Allow for global variables in function
-  utils::globalVariables(c("relativity", "std.error", "estimate", "effect", "est", "Sign", "Importance", "variable", "level", "name", "term", "statistic", "p.value"))
-
   # Extract model object if parsnip object
   if (any(class(m) == 'model_fit') == TRUE) m <- m$fit else m <- m
 

@@ -21,8 +21,8 @@
 
 predict_outcome <- function(target, model_object, dataset, prediction_type = NULL, weights = NULL){
 
-  # Allow for global variables
-  utils::globalVariables(c("predict"))
+  # # Allow for global variables
+  # utils::globalVariables(c("predict"))
 
   # Check if model is a parsnip / tidymodel object --------------------------------------------
   if (base::any(base::class(model_object) == 'workflow') | base::any(base::class(model_object) == 'model_fit')){

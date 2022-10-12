@@ -67,9 +67,6 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
   # Clean all code, update exmaples to include some interactions
   # add our own cut2 function to avoid Hmisc import
 
-  # Allow for global variables
-  utils::globalVariables(c("tidy_workflow", "Actual_Values", "Predicted_Values", "Actual", "Predicted", "value", "Data_Type", "density"))
-
   # Extract the actual and expected values -------------------------------------------
   # if provided dataset is null then use the training data from model object
   if (is.null(data_set)==T){
