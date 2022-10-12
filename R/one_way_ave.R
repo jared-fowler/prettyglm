@@ -50,7 +50,6 @@
 #' @importFrom tibble "tibble"
 #' @importFrom tidyselect "all_of"
 #' @importFrom tidyr "pivot_longer"
-#' @importFrom Hmisc "cut2"
 #' @importFrom stats "density"
 #' @importFrom stats "predict"
 #' @import dplyr
@@ -66,6 +65,7 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
   # Make sure plots can handle residuals as a Plot_Type input
 
   # Clean all code, update exmaples to include some interactions
+  # add our own cut2 function to avoid Hmisc import
 
   # Allow for global variables
   utils::globalVariables(c("tidy_workflow", "Actual_Values", "Predicted_Values", "Actual", "Predicted", "value", "Data_Type", "density"))
