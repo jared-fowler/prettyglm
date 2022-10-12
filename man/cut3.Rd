@@ -34,12 +34,10 @@ cut3(
 
 \item{onlycuts}{set to TRUE to only return the vector of computed cuts. This consists of the interior values plus outer ranges.}
 
-\item{formatfun}{formatting function, supports formula notation (if rlang is installed)}
-
 \item{...}{additional arguments passed to formatfun}
 }
 \value{
-vecotr of cut values
+vector of cut getFromNamespace
 }
 \description{
 Hmisc::cut2 bones repackages to remove errors which arrise with importing Hmisc

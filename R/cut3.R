@@ -10,26 +10,20 @@
 #' @param minmax if cuts is specified but min(x)<min(cuts) or max(x)>max(cuts), augments cuts to include min and max x
 #' @param oneval if an interval contains only one unique value, the interval will be labeled with the formatted version of that value instead of the interval endpoints, unless oneval=FALSE
 #' @param onlycuts set to TRUE to only return the vector of computed cuts. This consists of the interior values plus outer ranges.
-#' @param formatfun formatting function, supports formula notation (if rlang is installed)
 #' @param ... additional arguments passed to formatfun
 #'
-#' @return vecotr of cut values
+#' @return vector of cut getFromNamespace
 #'
 #' @export
+#' @importFrom utils "tibble"
 
 cut3 <- function(x, cuts, m=150, g, digits, minmax=TRUE,
-                oneval=TRUE, onlycuts=FALSE, formatfun = format, ...)
-{
-  if (inherits(formatfun, "formula")) {
-    if (!requireNamespace("rlang"))
-      stop("Package 'rlang' must be installed to use formula notation")
-    formatfun <- getFromNamespace('as_function', 'rlang')(formatfun)
-
-  }
+                oneval=TRUE, onlycuts=FALSE, formatfun = format, ...){
 
   method <- 1 ## 20may02
-  x.unique <- sort(unique(c(x[!is.na(x)],if(!missing(cuts))cuts)))
-  min.dif <- min(diff(x.unique))/2
+  formatfun <- format
+  x.unique <- base::sort(base::unique(c(x[!is.na(x)],if(!missing(cuts))cuts)))
+  min.dif <- base::min(diff(x.unique))/2
   min.dif.factor <- 1
 
   ## Make formatted values look good
