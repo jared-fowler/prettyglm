@@ -37,7 +37,7 @@ cut3(
 \item{...}{additional arguments passed to formatfun}
 }
 \value{
-vector of cut getFromNamespace
+vector of cut
 }
 \description{
 Hmisc::cut2 bones repackages to remove errors which arrise with importing Hmisc

@@ -12,10 +12,9 @@
 #' @param onlycuts set to TRUE to only return the vector of computed cuts. This consists of the interior values plus outer ranges.
 #' @param ... additional arguments passed to formatfun
 #'
-#' @return vector of cut getFromNamespace
+#' @return vector of cut
 #'
 #' @export
-#' @importFrom utils "tibble"
 
 cut3 <- function(x, cuts, m=150, g, digits, minmax=TRUE,
                 oneval=TRUE, onlycuts=FALSE, formatfun = format, ...){
