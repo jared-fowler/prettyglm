@@ -1,6 +1,6 @@
 #' @title cut3
 #'
-#' @description Hmisc::cut2 bones repackages to remove errors which arrise with importing Hmisc
+#' @description Hmisc::cut2 bones repackaged to remove errors with importing Hmisc
 #'
 #' @param x numeric vector to classify into intervals.
 #' @param cuts cut points.
@@ -18,7 +18,7 @@
 cut3 <- function(x, cuts, m=150, g, digits, minmax=TRUE,
                 oneval=TRUE, onlycuts=FALSE){
 
-  method <- 1 ## 20may02
+  method <- 1
   formatfun <- format
   x.unique <- base::sort(base::unique(c(x[!is.na(x)],if(!missing(cuts))cuts)))
   min.dif <- base::min(diff(x.unique))/2
