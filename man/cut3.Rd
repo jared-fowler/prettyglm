@@ -36,5 +36,5 @@ cut3(
 vector of cut
 }
 \description{
-Hmisc::cut2 bones repackages to remove errors which arrise with importing Hmisc
+Hmisc::cut2 bones repackaged to remove errors with importing Hmisc
 }

@@ -15,6 +15,7 @@
 #' @param iteractionplottype If plotting the relativity for an interaction variable you can "facet" or "colour" by one of the interaction variables. Defaults to null.
 #' @param facetorcolourtby If iteractionplottype is not Null, then this is the variable in the interaction you want to colour or facet by.
 #' @param percentile_to_cut For continuous variables what percentile to cut off each end of the distribution. Defaults to 0.01. Cutting off some of the distribution can help the views if outliers are present in the training data.
+#' @param spline_seperator sting of the spline seperator. For example AGE_0_25 would be "_"
 #'
 #' @return plotly plot of fitted relativities. \link[base]{data.frame} if return_data = TRUE.
 #'
@@ -51,12 +52,13 @@
 #' @import plotly
 #'
 
-pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', relativity_label = 'Relativity', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = FALSE, iteractionplottype = NULL, facetorcolourtby = NULL, percentile_to_cut = 0.01){
+pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', relativity_label = 'Relativity', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = FALSE, iteractionplottype = NULL, facetorcolourtby = NULL, percentile_to_cut = 0, spline_seperator = NULL){
   # fix colouring to add trace markers and lines
   # interacted cts varas, all combos of interaction variable
   # all types in interacted variable with splines
   # Check maths behind just chucking the relativity in there multiplicative for cts variables
   # change name of approx upper and lower confidence intervals
+  # Check caluclation arounds the splines
 
   # Fix for global variables
   tidy_workflow <- NULL
@@ -73,7 +75,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
   base::eval(base::parse(text = base::paste('relativity <- function(estimate) { return(' , relativity_transform , ')}', sep='')))
 
   # Tidy model coefficients
-  complete_factor_summary_df <- prettyglm::pretty_coefficients(model_object = model_object, relativity_transform = relativity_transform, return_data = T)
+  complete_factor_summary_df <- prettyglm::pretty_coefficients(model_object = model_object, relativity_transform = relativity_transform, return_data = T, spline_seperator = spline_seperator)
 
   # Extract training data from model object
   if (base::any(class(model_object) == 'workflow')){
@@ -631,9 +633,68 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                        margin = list(b = 50, l = 50, r=80))
       return(p_return)
     }
+  } else if (base::unique(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot)$Effect) == "ctsspline"){
+    # spline no interaction
+    spine_estimates <- complete_factor_summary_df %>%
+      dplyr::filter(Variable == feature_to_plot) %>%
+      dplyr::mutate(SP_Min = stringr::word(Level,2,sep = spline_seperator)) %>%
+      dplyr::mutate(SP_Max = stringr::word(Level,3,sep = spline_seperator)) %>%
+      dplyr::mutate(SP_Max = stringr::word(Level,3,sep = spline_seperator))
 
-    #cts cts interaction???? maybe same as continous but we need to fiddle with the density????
+    plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-percentile_to_cut), na.rm = T),length.out =1000))
+    for (i in 1:nrow(spine_estimates)){
+      New_col <- base::unlist(base::lapply(X = dplyr::pull(dplyr::select(plot_data, tidyselect::all_of('var_range'))), FUN = function(a) prettyglm::splineit(a, as.numeric(spine_estimates$SP_Min[i]), as.numeric(spine_estimates$SP_Max[i]))))
+      New_col <- New_col*(spine_estimates$Estimate[i])
+      plot_data <- plot_data %>%
+        tibble::add_column(tibble(!!as.character(spine_estimates$Level[i]) := New_col))
+    }
+
+    plot_data <- plot_data %>% dplyr::mutate(feature_estimate = (base::rowSums(dplyr::select(., spine_estimates$Level))),
+                                             feature_relativity = relativity(base::rowSums(dplyr::select(., spine_estimates$Level))))
+
+
+    # plot density and relativity
+    fit <- stats::density(dplyr::pull(dplyr::select(training_data, all_of(feature_to_plot))))
+    p_return <- plotly::plot_ly(plot_data,
+                                height = height,
+                                width = width) %>%
+      plotly::add_trace(x = ~var_range,
+                        y = ~feature_relativity,
+                        type="scatter",
+                        mode="lines",
+                        name = relativity_label,
+                        line = list(color = 'black', width = 4),
+                        yaxis = "y2") %>%
+      plotly::add_trace(x = fit$x,
+                        y = fit$y,
+                        type = "scatter",
+                        mode = "lines",
+                        fill = "tozeroy",
+                        yaxis = "y",
+                        name = "Density",
+                        fillcolor = 'rgba(221,221,221,0.5)',
+                        line  = list(color = 'rgba(221,221,221,0.7)')) %>%
+      plotly::layout(yaxis = list(side = 'right',
+                                  title = 'Density',
+                                  zeroline = FALSE),
+                     yaxis2 = list(side = 'left',
+                                   title = relativity_label,
+                                   showgrid = F,
+                                   zeroline = FALSE,
+                                   overlaying = 'y'),
+                     legend = list(orientation = "h",
+                                   y = -0.2,
+                                   x = 0.38,
+                                   title = ''),
+                     xaxis = list(title = feature_to_plot,
+                                  zeroline = FALSE),
+                     title = base::paste(relativity_label, 'for', feature_to_plot),
+                     autosize = T,
+                     margin = list(b = 50, l = 50, r=80))
+    return(p_return)
   }
   # cts
+  #cts cts interaction???? maybe same as continous but we need to fiddle with the density????
+
 }
 

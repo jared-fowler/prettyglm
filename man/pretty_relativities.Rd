@@ -17,7 +17,8 @@ pretty_relativities(
   return_data = FALSE,
   iteractionplottype = NULL,
   facetorcolourtby = NULL,
-  percentile_to_cut = 0.01
+  percentile_to_cut = 0,
+  spline_seperator = NULL
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ pretty_relativities(
 \item{facetorcolourtby}{If iteractionplottype is not Null, then this is the variable in the interaction you want to colour or facet by.}
 
 \item{percentile_to_cut}{For continuous variables what percentile to cut off each end of the distribution. Defaults to 0.01. Cutting off some of the distribution can help the views if outliers are present in the training data.}
+
+\item{spline_seperator}{sting of the spline seperator. For example AGE_0_25 would be "_"}
 }
 \value{
 plotly plot of fitted relativities. \link[base]{data.frame} if return_data = TRUE.
