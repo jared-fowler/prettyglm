@@ -154,23 +154,32 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
   # some cleaning for spline columns
   tidy_coef <- tidy_coef %>%
     dplyr::mutate(Variable = base::ifelse(Effect %in% c('ctsspline'),
-                                          yes = stringr::str_extract(tidy_coef$Variable, "[^_]+"),
-                                          no = Variable))
+                                          yes = stringr::str_extract(Variable, "[^_]+"),
+                                          no = as.character(Variable)))
 
   tidy_coef <- tidy_coef %>%
     dplyr::mutate(Variable = base::ifelse(Effect %in% c('factorandctsinteractionspline'),
-                                          yes = base::paste0(stringr::word(tidy_coef$Term,1,sep = ":"),':',stringr::str_extract(stringr::word(tidy_coef$Variable,2,sep = ":"), "[^_]+")),
-                                          no = Variable))
-  tidy_coef_fc_spline <- tidy_coef %>%
-    dplyr::filter(Effect == 'factorandctsinteractionspline') %>%
-    dplyr::mutate(Level = as.factor(base::ifelse(Effect %in% c('factorandctsinteractionspline'),
-                                                 yes = stringr::word(Term,2,sep = ":"),
-                                                 no = as.character(Level)))) %>%
-    dplyr::arrange(Variable, Level)
+                                          yes = base::paste0(stringr::word(Variable,1,sep = ":"),':',stringr::str_extract(stringr::word(Variable,2,sep = ":"), "[^_]+")),
+                                          no = as.character(Variable))) %>%
+    dplyr::mutate(Level = base::ifelse(Effect %in% c('factorandctsinteractionspline'),
+                                          yes = base::paste0(Level, ':',stringr::word(Term,2,sep = ":")),
+                                          no = as.character(Level)))
 
-  tidy_coef <- tidy_coef %>%
-    dplyr::filter(Effect != 'factorandctsinteractionspline') %>%
-    dplyr::bind_rows(tidy_coef_fc_spline)
+
+  # tidy_coef <- tidy_coef %>%
+  #   dplyr::mutate(Variable = base::ifelse(Effect %in% c('factorandctsinteractionspline'),
+  #                                         yes = base::paste0(stringr::word(tidy_coef$Term,1,sep = ":"),':',stringr::str_extract(stringr::word(tidy_coef$Variable,2,sep = ":"), "[^_]+")),
+  #                                         no = Variable))
+  # tidy_coef_fc_spline <- tidy_coef %>%
+  #   dplyr::filter(Effect == 'factorandctsinteractionspline') %>%
+  #   dplyr::mutate(Level = as.factor(base::ifelse(Effect %in% c('factorandctsinteractionspline'),
+  #                                                yes = stringr::word(Term,2,sep = ":"),
+  #                                                no = as.character(Level)))) %>%
+  #   dplyr::arrange(Variable, Level)
+  #
+  # tidy_coef <- tidy_coef %>%
+  #   dplyr::filter(Effect != 'factorandctsinteractionspline') %>%
+  #   dplyr::bind_rows(tidy_coef_fc_spline)
 
   # return desired output
   if (return_data == FALSE){

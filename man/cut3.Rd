@@ -12,7 +12,9 @@ cut3(
   digits,
   minmax = TRUE,
   oneval = TRUE,
-  onlycuts = FALSE
+  onlycuts = FALSE,
+  formatfun = format,
+  ...
 )
 }
 \arguments{
@@ -31,6 +33,8 @@ cut3(
 \item{oneval}{if an interval contains only one unique value, the interval will be labeled with the formatted version of that value instead of the interval endpoints, unless oneval=FALSE}
 
 \item{onlycuts}{set to TRUE to only return the vector of computed cuts. This consists of the interior values plus outer ranges.}
+
+\item{...}{additional arguments passed to formatfun}
 }
 \value{
 vector of cut

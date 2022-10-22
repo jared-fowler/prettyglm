@@ -289,7 +289,7 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
       number_of_buckets <- 30
     }
     # prep the data
-    Plot_data[,base::paste0(feature_to_plot,'_cat')] = prettyglm::cut3(dplyr::pull(dplyr::select(Plot_data, feature_to_plot)), g = number_of_buckets)
+    Plot_data[,base::paste0(feature_to_plot,'_cat')] = prettyglm::cut3(x = dplyr::pull(dplyr::select(Plot_data, tidyselect::all_of(feature_to_plot))), g = number_of_buckets)
     if (is.null(variable_to_facet_by)==F){
       # faceted code ---------------------------------------------------------------------------
       numberoffacets <- base::length(base::unique(dplyr::pull(dplyr::select(Plot_data, dplyr::all_of(variable_to_facet_by)))))
