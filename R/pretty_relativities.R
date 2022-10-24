@@ -692,6 +692,175 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                      autosize = T,
                      margin = list(b = 50, l = 50, r=80))
     return(p_return)
+  } else if (base::unique(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot)$Effect) == "factorandctsinteractionspline"){
+     # get spline estimates
+     spine_estimates <- complete_factor_summary_df %>%
+      dplyr::filter(Variable == feature_to_plot) %>%
+      dplyr::mutate(SP_Min = stringr::word(Level,2,sep = spline_seperator)) %>%
+      dplyr::mutate(SP_Max = stringr::word(Level,3,sep = spline_seperator)) %>%
+      dplyr::mutate(SP_Max = stringr::word(Level,3,sep = spline_seperator))
+
+     if (is.null(iteractionplottype) == T){
+       iteractionplottype <- 'colour'
+       base::message("Factor and Continuous Spine interaction detected, defualting to iteractionplottype = colour")
+     }
+
+     if (iteractionplottype == 'facet'){
+       l <- 1
+       plotlist <- list()
+       for (interactionk in base::unique(stringr::word(spine_estimates$Level,1,sep = ':'))){
+         # Get the data for that interaction will need to change based on facet or colour
+         for (g in 1:2) {
+           if (base::class(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':')))) == 'numeric') {
+             plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(1-percentile_to_cut), na.rm = T),length.out =100))
+             # get whatever is not g and then filter to that interaction
+             ctsvariable <- stringr::word(feature_to_plot,g,sep = ':')
+             otherg <- base::ifelse(g == 2,1,2)
+             fit <- stats::density(dplyr::pull(dplyr::select(dplyr::filter(training_data, base::get(stringr::word(feature_to_plot,otherg,sep = ':')) == interactionk), all_of(stringr::word(feature_to_plot,g,sep = ':')))))
+           }
+         }
+
+         # Build the relativity curves
+         spine_estimates_inside <- spine_estimates %>%
+           dplyr::filter(stringr::word(Level,1,sep = ':') == interactionk)
+         # check for empty plot data
+         for (i in 1:nrow(spine_estimates_inside)){
+           New_col <- base::unlist(base::lapply(X = dplyr::pull(dplyr::select(plot_data, tidyselect::all_of('var_range'))), FUN = function(a) prettyglm::splineit(a, as.numeric(spine_estimates_inside$SP_Min[i]), as.numeric(spine_estimates_inside$SP_Max[i]))))
+           New_col <- New_col*(spine_estimates_inside$Estimate[i])
+           plot_data <- plot_data %>%
+             tibble::add_column(tibble(!!as.character(stringr::word(spine_estimates_inside$Level,2,sep = ':')[i]) := New_col))
+         }
+
+         plot_data <- plot_data %>% dplyr::mutate(feature_estimate = (base::rowSums(dplyr::select(., stringr::word(spine_estimates_inside$Level,2,sep = ':')))),
+                                                  feature_relativity = relativity(base::rowSums(dplyr::select(., stringr::word(spine_estimates_inside$Level,2,sep = ':')))))
+
+         plotlist[[l]] <- plotly::plot_ly(plot_data,
+                                          height = height,
+                                          width = width,
+                                          showlegend = base::ifelse(l==1,T,F)) %>%
+           plotly::add_trace(x = ~var_range,
+                             y = ~feature_relativity,
+                             type="scatter",
+                             mode="lines",
+                             name = relativity_label,
+                             line = list(color = 'black', width = 4),
+                             yaxis = "y2") %>%
+           plotly::add_trace(x = fit$x,
+                             y = fit$y,
+                             type = "scatter",
+                             mode = "lines",
+                             fill = "tozeroy",
+                             yaxis = "y",
+                             name = "Density",
+                             fillcolor = 'rgba(221,221,221,0.5)',
+                             line  = list(color = 'rgba(221,221,221,0.7)')) %>%
+           plotly::layout(yaxis = list(side = 'right',
+                                       title = 'Density',
+                                       zeroline = FALSE),
+                          yaxis2 = list(side = 'left',
+                                        title = relativity_label,
+                                        showgrid = F,
+                                        zeroline = FALSE,
+                                        overlaying = base::paste0('y', as.character((l-1)*2 + 1))),
+                          legend = list(orientation = "h",
+                                        y = -0.2,
+                                        x = 0.38,
+                                        title = ''),
+                          xaxis = list(title = ctsvariable,
+                                       zeroline = FALSE),
+                          title = base::paste(relativity_label, 'for', ctsvariable),
+                          autosize = T,
+                          margin = list(b = 50, l = 50, r=80)) %>%
+           plotly::add_annotations(
+             x= 0.5,
+             y= 1.05,
+             xref = "paper",
+             yref = "paper",
+             text = base::paste0('<b>',interactionk, '<b>'),#"<b>paper reference = [0.5, 1]</b>",
+             showarrow = F
+           )
+         l <- l + 1
+       }
+
+
+       p_return <-
+         plotly::subplot(plotlist,
+                         nrows = numberoffacets,
+                         titleY = T,
+                         titleX = T,
+                         margin = 0.07,
+                         shareY = F,
+                         shareX = T) %>%
+         plotly::layout(title = base::paste(relativity_label, 'for', feature_to_plot, 'interaction'))
+       return(p_return)
+     } else if (iteractionplottype == 'colour'){
+       # Get the data for that interaction will need to change based on facet or colour
+       for (g in 1:2) {
+         if (base::class(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':')))) == 'numeric') {
+           plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(1-percentile_to_cut), na.rm = T),length.out =100))
+           # get whatever is not g and then filter to that interaction
+           ctsvariable <- stringr::word(feature_to_plot,g,sep = ':')
+           otherg <- base::ifelse(g == 2,1,2)
+           fit <- stats::density(dplyr::pull(dplyr::select(training_data, all_of(stringr::word(feature_to_plot,g,sep = ':')))))
+         }
+       }
+
+       plot_data_record <- data.frame()
+       for (interactionk in base::unique(stringr::word(spine_estimates$Level,1,sep = ':'))){
+         # Build the relativity curves
+         spine_estimates_inside <- spine_estimates %>%
+           dplyr::filter(stringr::word(Level,1,sep = ':') == interactionk)
+         # check for empty plot data
+         plot_data_inside <- plot_data
+         for (i in 1:nrow(spine_estimates_inside)){
+           New_col <- base::unlist(base::lapply(X = dplyr::pull(dplyr::select(plot_data, tidyselect::all_of('var_range'))), FUN = function(a) prettyglm::splineit(a, as.numeric(spine_estimates_inside$SP_Min[i]), as.numeric(spine_estimates_inside$SP_Max[i]))))
+           New_col <- New_col*(spine_estimates_inside$Estimate[i])
+           plot_data_inside <- plot_data_inside %>%
+             tibble::add_column(tibble(!!as.character(stringr::word(spine_estimates_inside$Level,2,sep = ':')[i]) := New_col))
+         }
+         plot_data_inside <- plot_data_inside %>% dplyr::mutate(feature_estimate = (base::rowSums(dplyr::select(., stringr::word(spine_estimates_inside$Level,2,sep = ':')))),
+                                                                feature_relativity = relativity(base::rowSums(dplyr::select(., stringr::word(spine_estimates_inside$Level,2,sep = ':')))))
+         plot_data_inside$interaction <- interactionk
+         plot_data_record <- rbind(plot_data_record,plot_data_inside)
+       }
+       p_return <- plotly::plot_ly(plot_data_record,
+                                   height = height,
+                                   width = width) %>%
+         plotly::add_trace(x = ~var_range,
+                           y = ~feature_relativity,
+                           type="scatter",
+                           mode="lines",
+                           color = ~interaction,
+                           line = list(width = 4),
+                           yaxis = "y2") %>%
+         plotly::add_trace(x = fit$x,
+                           y = fit$y,
+                           type = "scatter",
+                           mode = "lines",
+                           fill = "tozeroy",
+                           yaxis = "y",
+                           name = "Density",
+                           fillcolor = 'rgba(221,221,221,0.5)',
+                           line  = list(color = 'rgba(221,221,221,0.7)')) %>%
+         plotly::layout(yaxis = list(side = 'right',
+                                     title = 'Density',
+                                     zeroline = FALSE),
+                        yaxis2 = list(side = 'left',
+                                      title = relativity_label,
+                                      showgrid = F,
+                                      zeroline = FALSE,
+                                      overlaying = 'y'),
+                        legend = list(orientation = "h",
+                                      y = -0.2,
+                                      x = 0.35,
+                                      title = ''),
+                        xaxis = list(title = ctsvariable,
+                                     zeroline = FALSE),
+                        title = base::paste(relativity_label, 'for', feature_to_plot),
+                        autosize = T,
+                        margin = list(b = 50, l = 50, r=80))
+       return(p_return)
+     }
   }
   # cts
   #cts cts interaction???? maybe same as continous but we need to fiddle with the density????
