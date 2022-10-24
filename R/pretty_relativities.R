@@ -644,13 +644,13 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
     plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-percentile_to_cut), na.rm = T),length.out =1000))
     for (i in 1:nrow(spine_estimates)){
       New_col <- base::unlist(base::lapply(X = dplyr::pull(dplyr::select(plot_data, tidyselect::all_of('var_range'))), FUN = function(a) prettyglm::splineit(a, as.numeric(spine_estimates$SP_Min[i]), as.numeric(spine_estimates$SP_Max[i]))))
-      New_col <- New_col*(spine_estimates$Estimate[i])
+      New_col <- New_col*relativity((spine_estimates$Estimate[i]))
       plot_data <- plot_data %>%
         tibble::add_column(tibble(!!as.character(spine_estimates$Level[i]) := New_col))
     }
 
-    plot_data <- plot_data %>% dplyr::mutate(feature_estimate = (base::rowSums(dplyr::select(., spine_estimates$Level))),
-                                             feature_relativity = relativity(base::rowSums(dplyr::select(., spine_estimates$Level))))
+    plot_data <- plot_data %>% dplyr::mutate(feature_relativity = (base::rowSums(dplyr::select(., spine_estimates$Level))))#,
+                                             #feature_relativity = relativity(base::rowSums(dplyr::select(., spine_estimates$Level))))
 
 
     # plot density and relativity
@@ -726,13 +726,13 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
          # check for empty plot data
          for (i in 1:nrow(spine_estimates_inside)){
            New_col <- base::unlist(base::lapply(X = dplyr::pull(dplyr::select(plot_data, tidyselect::all_of('var_range'))), FUN = function(a) prettyglm::splineit(a, as.numeric(spine_estimates_inside$SP_Min[i]), as.numeric(spine_estimates_inside$SP_Max[i]))))
-           New_col <- New_col*(spine_estimates_inside$Estimate[i])
+           New_col <- New_col*relativity((spine_estimates_inside$Estimate[i]))
            plot_data <- plot_data %>%
              tibble::add_column(tibble(!!as.character(stringr::word(spine_estimates_inside$Level,2,sep = ':')[i]) := New_col))
          }
 
-         plot_data <- plot_data %>% dplyr::mutate(feature_estimate = (base::rowSums(dplyr::select(., stringr::word(spine_estimates_inside$Level,2,sep = ':')))),
-                                                  feature_relativity = relativity(base::rowSums(dplyr::select(., stringr::word(spine_estimates_inside$Level,2,sep = ':')))))
+         plot_data <- plot_data %>% dplyr::mutate(feature_relativity = (base::rowSums(dplyr::select(., stringr::word(spine_estimates_inside$Level,2,sep = ':')))))#,
+                                                  #feature_relativity = relativity(base::rowSums(dplyr::select(., stringr::word(spine_estimates_inside$Level,2,sep = ':')))))
 
          plotlist[[l]] <- plotly::plot_ly(plot_data,
                                           height = height,
@@ -814,12 +814,12 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
          plot_data_inside <- plot_data
          for (i in 1:nrow(spine_estimates_inside)){
            New_col <- base::unlist(base::lapply(X = dplyr::pull(dplyr::select(plot_data, tidyselect::all_of('var_range'))), FUN = function(a) prettyglm::splineit(a, as.numeric(spine_estimates_inside$SP_Min[i]), as.numeric(spine_estimates_inside$SP_Max[i]))))
-           New_col <- New_col*(spine_estimates_inside$Estimate[i])
+           New_col <- New_col*relativity((spine_estimates_inside$Estimate[i]))
            plot_data_inside <- plot_data_inside %>%
              tibble::add_column(tibble(!!as.character(stringr::word(spine_estimates_inside$Level,2,sep = ':')[i]) := New_col))
          }
-         plot_data_inside <- plot_data_inside %>% dplyr::mutate(feature_estimate = (base::rowSums(dplyr::select(., stringr::word(spine_estimates_inside$Level,2,sep = ':')))),
-                                                                feature_relativity = relativity(base::rowSums(dplyr::select(., stringr::word(spine_estimates_inside$Level,2,sep = ':')))))
+         plot_data_inside <- plot_data_inside %>% dplyr::mutate(feature_relativity = (base::rowSums(dplyr::select(., stringr::word(spine_estimates_inside$Level,2,sep = ':')))))#,
+                                                                #feature_relativity = relativity(base::rowSums(dplyr::select(., stringr::word(spine_estimates_inside$Level,2,sep = ':')))))
          plot_data_inside$interaction <- interactionk
          plot_data_record <- rbind(plot_data_record,plot_data_inside)
        }
