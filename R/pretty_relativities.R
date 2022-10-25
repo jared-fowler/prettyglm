@@ -47,6 +47,7 @@
 #' @export
 #' @importFrom tibble "tibble"
 #' @importFrom tidyselect "all_of"
+#' @importFrom tidyselect "contains"
 #' @importFrom tidyr "pivot_longer"
 #' @import dplyr
 #' @import plotly
@@ -584,12 +585,12 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
     } else if (iteractionplottype == 'colour'){
       # prep the data for plotting
       plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-percentile_to_cut), na.rm = T),length.out =100))
-      plot_data[,as.character(factor_levels[1])] <- dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[1])), "Relativity"))
-      plot_data[,as.character(factor_levels[2])] <- dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[2])), "Relativity"))
-      plot_data[,base::paste0(as.character(factor_levels[1])," ", relativity_label)] <- plot_data$var_range * plot_data[,as.character(factor_levels[1])]
-      plot_data[,base::paste0(as.character(factor_levels[2])," ", relativity_label)] <- plot_data$var_range * plot_data[,as.character(factor_levels[2])]
+      for (k in 1:length(factor_levels)){
+        plot_data[,as.character(factor_levels[k])] <- dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[k])), "Relativity"))
+        plot_data[,base::paste0(as.character(factor_levels[k])," ", relativity_label)] <- plot_data$var_range * plot_data[,as.character(factor_levels[k])]
+      }
       plot_data <- plot_data %>%
-        tidyr::pivot_longer(cols = c(base::paste0(as.character(factor_levels[1])," ",relativity_label), base::paste0(as.character(factor_levels[2])," ", relativity_label)),
+        tidyr::pivot_longer(cols = tidyselect::contains(relativity_label),
                             names_to = "Level",
                             values_to = "feature_relativity")
 

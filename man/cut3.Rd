@@ -34,6 +34,8 @@ cut3(
 
 \item{onlycuts}{set to TRUE to only return the vector of computed cuts. This consists of the interior values plus outer ranges.}
 
+\item{formatfun}{format function}
+
 \item{...}{additional arguments passed to formatfun}
 }
 \value{

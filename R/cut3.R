@@ -10,6 +10,7 @@
 #' @param minmax if cuts is specified but min(x)<min(cuts) or max(x)>max(cuts), augments cuts to include min and max x
 #' @param oneval if an interval contains only one unique value, the interval will be labeled with the formatted version of that value instead of the interval endpoints, unless oneval=FALSE
 #' @param onlycuts set to TRUE to only return the vector of computed cuts. This consists of the interior values plus outer ranges.
+#' @param formatfun format function
 #' @param ... additional arguments passed to formatfun
 #'
 #' @return vector of cut
