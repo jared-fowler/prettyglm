@@ -207,51 +207,123 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
       return(p_return)
   } else if (base::unique(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot)$Effect) == "ctsmain"){
     # Continuous Variables -----------------------------------------------------
-    # Add Splined Variables???
-    # prep the data
-    plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-percentile_to_cut), na.rm = T),length.out =100),
-                                relativity_value = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot), 'Relativity'))) %>%
-      dplyr::mutate(feature_relativity = var_range*relativity_value)
+    if (plot_approx_ci == T){
+      complete_factor_summary_df <- complete_factor_summary_df %>%
+        dplyr::mutate(Approx_Upper_95CI = (Relativity + 2*relativity(Std.error)),
+                      Approx_Lower_95CI = (Relativity - 2*relativity(Std.error)))  %>%
+        tidyr::pivot_longer(cols = c(Relativity, Approx_Upper_95CI, Approx_Lower_95CI)) %>%
+        dplyr::filter(., Variable == feature_to_plot) %>%
+        dplyr::select(name,value)
 
-    # plot density and relativity
-    fit <- stats::density(dplyr::pull(dplyr::select(training_data, all_of(feature_to_plot))))
-    p_return <- plotly::plot_ly(plot_data,
-                         height = height,
-                         width = width) %>%
-      plotly::add_trace(x = ~var_range,
-                        y = ~feature_relativity,
-                        type="scatter",
-                        mode="lines",
-                        name = relativity_label,
-                        line = list(color = 'black', width = 4),
-                        yaxis = "y2") %>%
-      plotly::add_trace(x = fit$x,
-                        y = fit$y,
-                        type = "scatter",
-                        mode = "lines",
-                        fill = "tozeroy",
-                        yaxis = "y",
-                        name = "Density",
-                        fillcolor = 'rgba(221,221,221,0.5)',
-                        line  = list(color = 'rgba(221,221,221,0.7)')) %>%
-      plotly::layout(yaxis = list(side = 'right',
-                                  title = 'Density',
-                                  zeroline = FALSE),
-                     yaxis2 = list(side = 'left',
-                                   title = relativity_label,
-                                   showgrid = F,
-                                   zeroline = FALSE,
-                                   overlaying = 'y'),
-                     legend = list(orientation = "h",
-                                   y = -0.2,
-                                   x = 0.32,
-                                   title = ''),
-                     xaxis = list(title = feature_to_plot,
-                                  zeroline = FALSE),
-                     title = base::paste(relativity_label, 'for', feature_to_plot),
-                     autosize = T,
-                     margin = list(b = 50, l = 50, r=80))
-    return(p_return)
+      plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-percentile_to_cut), na.rm = T),length.out =100),
+                                  relativity_value = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, name == 'Relativity'), 'value')),
+                                  upper_95_ci = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, name == 'Approx_Upper_95CI'), 'value')),
+                                  lower_95_ci = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, name == 'Approx_Lower_95CI'), 'value'))) %>%
+        dplyr::mutate(feature_relativity = var_range*relativity_value) %>%
+        dplyr::mutate(feature_upper_95_ci = var_range*upper_95_ci) %>%
+        dplyr::mutate(feature_lower_95_ci = var_range*lower_95_ci) %>%
+        dplyr::select(-c(relativity_value, upper_95_ci,lower_95_ci)) #%>%
+      # tidyr::pivot_longer(cols = c(feature_relativity, feature_upper_95_ci, feature_lower_95_ci))
+
+      # plot density and relativity
+      fit <- stats::density(dplyr::pull(dplyr::select(training_data, all_of(feature_to_plot))))
+      p_return <- plotly::plot_ly(plot_data,
+                                  height = height,
+                                  width = width) %>%
+        plotly::add_trace(x = ~var_range,
+                          y = ~feature_relativity,
+                          type="scatter",
+                          mode="lines",
+                          name = relativity_label,
+                          line = list(width = 4, color = 'black'),
+                          yaxis = "y2") %>%
+        plotly::add_trace(x = ~var_range,
+                          y = ~feature_upper_95_ci,
+                          type="scatter",
+                          mode="lines",
+                          name = 'Approx Upper 95 CI',
+                          line = list(width = 4, color = 'grey',  dash = 'dash'),
+                          yaxis = "y2") %>%
+        plotly::add_trace(x = ~var_range,
+                          y = ~feature_lower_95_ci,
+                          type="scatter",
+                          mode="lines",
+                          name = 'Approx Lower 95 CI',
+                          line = list(width = 4, color = 'grey',  dash = 'dash'),
+                          yaxis = "y2") %>%
+        plotly::add_trace(x = fit$x,
+                          y = fit$y,
+                          type = "scatter",
+                          mode = "lines",
+                          fill = "tozeroy",
+                          yaxis = "y",
+                          name = "Density",
+                          fillcolor = 'rgba(221,221,221,0.5)',
+                          line  = list(color = 'rgba(221,221,221,0.7)')) %>%
+        plotly::layout(yaxis = list(side = 'right',
+                                    title = 'Density',
+                                    zeroline = FALSE),
+                       yaxis2 = list(side = 'left',
+                                     title = relativity_label,
+                                     showgrid = F,
+                                     zeroline = FALSE,
+                                     overlaying = 'y'),
+                       legend = list(orientation = "h",
+                                     y = -0.2,
+                                     x = 0.12,
+                                     title = ''),
+                       xaxis = list(title = feature_to_plot,
+                                    zeroline = FALSE),
+                       title = base::paste(relativity_label, 'for', feature_to_plot),
+                       autosize = T,
+                       margin = list(b = 50, l = 50, r=80))
+      return(p_return)
+    } else {
+      # prep the data
+      plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-percentile_to_cut), na.rm = T),length.out =100),
+                                  relativity_value = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot), 'Relativity'))) %>%
+        dplyr::mutate(feature_relativity = var_range*relativity_value)
+
+      # plot density and relativity
+      fit <- stats::density(dplyr::pull(dplyr::select(training_data, all_of(feature_to_plot))))
+      p_return <- plotly::plot_ly(plot_data,
+                                  height = height,
+                                  width = width) %>%
+        plotly::add_trace(x = ~var_range,
+                          y = ~feature_relativity,
+                          type="scatter",
+                          mode="lines",
+                          name = relativity_label,
+                          line = list(color = 'black', width = 4),
+                          yaxis = "y2") %>%
+        plotly::add_trace(x = fit$x,
+                          y = fit$y,
+                          type = "scatter",
+                          mode = "lines",
+                          fill = "tozeroy",
+                          yaxis = "y",
+                          name = "Density",
+                          fillcolor = 'rgba(221,221,221,0.5)',
+                          line  = list(color = 'rgba(221,221,221,0.7)')) %>%
+        plotly::layout(yaxis = list(side = 'right',
+                                    title = 'Density',
+                                    zeroline = FALSE),
+                       yaxis2 = list(side = 'left',
+                                     title = relativity_label,
+                                     showgrid = F,
+                                     zeroline = FALSE,
+                                     overlaying = 'y'),
+                       legend = list(orientation = "h",
+                                     y = -0.2,
+                                     x = 0.32,
+                                     title = ''),
+                       xaxis = list(title = feature_to_plot,
+                                    zeroline = FALSE),
+                       title = base::paste(relativity_label, 'for', feature_to_plot),
+                       autosize = T,
+                       margin = list(b = 50, l = 50, r=80))
+      return(p_return)
+    }
   } else if (base::unique(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot)$Effect) == "factorfactorinteraction"){
     # Factor Factor interactions --------------------------------------------------------------------
     # Filter to the interaction we are plotting
