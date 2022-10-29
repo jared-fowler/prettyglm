@@ -155,32 +155,18 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
       }
     }
 
-    # add confidence interval of 2* the standard error
-    plot_data <- plot_data %>%
-      dplyr::mutate(Approx_Upper_95CI = (Relativity + 2*relativity(Std.error)),
-                    Approx_Lower_95CI = (Relativity - 2*relativity(Std.error)))  %>%
-      tidyr::pivot_longer(cols = c(Relativity, Approx_Upper_95CI, Approx_Lower_95CI))
-
     if (plot_approx_ci == FALSE){
-      plot_data <- plot_data %>% dplyr::filter(name == 'relativity')
-    }
-
-    # Create plot
-    p_return <- plot_data %>%
-        dplyr::mutate(number_of_records = base::ifelse(name == 'Relativity', number_of_records, 0)) %>%
-        plotly::plot_ly(colors = if(plot_approx_ci == TRUE) c('grey', 'grey', 'black') else c('black'),
-                        linetypes = if(plot_approx_ci == TRUE) c('dash', 'dash', 'solid') else c('solid'),
-                        height = height,
+      p_return <- plot_data %>%
+        plotly::plot_ly(height = height,
                         width = width) %>%
-        plotly::add_markers(x = ~Level,
-                            y = ~value,
-                            color = ~name,
-                            type = "scatter",
-                            showlegend = FALSE) %>%
-        plotly::add_lines(x = ~Level,
-                          y = ~value,
-                          linetype = ~name,
-                          color = ~name) %>%
+        plotly::add_trace(x = ~Level,
+                          y = ~Relativity,
+                          type="scatter",
+                          mode="lines+markers",
+                          name = relativity_label,
+                          line = list(width = 4, color = 'black'),
+                          marker = list(color = 'black', size = 8),
+                          yaxis = "y") %>%
         plotly::add_bars(
           x = ~Level,
           y = ~number_of_records,
@@ -205,6 +191,65 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                        autosize = TRUE,
                        margin = list(b = 50, l = 50, r=80))
       return(p_return)
+
+    } else{
+      # add confidence interval of 2* the standard error
+      plot_data <- plot_data %>%
+        dplyr::mutate(Approx_Upper_95CI = (Relativity + 2*relativity(Std.error)),
+                      Approx_Lower_95CI = (Relativity - 2*relativity(Std.error)))  #%>%
+      # Create plot
+      p_return <- plot_data %>%
+        plotly::plot_ly(height = height,
+                        width = width) %>%
+        plotly::add_trace(x = ~Level,
+                          y = ~Relativity,
+                          type="scatter",
+                          mode="lines+markers",
+                          name = relativity_label,
+                          line = list(width = 4, color = 'black'),
+                          marker = list(color = 'black', size = 8),
+                          yaxis = "y") %>%
+        plotly::add_trace(x = ~Level,
+                          y = ~Approx_Upper_95CI,
+                          type="scatter",
+                          mode="lines+markers",
+                          name = 'Approx Upper 95 CI',
+                          line = list(width = 4, color = 'grey',  dash = 'dash'),
+                          marker = list(color = 'grey', size = 8),
+                          yaxis = "y") %>%
+        plotly::add_trace(x = ~Level,
+                          y = ~Approx_Lower_95CI,
+                          type="scatter",
+                          mode="lines+markers",
+                          name = 'Approx Lower 95 CI',
+                          line = list(width = 4, color = 'grey',  dash = 'dash'),
+                          marker = list(color = 'grey', size = 8),
+                          yaxis = "y") %>%
+        plotly::add_bars(
+          x = ~Level,
+          y = ~number_of_records,
+          yaxis = 'y2',
+          marker = list(color = '#dddddd',
+                        line = list(width=0,
+                                    color='black')),
+          showlegend = FALSE
+        ) %>%
+        plotly::layout(title = base::paste(relativity_label, 'for', feature_to_plot),
+                       yaxis2 = list(side = 'right',
+                                     title = 'Number of Records',
+                                     showgrid = FALSE),
+                       yaxis = list(overlaying='y2',
+                                    side = 'left',
+                                    title = relativity_label, #relativity_label
+                                    showgrid = TRUE),
+                       legend = list(orientation = "h",
+                                     xanchor = "center",
+                                     x=0.5,
+                                     y=-0.2),
+                       autosize = TRUE,
+                       margin = list(b = 50, l = 50, r=80))
+      return(p_return)
+    }
   } else if (base::unique(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot)$Effect) == "ctsmain"){
     # Continuous Variables -----------------------------------------------------
     if (plot_approx_ci == T){
