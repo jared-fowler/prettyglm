@@ -54,13 +54,6 @@
 #'
 
 pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', relativity_label = 'Relativity', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = FALSE, iteractionplottype = NULL, facetorcolourby = NULL, percentile_to_cut = 0, spline_seperator = NULL){
-  # fix colouring to add trace markers and lines
-  # interacted cts varas, all combos of interaction variable
-  # all types in interacted variable with splines
-  # Check maths behind just chucking the relativity in there multiplicative for cts variables
-  # change name of approx upper and lower confidence intervals
-  # Check caluclation arounds the splines
-
   # Fix for global variables
   tidy_workflow <- NULL
   Variable <- NULL
@@ -760,82 +753,196 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
     factor_levels <- base::unique(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned)$Level)
 
     if (iteractionplottype == 'facet'){
-      numberoffacets <- base::length(factor_levels)
-      l <- 1
-      plotlist <- list()
-      while (l <= numberoffacets){
-        facettoplot <- factor_levels[l]
+      complete_factor_summary_df <- complete_factor_summary_df %>%
+        dplyr::mutate(Approx_Upper_95CI = (Relativity + 2*relativity(Std.error)),
+                      Approx_Lower_95CI = (Relativity - 2*relativity(Std.error)))
+      if (plot_approx_ci == T){
+        numberoffacets <- base::length(factor_levels)
+        l <- 1
+        plotlist <- list()
+        while (l <= numberoffacets){
+          facettoplot <- factor_levels[l]
 
-        # get the fit for that facet
-        fit <- dplyr::filter(training_data, get(factorvariable) == as.character(facettoplot)) %>%
-          dplyr::select(all_of(ctsvariable)) %>%
-          dplyr::pull() %>%
-          stats::density()
+          # get the fit for that facet
+          fit <- dplyr::filter(training_data, get(factorvariable) == as.character(facettoplot)) %>%
+            dplyr::select(all_of(ctsvariable)) %>%
+            dplyr::pull() %>%
+            stats::density()
 
-        # prep the plot data
-        plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-percentile_to_cut), na.rm = T),length.out =100))
-        plot_data[,'relativity_value'] <- dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[l])), "Relativity"))
-        plot_data <- plot_data %>%
-          dplyr::mutate(feature_relativity = var_range*relativity_value)
+          # prep the plot data
+          plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-percentile_to_cut), na.rm = T),length.out =100),
+                                      relativity_value = dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[l])), "Relativity")),
+                                      upper_95_ci = dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[l])), "Approx_Upper_95CI")),
+                                      lower_95_ci = dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[l])), "Approx_Lower_95CI")))  %>%
+            dplyr::mutate(feature_relativity = var_range*relativity_value) %>%
+            dplyr::mutate(feature_upper_95_ci = var_range*upper_95_ci) %>%
+            dplyr::mutate(feature_lower_95_ci = var_range*lower_95_ci) %>%
+            dplyr::select(-c(relativity_value, upper_95_ci,lower_95_ci))
 
-        # try the plotly plot!!!!!! --------------------------------------------------------------------
-        plotlist[[l]] <- plotly::plot_ly(plot_data,
-                                         height = height,
-                                         width = width,
-                                         showlegend = base::ifelse(l==1,T,F)) %>%
-          plotly::add_trace(x = ~var_range,
-                            y = ~feature_relativity,
-                            type="scatter",
-                            mode="lines",
-                            name = relativity_label,
-                            line = list(color = 'black', width = 4),
-                            yaxis = "y2") %>%
-          plotly::add_trace(x = fit$x,
-                            y = fit$y,
-                            type = "scatter",
-                            mode = "lines",
-                            fill = "tozeroy",
-                            yaxis = "y",
-                            name = "Density",
-                            fillcolor = 'rgba(221,221,221,0.5)',
-                            line  = list(color = 'rgba(221,221,221,0.7)')) %>%
-          plotly::layout(yaxis = list(side = 'right',
-                                      title = 'Density',
-                                      zeroline = FALSE),
-                         yaxis2 = list(side = 'left',
-                                       title = relativity_label,
-                                       showgrid = F,
-                                       zeroline = FALSE,
-                                       overlaying = base::paste0('y', as.character((l-1)*2 + 1))),
+          # try the plotly plot!!!!!! --------------------------------------------------------------------
+          plotlist[[l]] <- plotly::plot_ly(plot_data,
+                                           height = height,
+                                           width = width,
+                                           showlegend = base::ifelse(l==1,T,F)) %>%
+            plotly::add_trace(x = ~var_range,
+                              y = ~feature_relativity,
+                              type="scatter",
+                              mode="lines",
+                              name = relativity_label,
+                              line = list(color = 'black', width = 4),
+                              yaxis = "y2") %>%
+            plotly::add_trace(x = ~var_range,
+                              y = ~feature_upper_95_ci,
+                              type="scatter",
+                              mode="lines",
+                              name = 'Approx Upper 95 CI',
+                              line = list(width = 4, color = 'grey',  dash = 'dash'),
+                              yaxis = "y2") %>%
+            plotly::add_trace(x = ~var_range,
+                              y = ~feature_lower_95_ci,
+                              type="scatter",
+                              mode="lines",
+                              name = 'Approx Lower 95 CI',
+                              line = list(width = 4, color = 'grey',  dash = 'dash'),
+                              yaxis = "y2") %>%
+            plotly::add_trace(x = fit$x,
+                              y = fit$y,
+                              type = "scatter",
+                              mode = "lines",
+                              fill = "tozeroy",
+                              yaxis = "y",
+                              name = "Density",
+                              fillcolor = 'rgba(221,221,221,0.5)',
+                              line  = list(color = 'rgba(221,221,221,0.7)')) %>%
+            plotly::layout(yaxis = list(side = 'right',
+                                        title = 'Density',
+                                        zeroline = FALSE),
+                           yaxis2 = list(side = 'left',
+                                         title = relativity_label,
+                                         showgrid = F,
+                                         zeroline = FALSE,
+                                         overlaying = base::paste0('y', as.character((l-1)*2 + 1))),
+                           legend = list(orientation = "h",
+                                         y = -0.2,
+                                         x = 0.15,
+                                         title = ''),
+                           xaxis = list(title = feature_to_plot,
+                                        zeroline = FALSE),
+                           title = base::paste(relativity_label, 'for', feature_to_plot),
+                           autosize = T,
+                           margin = list(b = 50, l = 50, r=80)) %>%
+            plotly::add_annotations(
+              x= 0.5,
+              y= 1.05,
+              xref = "paper",
+              yref = "paper",
+              text = base::paste0('<b>',facettoplot, '<b>'),#"<b>paper reference = [0.5, 1]</b>",
+              showarrow = F
+            )
+          l <- l + 1
+        }
+        p_return <-
+          plotly::subplot(plotlist,
+                          nrows = numberoffacets,
+                          titleY = T,
+                          titleX = T,
+                          margin = 0.07,
+                          shareY = F,
+                          shareX = T) %>%
+          plotly::layout(title = base::paste(relativity_label, 'for', feature_to_plot, 'interaction', 'faceted by', facetorcolourby),
                          legend = list(orientation = "h",
                                        y = -0.2,
-                                       x = 0.35,
-                                       title = ''),
-                         xaxis = list(title = feature_to_plot,
-                                      zeroline = FALSE),
-                         title = base::paste(relativity_label, 'for', feature_to_plot),
-                         autosize = T,
-                         margin = list(b = 50, l = 50, r=80)) %>%
-          plotly::add_annotations(
-            x= 0.5,
-            y= 1.05,
-            xref = "paper",
-            yref = "paper",
-            text = base::paste0('<b>',facettoplot, '<b>'),#"<b>paper reference = [0.5, 1]</b>",
-            showarrow = F
-          )
-        l <- l + 1
+                                       x = 0.15,
+                                       title = ''))
+        return(p_return)
+      } else{
+        numberoffacets <- base::length(factor_levels)
+        l <- 1
+        plotlist <- list()
+        while (l <= numberoffacets){
+          facettoplot <- factor_levels[l]
+
+          # get the fit for that facet
+          fit <- dplyr::filter(training_data, get(factorvariable) == as.character(facettoplot)) %>%
+            dplyr::select(all_of(ctsvariable)) %>%
+            dplyr::pull() %>%
+            stats::density()
+
+          # prep the plot data
+          plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-percentile_to_cut), na.rm = T),length.out =100),
+                                      relativity_value = dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[l])), "Relativity")),
+                                      upper_95_ci = dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[l])), "Approx_Upper_95CI")),
+                                      lower_95_ci = dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[l])), "Approx_Lower_95CI")))  %>%
+            dplyr::mutate(feature_relativity = var_range*relativity_value) %>%
+            dplyr::mutate(feature_upper_95_ci = var_range*upper_95_ci) %>%
+            dplyr::mutate(feature_lower_95_ci = var_range*lower_95_ci) %>%
+            dplyr::select(-c(relativity_value, upper_95_ci,lower_95_ci))
+
+          # try the plotly plot!!!!!! --------------------------------------------------------------------
+          plotlist[[l]] <- plotly::plot_ly(plot_data,
+                                           height = height,
+                                           width = width,
+                                           showlegend = base::ifelse(l==1,T,F)) %>%
+            plotly::add_trace(x = ~var_range,
+                              y = ~feature_relativity,
+                              type="scatter",
+                              mode="lines",
+                              name = relativity_label,
+                              line = list(color = 'black', width = 4),
+                              yaxis = "y2") %>%
+            plotly::add_trace(x = fit$x,
+                              y = fit$y,
+                              type = "scatter",
+                              mode = "lines",
+                              fill = "tozeroy",
+                              yaxis = "y",
+                              name = "Density",
+                              fillcolor = 'rgba(221,221,221,0.5)',
+                              line  = list(color = 'rgba(221,221,221,0.7)')) %>%
+            plotly::layout(yaxis = list(side = 'right',
+                                        title = 'Density',
+                                        zeroline = FALSE),
+                           yaxis2 = list(side = 'left',
+                                         title = relativity_label,
+                                         showgrid = F,
+                                         zeroline = FALSE,
+                                         overlaying = base::paste0('y', as.character((l-1)*2 + 1))),
+                           legend = list(orientation = "h",
+                                         y = -0.2,
+                                         x = 0.15,
+                                         title = ''),
+                           xaxis = list(title = feature_to_plot,
+                                        zeroline = FALSE),
+                           title = base::paste(relativity_label, 'for', feature_to_plot),
+                           autosize = T,
+                           margin = list(b = 50, l = 50, r=80)) %>%
+            plotly::add_annotations(
+              x= 0.5,
+              y= 1.05,
+              xref = "paper",
+              yref = "paper",
+              text = base::paste0('<b>',facettoplot, '<b>'),#"<b>paper reference = [0.5, 1]</b>",
+              showarrow = F
+            )
+          l <- l + 1
+        }
+        p_return <-
+          plotly::subplot(plotlist,
+                          nrows = numberoffacets,
+                          titleY = T,
+                          titleX = T,
+                          margin = 0.07,
+                          shareY = F,
+                          shareX = T) %>%
+          plotly::layout(title = base::paste(relativity_label, 'for', feature_to_plot, 'interaction', 'faceted by', facetorcolourby),
+                         legend = list(orientation = "h",
+                                       y = -0.2,
+                                       x = 0.15,
+                                       title = ''))
+        return(p_return)
       }
-      p_return <-
-        plotly::subplot(plotlist,
-                        nrows = numberoffacets,
-                        titleY = T,
-                        titleX = T,
-                        margin = 0.07,
-                        shareY = F,
-                        shareX = T) %>%
-        plotly::layout(title = base::paste(relativity_label, 'for', feature_to_plot, 'interaction', 'faceted by', facetorcolourby))
-      return(p_return)
+
+
     } else if (iteractionplottype == 'colour'){
       # prep the data for plotting
       plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-percentile_to_cut), na.rm = T),length.out =100))
