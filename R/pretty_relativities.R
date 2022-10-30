@@ -779,7 +779,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
             dplyr::mutate(feature_lower_95_ci = var_range*lower_95_ci) %>%
             dplyr::select(-c(relativity_value, upper_95_ci,lower_95_ci))
 
-          # try the plotly plot!!!!!! --------------------------------------------------------------------
+          # Do the plot --------------------------------------------------------------------
           plotlist[[l]] <- plotly::plot_ly(plot_data,
                                            height = height,
                                            width = width,
@@ -1126,11 +1126,11 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                                         overlaying = base::paste0('y', as.character((l-1)*2 + 1))),
                           legend = list(orientation = "h",
                                         y = -0.2,
-                                        x = 0.38,
+                                        x = 0.15,
                                         title = ''),
-                          xaxis = list(title = ctsvariable,
+                          xaxis = list(title = feature_to_plot,
                                        zeroline = FALSE),
-                          title = base::paste(relativity_label, 'for', ctsvariable),
+                          title = base::paste(relativity_label, 'for', feature_to_plot),
                           autosize = T,
                           margin = list(b = 50, l = 50, r=80)) %>%
            plotly::add_annotations(
@@ -1143,8 +1143,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
            )
          l <- l + 1
        }
-
-
+       numberoffacets <- l-1
        p_return <-
          plotly::subplot(plotlist,
                          nrows = numberoffacets,
@@ -1153,7 +1152,11 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                          margin = 0.07,
                          shareY = F,
                          shareX = T) %>%
-         plotly::layout(title = base::paste(relativity_label, 'for', feature_to_plot, 'interaction'))
+         plotly::layout(title = base::paste(relativity_label, 'for', feature_to_plot, 'interaction'),
+                        legend = list(orientation = "h",
+                                      y = -0.2,
+                                      x = 0.35,
+                                      title = ''))
        return(p_return)
      } else if (iteractionplottype == 'colour'){
        # Get the data for that interaction will need to change based on facet or colour
