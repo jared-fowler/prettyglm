@@ -1116,9 +1116,128 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                         margin = list(b = 50, l = 50, r=80))
        return(p_return)
      }
-  }
-  # cts
-  #cts cts interaction???? maybe same as continous but we need to fiddle with the density????
+  } else if (base::unique(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot)$Effect) == "ctsctsinteraction"){
+  #cts cts interaction ------------------------------------------------------------------
+  complete_factor_summary_df <- complete_factor_summary_df %>%
+    dplyr::mutate(Approx_Upper_95CI = (Relativity + 2*relativity(Std.error)),
+                  Approx_Lower_95CI = (Relativity - 2*relativity(Std.error)))  %>%
+    tidyr::pivot_longer(cols = c(Relativity, Approx_Upper_95CI, Approx_Lower_95CI)) %>%
+    dplyr::filter(., Variable == feature_to_plot) %>%
+    dplyr::select(name,value)
 
+  variableone <- base::unlist(base::strsplit(feature_to_plot, ':'))[2]
+  variabletwo <- base::unlist(base::strsplit(feature_to_plot, ':'))[1]
+
+  product_data <- training_data %>%
+    dplyr::select(tidyselect::all_of(variableone), tidyselect::all_of(variabletwo)) %>%
+    dplyr::mutate(product = base::get(variableone)*base::get(variabletwo))
+
+  fit <- dplyr::select(product_data, product) %>%
+    dplyr::pull() %>%
+    stats::density()
+
+  plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(product_data, product), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(product_data, product), probs=c(1-percentile_to_cut), na.rm = T),length.out =100),
+                              relativity_value = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, name == 'Relativity'), 'value')),
+                              upper_95_ci = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, name == 'Approx_Upper_95CI'), 'value')),
+                              lower_95_ci = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, name == 'Approx_Lower_95CI'), 'value'))) %>%
+    dplyr::mutate(feature_relativity = var_range*relativity_value) %>%
+    dplyr::mutate(feature_upper_95_ci = var_range*upper_95_ci) %>%
+    dplyr::mutate(feature_lower_95_ci = var_range*lower_95_ci) %>%
+    dplyr::select(-c(relativity_value, upper_95_ci,lower_95_ci))
+
+  if (plot_approx_ci == T){
+    # plot density and relativity
+    p_return <- plotly::plot_ly(plot_data,
+                                height = height,
+                                width = width) %>%
+      plotly::add_trace(x = ~var_range,
+                        y = ~feature_relativity,
+                        type="scatter",
+                        mode="lines",
+                        name = relativity_label,
+                        line = list(width = 4, color = 'black'),
+                        yaxis = "y2") %>%
+      plotly::add_trace(x = ~var_range,
+                        y = ~feature_upper_95_ci,
+                        type="scatter",
+                        mode="lines",
+                        name = 'Approx Upper 95 CI',
+                        line = list(width = 4, color = 'grey',  dash = 'dash'),
+                        yaxis = "y2") %>%
+      plotly::add_trace(x = ~var_range,
+                        y = ~feature_lower_95_ci,
+                        type="scatter",
+                        mode="lines",
+                        name = 'Approx Lower 95 CI',
+                        line = list(width = 4, color = 'grey',  dash = 'dash'),
+                        yaxis = "y2") %>%
+      plotly::add_trace(x = fit$x,
+                        y = fit$y,
+                        type = "scatter",
+                        mode = "lines",
+                        fill = "tozeroy",
+                        yaxis = "y",
+                        name = "Density",
+                        fillcolor = 'rgba(221,221,221,0.5)',
+                        line  = list(color = 'rgba(221,221,221,0.7)')) %>%
+      plotly::layout(yaxis = list(side = 'right',
+                                  title = 'Density',
+                                  zeroline = FALSE),
+                     yaxis2 = list(side = 'left',
+                                   title = relativity_label,
+                                   showgrid = F,
+                                   zeroline = FALSE,
+                                   overlaying = 'y'),
+                     legend = list(orientation = "h",
+                                   y = -0.2,
+                                   x = 0.12,
+                                   title = ''),
+                     xaxis = list(title = feature_to_plot,
+                                  zeroline = FALSE),
+                     title = base::paste(relativity_label, 'for', feature_to_plot),
+                     autosize = T,
+                     margin = list(b = 50, l = 50, r=80))
+    return(p_return)
+  } else{
+    # plot density and relativity
+    p_return <- plotly::plot_ly(plot_data,
+                                height = height,
+                                width = width) %>%
+      plotly::add_trace(x = ~var_range,
+                        y = ~feature_relativity,
+                        type="scatter",
+                        mode="lines",
+                        name = relativity_label,
+                        line = list(width = 4, color = 'black'),
+                        yaxis = "y2") %>%
+      plotly::add_trace(x = fit$x,
+                        y = fit$y,
+                        type = "scatter",
+                        mode = "lines",
+                        fill = "tozeroy",
+                        yaxis = "y",
+                        name = "Density",
+                        fillcolor = 'rgba(221,221,221,0.5)',
+                        line  = list(color = 'rgba(221,221,221,0.7)')) %>%
+      plotly::layout(yaxis = list(side = 'right',
+                                  title = 'Density',
+                                  zeroline = FALSE),
+                     yaxis2 = list(side = 'left',
+                                   title = relativity_label,
+                                   showgrid = F,
+                                   zeroline = FALSE,
+                                   overlaying = 'y'),
+                     legend = list(orientation = "h",
+                                   y = -0.2,
+                                   x = 0.12,
+                                   title = ''),
+                     xaxis = list(title = feature_to_plot,
+                                  zeroline = FALSE),
+                     title = base::paste(relativity_label, 'for', feature_to_plot),
+                     autosize = T,
+                     margin = list(b = 50, l = 50, r=80))
+    return(p_return)
+  }
+  }
 }
 
