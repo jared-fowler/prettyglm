@@ -956,7 +956,12 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                             values_to = "feature_relativity")
 
       # plot density and relativity
-      fit <- stats::density(dplyr::pull(dplyr::select(training_data, all_of(ctsvariable))))
+      data_to_density <- training_data %>%
+        dplyr::select(., all_of(ctsvariable)) %>%
+        dplyr::filter(base::get(ctsvariable) <= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(percentile_to_cut), na.rm = T))) %>%
+        dplyr::pull()
+
+      fit <- stats::density(data_to_density)
       p_return <- plotly::plot_ly(plot_data,
                                   height = height,
                                   width = width) %>%
