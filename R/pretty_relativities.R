@@ -14,8 +14,9 @@
 #' @param return_data Set to TRUE to return data set instead of plot
 #' @param iteractionplottype If plotting the relativity for an interaction variable you can "facet" or "colour" by one of the interaction variables. Defaults to null.
 #' @param facetorcolourby If iteractionplottype is not Null, then this is the variable in the interaction you want to colour or facet by.
-#' @param percentile_to_cut For continuous variables what percentile to cut off each end of the distribution. Defaults to 0.01. Cutting off some of the distribution can help the views if outliers are present in the training data.
-#' @param spline_seperator sting of the spline seperator. For example AGE_0_25 would be "_"
+#' @param upper_percentile_to_cut For continuous variables this is what percentile to exclude from the upper end of the distribution. Defaults to 0.01, so the maximum percentile of the variable in the plot will be 0.99. Cutting off some of the distribution can help the views if outlier's are present in the  data.
+#' @param lower_percentile_to_cut For continuous variables this is what percentile to exclude from the lower end of the distribution. Defaults to 0.01, so the mimimum percentile of the variable in the plot will be 0.01. Cutting off some of the distribution can help the views if outlier's are present in the  data.
+#' @param spline_seperator string of the spline separator. For example AGE_0_25 would be "_".
 #'
 #' @return plotly plot of fitted relativities. \link[base]{data.frame} if return_data = TRUE.
 #'
@@ -53,7 +54,7 @@
 #' @import plotly
 #'
 
-pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', relativity_label = 'Relativity', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = FALSE, iteractionplottype = NULL, facetorcolourby = NULL, percentile_to_cut = 0, spline_seperator = NULL){
+pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', relativity_label = 'Relativity', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = FALSE, iteractionplottype = NULL, facetorcolourby = NULL, upper_percentile_to_cut = 0, lower_percentile_to_cut = 0, spline_seperator = NULL){
   # Fix for global variables
   tidy_workflow <- NULL
   Variable <- NULL
@@ -253,18 +254,23 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
         dplyr::filter(., Variable == feature_to_plot) %>%
         dplyr::select(name,value)
 
-      plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-percentile_to_cut), na.rm = T),length.out =100),
+      plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =100),
                                   relativity_value = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, name == 'Relativity'), 'value')),
                                   upper_95_ci = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, name == 'Approx_Upper_95CI'), 'value')),
                                   lower_95_ci = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, name == 'Approx_Lower_95CI'), 'value'))) %>%
         dplyr::mutate(feature_relativity = var_range*relativity_value) %>%
         dplyr::mutate(feature_upper_95_ci = var_range*upper_95_ci) %>%
         dplyr::mutate(feature_lower_95_ci = var_range*lower_95_ci) %>%
-        dplyr::select(-c(relativity_value, upper_95_ci,lower_95_ci)) #%>%
-      # tidyr::pivot_longer(cols = c(feature_relativity, feature_upper_95_ci, feature_lower_95_ci))
+        dplyr::select(-c(relativity_value, upper_95_ci,lower_95_ci))
 
       # plot density and relativity
-      fit <- stats::density(dplyr::pull(dplyr::select(training_data, all_of(feature_to_plot))))
+      fit <- training_data %>%
+        dplyr::select(., all_of(ctsvariable)) %>%
+        dplyr::filter(base::get(ctsvariable) <= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-upper_percentile_to_cut), na.rm = T))) %>%
+        dplyr::filter(base::get(ctsvariable) >= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(lower_percentile_to_cut), na.rm = T))) %>%
+        dplyr::pull() %>%
+        stats::density()
+
       p_return <- plotly::plot_ly(plot_data,
                                   height = height,
                                   width = width) %>%
@@ -318,12 +324,18 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
       return(p_return)
     } else {
       # prep the data
-      plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-percentile_to_cut), na.rm = T),length.out =100),
+      plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =100),
                                   relativity_value = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot), 'Relativity'))) %>%
         dplyr::mutate(feature_relativity = var_range*relativity_value)
 
       # plot density and relativity
-      fit <- stats::density(dplyr::pull(dplyr::select(training_data, all_of(feature_to_plot))))
+      fit <- training_data %>%
+        dplyr::select(., all_of(feature_to_plot)) %>%
+        dplyr::filter(base::get(feature_to_plot) <= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-upper_percentile_to_cut), na.rm = T))) %>%
+        dplyr::filter(base::get(feature_to_plot) >= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(lower_percentile_to_cut), na.rm = T))) %>%
+        dplyr::pull() %>%
+        stats::density()
+
       p_return <- plotly::plot_ly(plot_data,
                                   height = height,
                                   width = width) %>%
@@ -764,13 +776,15 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
           facettoplot <- factor_levels[l]
 
           # get the fit for that facet
-          fit <- dplyr::filter(training_data, get(factorvariable) == as.character(facettoplot)) %>%
-            dplyr::select(all_of(ctsvariable)) %>%
+          fit <- dplyr::filter(training_data, get(factorvariable) == as.character(facettoplot))  %>%
+            dplyr::select(., all_of(ctsvariable)) %>%
+            dplyr::filter(base::get(ctsvariable) <= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-upper_percentile_to_cut), na.rm = T))) %>%
+            dplyr::filter(base::get(ctsvariable) >= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(lower_percentile_to_cut), na.rm = T))) %>%
             dplyr::pull() %>%
             stats::density()
 
           # prep the plot data
-          plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-percentile_to_cut), na.rm = T),length.out =100),
+          plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =100),
                                       relativity_value = dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[l])), "Relativity")),
                                       upper_95_ci = dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[l])), "Approx_Upper_95CI")),
                                       lower_95_ci = dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[l])), "Approx_Lower_95CI")))  %>%
@@ -864,12 +878,14 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
 
           # get the fit for that facet
           fit <- dplyr::filter(training_data, get(factorvariable) == as.character(facettoplot)) %>%
-            dplyr::select(all_of(ctsvariable)) %>%
+            dplyr::select(., tidyselect:::all_of(ctsvariable)) %>%
+            dplyr::filter(base::get(ctsvariable) <= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-upper_percentile_to_cut), na.rm = T))) %>%
+            dplyr::filter(base::get(ctsvariable) >= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(lower_percentile_to_cut), na.rm = T))) %>%
             dplyr::pull() %>%
             stats::density()
 
           # prep the plot data
-          plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-percentile_to_cut), na.rm = T),length.out =100),
+          plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =100),
                                       relativity_value = dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[l])), "Relativity")),
                                       upper_95_ci = dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[l])), "Approx_Upper_95CI")),
                                       lower_95_ci = dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[l])), "Approx_Lower_95CI")))  %>%
@@ -945,7 +961,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
 
     } else if (iteractionplottype == 'colour'){
       # prep the data for plotting
-      plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-percentile_to_cut), na.rm = T),length.out =100))
+      plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =100))
       for (k in 1:length(factor_levels)){
         plot_data[,as.character(factor_levels[k])] <- dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[k])), "Relativity"))
         plot_data[,base::paste0(as.character(factor_levels[k])," ", relativity_label)] <- plot_data$var_range * plot_data[,as.character(factor_levels[k])]
@@ -956,12 +972,13 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                             values_to = "feature_relativity")
 
       # plot density and relativity
-      data_to_density <- training_data %>%
+      fit <- training_data %>%
         dplyr::select(., all_of(ctsvariable)) %>%
-        dplyr::filter(base::get(ctsvariable) <= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(percentile_to_cut), na.rm = T))) %>%
-        dplyr::pull()
+        dplyr::filter(base::get(ctsvariable) <= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-upper_percentile_to_cut), na.rm = T))) %>%
+        dplyr::filter(base::get(ctsvariable) >= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(lower_percentile_to_cut), na.rm = T))) %>%
+        dplyr::pull() %>%
+        stats::density()
 
-      fit <- stats::density(data_to_density)
       p_return <- plotly::plot_ly(plot_data,
                                   height = height,
                                   width = width) %>%
@@ -1008,7 +1025,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
       dplyr::mutate(SP_Max = stringr::word(Level,3,sep = spline_seperator)) %>%
       dplyr::mutate(SP_Max = stringr::word(Level,3,sep = spline_seperator))
 
-    plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-percentile_to_cut), na.rm = T),length.out =1000))
+    plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =1000))
     for (i in 1:nrow(spine_estimates)){
       New_col <- base::unlist(base::lapply(X = dplyr::pull(dplyr::select(plot_data, tidyselect::all_of('var_range'))), FUN = function(a) prettyglm::splineit(a, as.numeric(spine_estimates$SP_Min[i]), as.numeric(spine_estimates$SP_Max[i]))))
       New_col <- New_col*relativity((spine_estimates$Estimate[i]))
@@ -1021,7 +1038,13 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
 
 
     # plot density and relativity
-    fit <- stats::density(dplyr::pull(dplyr::select(training_data, all_of(feature_to_plot))))
+    fit <- training_data %>%
+      dplyr::select(., all_of(feature_to_plot)) %>%
+      dplyr::filter(base::get(feature_to_plot) <= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-upper_percentile_to_cut), na.rm = T))) %>%
+      dplyr::filter(base::get(feature_to_plot) >= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(lower_percentile_to_cut), na.rm = T))) %>%
+      dplyr::pull() %>%
+      stats::density()
+
     p_return <- plotly::plot_ly(plot_data,
                                 height = height,
                                 width = width) %>%
@@ -1079,11 +1102,18 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
          # Get the data for that interaction will need to change based on facet or colour
          for (g in 1:2) {
            if (base::class(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':')))) == 'numeric') {
-             plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(1-percentile_to_cut), na.rm = T),length.out =100))
+             plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =100))
              # get whatever is not g and then filter to that interaction
              ctsvariable <- stringr::word(feature_to_plot,g,sep = ':')
              otherg <- base::ifelse(g == 2,1,2)
-             fit <- stats::density(dplyr::pull(dplyr::select(dplyr::filter(training_data, base::get(stringr::word(feature_to_plot,otherg,sep = ':')) == interactionk), all_of(stringr::word(feature_to_plot,g,sep = ':')))))
+
+             fit <- training_data %>%
+               dplyr::filter(., base::get(stringr::word(feature_to_plot,otherg,sep = ':')) == interactionk) %>%
+               dplyr::select(., all_of(stringr::word(feature_to_plot,g,sep = ':'))) %>%
+               dplyr::filter(base::get(stringr::word(feature_to_plot,g,sep = ':')) <= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(stringr::word(feature_to_plot,g,sep = ':'))), probs=c(1-upper_percentile_to_cut), na.rm = T))) %>%
+               dplyr::filter(base::get(stringr::word(feature_to_plot,g,sep = ':')) >= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(stringr::word(feature_to_plot,g,sep = ':'))), probs=c(lower_percentile_to_cut), na.rm = T))) %>%
+               dplyr::pull() %>%
+               stats::density()
            }
          }
 
@@ -1167,11 +1197,17 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
        # Get the data for that interaction will need to change based on facet or colour
        for (g in 1:2) {
          if (base::class(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':')))) == 'numeric') {
-           plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(1-percentile_to_cut), na.rm = T),length.out =100))
+           plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =100))
            # get whatever is not g and then filter to that interaction
            ctsvariable <- stringr::word(feature_to_plot,g,sep = ':')
            otherg <- base::ifelse(g == 2,1,2)
-           fit <- stats::density(dplyr::pull(dplyr::select(training_data, all_of(stringr::word(feature_to_plot,g,sep = ':')))))
+
+           fit <- training_data %>%
+             dplyr::select(., all_of(stringr::word(feature_to_plot,g,sep = ':'))) %>%
+             dplyr::filter(base::get(stringr::word(feature_to_plot,g,sep = ':')) <= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(stringr::word(feature_to_plot,g,sep = ':'))), probs=c(1-upper_percentile_to_cut), na.rm = T))) %>%
+             dplyr::filter(base::get(stringr::word(feature_to_plot,g,sep = ':')) >= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(stringr::word(feature_to_plot,g,sep = ':'))), probs=c(lower_percentile_to_cut), na.rm = T))) %>%
+             dplyr::pull() %>%
+             stats::density()
          }
        }
 
@@ -1248,10 +1284,13 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
     dplyr::mutate(product = base::get(variableone)*base::get(variabletwo))
 
   fit <- dplyr::select(product_data, product) %>%
+    dplyr::select(., c('product')) %>%
+    dplyr::filter(product <= as.numeric(stats::quantile(dplyr::select(product_data, tidyselect::all_of('product')), probs=c(1-upper_percentile_to_cut), na.rm = T))) %>%
+    dplyr::filter(product >= as.numeric(stats::quantile(dplyr::select(product_data, tidyselect::all_of('product')), probs=c(lower_percentile_to_cut), na.rm = T))) %>%
     dplyr::pull() %>%
     stats::density()
 
-  plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(product_data, product), probs=c(percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(product_data, product), probs=c(1-percentile_to_cut), na.rm = T),length.out =100),
+  plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(product_data, product), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(product_data, product), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =100),
                               relativity_value = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, name == 'Relativity'), 'value')),
                               upper_95_ci = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, name == 'Approx_Upper_95CI'), 'value')),
                               lower_95_ci = dplyr::pull(dplyr::select(dplyr::filter(complete_factor_summary_df, name == 'Approx_Lower_95CI'), 'value'))) %>%
