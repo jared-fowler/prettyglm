@@ -14,8 +14,10 @@
 #' @param number_of_buckets Number of buckets for continuous variable plots
 #' @param first_colour First colour to plot, usually the colour of actual.
 #' @param second_colour Second colour to plot, usually the colour of predicted.
-#' @param variable_to_facet_by Variable to facet the actual vs expect plots by.
+#' @param facetby Variable to facet the actual vs expect plots by.
 #' @param predict_function to use. Still in development.
+#' @param upper_percentile_to_cut For continuous variables this is what percentile to exclude from the upper end of the distribution. Defaults to 0.01, so the maximum percentile of the variable in the plot will be 0.99. Cutting off some of the distribution can help the views if outlier's are present in the data.
+#' @param lower_percentile_to_cut For continuous variables this is what percentile to exclude from the lower end of the distribution. Defaults to 0.01, so the mimimum percentile of the variable in the plot will be 0.01. Cutting off some of the distribution can help the views if outlier's are present in the data.
 #'
 #' @return plotly plot of one way actual vs expected.
 #'
@@ -54,8 +56,7 @@
 #' @import plotly
 #'
 
-one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set, plot_type = 'predictions', plot_factor_as_numeric = FALSE, ordering = NULL, width = 800, height = 500, number_of_buckets = NULL, first_colour = 'black', second_colour = '#cc4678', variable_to_facet_by = NULL, predict_function = NULL){
-  # add package of density function stats????
+one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set, plot_type = 'predictions', plot_factor_as_numeric = FALSE, ordering = NULL, width = 800, height = 500, number_of_buckets = NULL, first_colour = 'black', second_colour = '#cc4678', facetby = NULL, predict_function = NULL, upper_percentile_to_cut = 0, lower_percentile_to_cut = 0){
   # add ability for user to be able to use custom predict function or input a dataset of predictions and actuals
   # make sure to document
   # better value / target label / maybe user can choose????????
@@ -96,17 +97,17 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
     # categorical logic
     if (base::length(base::which(base::is.na(Plot_data$Predicted_Values))) > 0) Plot_data <- Plot_data[-base::which(base::is.na(Plot_data$Predicted_Values)),]
 
-    if (is.null(variable_to_facet_by)==F){
+    if (is.null(facetby)==F){
       # faceted code ---------------------------------------------------------------------------
-      numberoffacets <- base::length(base::unique(dplyr::pull(dplyr::select(Plot_data, dplyr::all_of(variable_to_facet_by)))))
+      numberoffacets <- base::length(base::unique(dplyr::pull(dplyr::select(Plot_data, dplyr::all_of(facetby)))))
       l <- 1
       plotlist <- list()
       while (l <= numberoffacets){
-        facettoplot <- base::unique(dplyr::pull(dplyr::select(Plot_data, dplyr::all_of(variable_to_facet_by))))[l]
+        facettoplot <- base::unique(dplyr::pull(dplyr::select(Plot_data, dplyr::all_of(facetby))))[l]
 
         # prep the data--------------------------------------------------------------
         Plot_data_inside <- Plot_data %>%
-          dplyr::filter(get(variable_to_facet_by) == facettoplot) %>%
+          dplyr::filter(get(facetby) == facettoplot) %>%
           dplyr::mutate(Actual_Values = (as.numeric(Actual_Values))) %>%
           dplyr::rename(Actual = Actual_Values) %>%
           dplyr::rename(Predicted = Predicted_Values) %>%
@@ -288,19 +289,23 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
     if(base::is.null(number_of_buckets) == T){
       number_of_buckets <- 30
     }
-    # prep the data
+    # prep the data and cut the data
+    Plot_data <- Plot_data%>%
+      dplyr::filter(base::get(feature_to_plot) <= as.numeric(stats::quantile(dplyr::select(Plot_data, tidyselect::all_of(feature_to_plot)), probs=c(1-upper_percentile_to_cut), na.rm = T))) %>%
+      dplyr::filter(base::get(feature_to_plot) >= as.numeric(stats::quantile(dplyr::select(Plot_data, tidyselect::all_of(feature_to_plot)), probs=c(lower_percentile_to_cut), na.rm = T)))
+
     Plot_data[,base::paste0(feature_to_plot,'_cat')] = prettyglm::cut3(x = dplyr::pull(dplyr::select(Plot_data, tidyselect::all_of(feature_to_plot))), g = number_of_buckets)
-    if (is.null(variable_to_facet_by)==F){
+    if (is.null(facetby)==F){
       # faceted code ---------------------------------------------------------------------------
-      numberoffacets <- base::length(base::unique(dplyr::pull(dplyr::select(Plot_data, dplyr::all_of(variable_to_facet_by)))))
+      numberoffacets <- base::length(base::unique(dplyr::pull(dplyr::select(Plot_data, dplyr::all_of(facetby)))))
       l <- 1
       plotlist <- list()
       while (l <= numberoffacets){
-        facettoplot <- base::unique(dplyr::pull(dplyr::select(Plot_data, dplyr::all_of(variable_to_facet_by))))[l]
+        facettoplot <- base::unique(dplyr::pull(dplyr::select(Plot_data, dplyr::all_of(facetby))))[l]
 
         # prep the data
         Plot_data_inside <- Plot_data %>%
-          dplyr::filter(get(variable_to_facet_by) == facettoplot) %>%
+          dplyr::filter(get(facetby) == facettoplot) %>%
           dplyr::mutate(Actual_Values = (as.numeric(Actual_Values))) %>%
           dplyr::rename(Actual = Actual_Values) %>%
           dplyr::rename(Predicted = Predicted_Values) %>%
@@ -332,8 +337,15 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
 
         # try the plotly plot!!!!!! --------------------------------------------------------------------
         density_data <- dplyr::bind_cols(list(data_set, predicted_dataset)) %>%
-          dplyr::filter(get(variable_to_facet_by) == facettoplot)
-        fit <- density(dplyr::pull(dplyr::select(density_data, all_of(feature_to_plot))))
+          dplyr::filter(get(facetby) == facettoplot)
+
+        fit <- density_data %>%
+          dplyr::filter(base::get(feature_to_plot) <= as.numeric(stats::quantile(dplyr::select(density_data, tidyselect::all_of(feature_to_plot)), probs=c(1-upper_percentile_to_cut), na.rm = T))) %>%
+          dplyr::filter(base::get(feature_to_plot) >= as.numeric(stats::quantile(dplyr::select(density_data, tidyselect::all_of(feature_to_plot)), probs=c(lower_percentile_to_cut), na.rm = T))) %>%
+          dplyr::select(tidyselect::all_of(feature_to_plot)) %>%
+          dplyr::pull() %>%
+          stats::density(.,na.rm = T)
+
         plotlist[[l]] <- Plot_data_to_plot %>%
           plotly::plot_ly(colors = c(first_colour, second_colour),
                           height = height,
@@ -420,7 +432,13 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
       Plot_data_to_plot <- Plot_data_to_plot %>% dplyr::mutate_at(dplyr::vars(tidyselect::all_of(base::paste0(feature_to_plot,'_cat'))), ~ as.numeric(as.character(dplyr::pull(dplyr::select(Plot_data_to_plot, tidyselect::all_of(base::paste0(feature_to_plot,'_cat')))))))
 
       # plot the data
-      fit <- stats::density(dplyr::pull(dplyr::select(dplyr::bind_cols(list(data_set, predicted_dataset)), all_of(feature_to_plot))))
+      density_data <- dplyr::select(dplyr::bind_cols(list(data_set, predicted_dataset)), all_of(feature_to_plot))
+      fit <- density_data %>%
+        dplyr::filter(base::get(feature_to_plot) <= as.numeric(stats::quantile(dplyr::select(density_data, tidyselect::all_of(feature_to_plot)), probs=c(1-upper_percentile_to_cut), na.rm = T))) %>%
+        dplyr::filter(base::get(feature_to_plot) >= as.numeric(stats::quantile(dplyr::select(density_data, tidyselect::all_of(feature_to_plot)), probs=c(lower_percentile_to_cut), na.rm = T))) %>%
+        dplyr::pull() %>%
+        stats::density()
+
       p_return <- Plot_data_to_plot %>%
         plotly::plot_ly(colors = c(first_colour, second_colour),
                         height = height,

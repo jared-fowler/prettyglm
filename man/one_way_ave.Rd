@@ -17,8 +17,10 @@ one_way_ave(
   number_of_buckets = NULL,
   first_colour = "black",
   second_colour = "#cc4678",
-  variable_to_facet_by = NULL,
-  predict_function = NULL
+  facetby = NULL,
+  predict_function = NULL,
+  upper_percentile_to_cut = 0,
+  lower_percentile_to_cut = 0
 )
 }
 \arguments{
@@ -46,9 +48,13 @@ one_way_ave(
 
 \item{second_colour}{Second colour to plot, usually the colour of predicted.}
 
-\item{variable_to_facet_by}{Variable to facet the actual vs expect plots by.}
+\item{facetby}{Variable to facet the actual vs expect plots by.}
 
 \item{predict_function}{to use. Still in development.}
+
+\item{upper_percentile_to_cut}{For continuous variables this is what percentile to exclude from the upper end of the distribution. Defaults to 0.01, so the maximum percentile of the variable in the plot will be 0.99. Cutting off some of the distribution can help the views if outlier's are present in the data.}
+
+\item{lower_percentile_to_cut}{For continuous variables this is what percentile to exclude from the lower end of the distribution. Defaults to 0.01, so the mimimum percentile of the variable in the plot will be 0.01. Cutting off some of the distribution can help the views if outlier's are present in the data.}
 }
 \value{
 plotly plot of one way actual vs expected.
