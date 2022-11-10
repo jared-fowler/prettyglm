@@ -12,7 +12,8 @@ pretty_coefficients(
   conf.int = FALSE,
   return_data = FALSE,
   vimethod = "model",
-  spline_seperator = NULL
+  spline_seperator = NULL,
+  ...
 )
 }
 \arguments{

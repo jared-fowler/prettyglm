@@ -8,7 +8,8 @@ clean_coefficients(
   d = NULL,
   m = NULL,
   vimethod = "model",
-  spline_seperator = NULL
+  spline_seperator = NULL,
+  ...
 )
 }
 \arguments{

@@ -33,13 +33,7 @@
 
 
 actual_expected_bucketed <- function(target_variable, model_object, data_set = NULL, number_of_buckets = 25, width = 800, height = 500, return_data=F, first_colour = 'black', second_colour = '#cc4678', predict_function = NULL, facetby = NULL){
-  # add ability to facet???
-  # add ability for user to be able to use custom predict function or input a dataset of predictions and actuals
-  # Fix global variable issues and tidy all formatting
-  # add splines
-
   # make predictions on data set --------------------------------------------------------------
-
   # if provided data set is null then use the training data from model object
   if (is.null(data_set)==T){
     # Extract training data from model object
@@ -61,9 +55,11 @@ actual_expected_bucketed <- function(target_variable, model_object, data_set = N
                                                     model_object = model_object,
                                                     dataset = data_set)
   } else{
-    base::simpleError('Functionality for custom predict function not avaliable yet')
+    #base::simpleError('Functionality for custom predict function not avaliable yet')
+    predicted_dataset <- predict_function(target = target_variable,
+                                          model_object = model_object,
+                                          dataset = data_set)
   }
-
 
   if (is.null(facetby) == T){
     # tidy data for rank plot --------------------------------------------------------------------

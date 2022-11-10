@@ -59,14 +59,15 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
   # document
   # also aggregate for returning data?/?
 
-  # if model object is a workflow, pull the model fit
   if (any(class(model_object) == 'workflow') == TRUE){
+    # if model object is a workflow, pull the model fit
     model_object <- model_object$fit$fit$fit
-  }
-
-  # if model object is a parsnip model, pull the model fit
-  if (any(class(model_object) == 'model_fit') == TRUE){
+  } else if (any(class(model_object) == 'model_fit') == TRUE){
+    # if model object is a parsnip model, pull the model fit
     model_object <- model_object$fit
+  } else{
+    # stats lm or glm fit
+    model_object$call$formula <- model_object$formula
   }
 
   # tidy coefficients

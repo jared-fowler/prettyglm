@@ -24,7 +24,6 @@
 
 clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model', spline_seperator = NULL, ...){
   # add Mat Ls formula fix
-  # remove tidycat dependecy???
   # check all github notes and modify checks
 
   # Extract model object if parsnip object

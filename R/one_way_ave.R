@@ -15,7 +15,7 @@
 #' @param first_colour First colour to plot, usually the colour of actual.
 #' @param second_colour Second colour to plot, usually the colour of predicted.
 #' @param facetby Variable to facet the actual vs expect plots by.
-#' @param predict_function to use. Still in development.
+#' @param predict_function A custom prediction function can be provided here.It must return a \link[base]{data.frame} with an "Actual_Values" column, and a "Predicted_Values" column.
 #' @param upper_percentile_to_cut For continuous variables this is what percentile to exclude from the upper end of the distribution. Defaults to 0.01, so the maximum percentile of the variable in the plot will be 0.99. Cutting off some of the distribution can help the views if outlier's are present in the data.
 #' @param lower_percentile_to_cut For continuous variables this is what percentile to exclude from the lower end of the distribution. Defaults to 0.01, so the mimimum percentile of the variable in the plot will be 0.01. Cutting off some of the distribution can help the views if outlier's are present in the data.
 #'
@@ -57,10 +57,8 @@
 #'
 
 one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set, plot_type = 'predictions', plot_factor_as_numeric = FALSE, ordering = NULL, width = 800, height = 500, number_of_buckets = NULL, first_colour = 'black', second_colour = '#cc4678', facetby = NULL, predict_function = NULL, upper_percentile_to_cut = 0, lower_percentile_to_cut = 0){
-  # add ability for user to be able to use custom predict function or input a dataset of predictions and actuals
   # make sure to document
   # better value / target label / maybe user can choose????????
-  # clean non - faceted code to also be in base plotly.... maybe work as a goal to remove dependancy on ggplot2 and make pacakges entirely plotly supported
   # Make sure plots can handle residuals as a plot_type input
 
   # Clean all code, update exmaples to include some interactions
@@ -87,7 +85,10 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
                                                     model_object = model_object,
                                                     dataset = data_set)
   } else{
-    base::simpleError('Functionality for custom predict function not avaliable yet')
+    #base::simpleError('Functionality for custom predict function not avaliable yet')
+    predicted_dataset <- predict_function(target = target_variable,
+                                          model_object = model_object,
+                                          dataset = data_set)
   }
 
   # tidy data for plotting different if factor or continuous -----------------------------------
