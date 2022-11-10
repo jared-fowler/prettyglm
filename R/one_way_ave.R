@@ -64,7 +64,6 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
   # Make sure plots can handle residuals as a plot_type input
 
   # Clean all code, update exmaples to include some interactions
-  # add our own cut2 function to avoid Hmisc import
 
   # Extract the actual and expected values -------------------------------------------
   # if provided dataset is null then use the training data from model object

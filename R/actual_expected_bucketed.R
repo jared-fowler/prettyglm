@@ -70,9 +70,9 @@ actual_expected_bucketed <- function(target_variable, model_object, data_set = N
     # Create tidy data to plot
     Plot_data <- dplyr::bind_cols(list(data_set, predicted_dataset)) %>%
       dplyr::mutate(Actual_Values = (as.numeric(Actual_Values))) # check if this needs to be made more generic
-    Plot_data$Rank <- Plot_data %>%  dplyr::select(Predicted_Values) %>% dplyr::pull() %>% dplyr::ntile(25)
+    Plot_data$Rank <- Plot_data %>%  dplyr::select(Predicted_Values) %>% dplyr::pull() %>% dplyr::ntile(number_of_buckets)
     Plot_data <- Plot_data %>%
-      dplyr::mutate(Rank = Rank/25) %>%
+      dplyr::mutate(Rank = Rank/number_of_buckets) %>%
       dplyr::rename(Actual = Actual_Values) %>%
       dplyr::rename(Predicted = Predicted_Values) %>%
       tidyr::pivot_longer(c(Actual, Predicted), names_to = 'Data_Type', values_to = 'value') %>%
@@ -118,9 +118,9 @@ actual_expected_bucketed <- function(target_variable, model_object, data_set = N
       Plot_data <- dplyr::bind_cols(list(data_set, predicted_dataset)) %>%
         dplyr::filter(get(facetby) == facettoplot) %>%
         dplyr::mutate(Actual_Values = (as.numeric(Actual_Values))) # check if this needs to be made more generic
-      Plot_data$Rank <- Plot_data %>%  dplyr::select(Predicted_Values) %>% dplyr::pull() %>% dplyr::ntile(25)
+      Plot_data$Rank <- Plot_data %>%  dplyr::select(Predicted_Values) %>% dplyr::pull() %>% dplyr::ntile(number_of_buckets)
       Plot_data <- Plot_data %>%
-        dplyr::mutate(Rank = Rank/25) %>%
+        dplyr::mutate(Rank = Rank/number_of_buckets) %>%
         dplyr::rename(Actual = Actual_Values) %>%
         dplyr::rename(Predicted = Predicted_Values) %>%
         tidyr::pivot_longer(c(Actual, Predicted), names_to = 'Data_Type', values_to = 'value') %>%

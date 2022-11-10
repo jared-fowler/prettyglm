@@ -22,7 +22,7 @@
 #' @importFrom tidycat "factor_regex"
 #' @import dplyr
 
-clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model', spline_seperator = NULL){
+clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model', spline_seperator = NULL, ...){
   # add Mat Ls formula fix
   # remove tidycat dependecy???
   # check all github notes and modify checks
@@ -118,10 +118,34 @@ clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model', spline_s
   }
 
   # Calculate variable importance and add to summary
-  v <- vip::vi(m, method = vimethod)
-  x <- dplyr::left_join(x, v, by = c('term' = 'Variable')) %>%
-    dplyr::mutate(Importance = base::ifelse(is.na(Importance), 0 , Importance),
-                  Sign = base::ifelse(is.na(Sign), 'NEU' , Sign))
+  if (vimethod == 'model'){
+    v <- vip::vi(m, method = vimethod)
+    x <- dplyr::left_join(x, v, by = c('term' = 'Variable')) %>%
+      dplyr::mutate(Importance = base::ifelse(is.na(Importance), 0 , Importance),
+                    Sign = base::ifelse(is.na(Sign), 'NEU' , Sign))
+  } else if (vimethod %in% c('permute', 'firm')){
+    vp <- vip::vi(object = survival_model, method = vimethod, ...)
+    vp <-  vp %>%
+      dplyr::filter(Importance != 0) %>%
+      dplyr::mutate(Importance = base::abs(Importance))
+    # Make a copy for interaction importance, in these case for interactions the importance will be addative
+    vp <- vp %>%
+      dplyr::mutate(dummyjoin  = 'a')
+    ivp <-vp %>%
+      dplyr::left_join(vp, by = 'dummyjoin') %>%
+      dplyr::mutate(Interacted_Variable = base::paste0(Variable.x,':',Variable.y)) %>%
+      dplyr::mutate(Interacted_Importance = Importance.x + Importance.y) %>%
+      dplyr::select(c('Interacted_Variable', Interacted_Importance))
+
+    x <- dplyr::left_join(x, vp, by = c('variable' = 'Variable')) %>%
+      dplyr::left_join(Interacted_Permuate, by = c('variable' = 'Interacted_Variable')) %>%
+      dplyr::mutate(Importance = base::ifelse(is.na(Importance) == T, Interacted_Importance,Importance)) %>%
+      dplyr::select(-c('dummyjoin','Interacted_Importance')) %>%
+      dplyr::mutate(Sign = NA) %>%
+      dplyr::mutate(Importance = base::ifelse(is.na(Importance), 0 , Importance),
+                    Sign = base::ifelse(is.na(Sign), 'NEU' , Sign)
+      )
+  }
 
   # Select columns we want in the output
   x <- x %>%
