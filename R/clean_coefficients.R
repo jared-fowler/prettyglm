@@ -138,7 +138,7 @@ clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model', spline_s
       dplyr::select(c('Interacted_Variable', Interacted_Importance))
 
     x <- dplyr::left_join(x, vp, by = c('variable' = 'Variable')) %>%
-      dplyr::left_join(Interacted_Permuate, by = c('variable' = 'Interacted_Variable')) %>%
+      dplyr::left_join(ivp, by = c('variable' = 'Interacted_Variable')) %>%
       dplyr::mutate(Importance = base::ifelse(is.na(Importance) == T, Interacted_Importance,Importance)) %>%
       dplyr::select(-c('dummyjoin','Interacted_Importance')) %>%
       dplyr::mutate(Sign = NA) %>%

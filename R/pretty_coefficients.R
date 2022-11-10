@@ -54,7 +54,7 @@
 #' @import dplyr
 #'
 
-pretty_coefficients <- function(model_object, relativity_transform = NULL, relativity_label = 'relativity', type_iii = NULL, conf.int = FALSE, return_data = FALSE, vimethod = 'model', spline_seperator = NULL){
+pretty_coefficients <- function(model_object, relativity_transform = NULL, relativity_label = 'relativity', type_iii = NULL, conf.int = FALSE, return_data = FALSE, vimethod = 'model', spline_seperator = NULL, ...){
   # add other options in the if statemnt for splines
   # document
   # also aggregate for returning data?/?
@@ -71,7 +71,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
 
   # tidy coefficients
   model_tidy_df <- broom::tidy(model_object, conf.int=conf.int)
-  tidy_coef <- prettyglm::clean_coefficients(d=model_tidy_df, m=model_object, vimethod = vimethod, spline_seperator = spline_seperator)
+  tidy_coef <- prettyglm::clean_coefficients(d=model_tidy_df, m=model_object, vimethod = vimethod, spline_seperator = spline_seperator, ...)
 
   # replace NAs with 0
   tidy_coef <- tidy_coef %>%  dplyr::mutate(estimate = base::ifelse(is.na(estimate), 0, estimate),
