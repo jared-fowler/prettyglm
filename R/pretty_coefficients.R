@@ -1,6 +1,6 @@
 #' @title pretty_coefficients
 #'
-#' @description Creates a pretty kable of model coefficients including coefficient base levels.
+#' @description Creates a pretty kable of model coefficients including coefficient base levels, type III P.values, and variable importance.
 #'
 #' @param model_object Model object to create coefficient table for. Must be of type: \code{\link[stats]{glm}}, \code{\link[stats]{lm}},  \code{\link[parsnip]{linear_reg}} or \code{\link[parsnip]{logistic_reg}}.
 #' @param conf.int Set to TRUE to include confidence intervals in summary table. Warning, can be computationally expensive.
@@ -8,8 +8,9 @@
 #' @param relativity_label String of label to give to relativity column if you want to change the title to your use case.
 #' @param type_iii Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \code{\link[car]{Anova}}
 #' @param return_data Set to TRUE to return \code{\link[base]{data.frame}} instead of creating \code{\link[knitr]{kable}}.
-#' @param vimethod Variable importance method to pass to method of \code{\link[vi]{vip}}. Defaults to "model"
-#' @param spline_seperator Seperator to look for to idendity a spline
+#' @param vimethod Variable importance method to pass to method of \code{\link[vi]{vip}}. Defaults to "model". Currently supports "permute" and "firm", pass any additional arguments to \code{\link[vi]{vip}} in ...
+#' @param spline_seperator Separator to look for to identity a spline. If this input is not null, it is assumed any features with this separator are spline columns. For example an age spline from 0 to 25 you could use: AGE_0_25 and "_".
+#' @param ... Any additional parameters to be past to  \code{\link[vip]{vi}}
 #'
 #' @return \code{\link[knitr]{kable}} if return_data = FALSE. \code{\link[base]{data.frame}} if return_data = TRUE.
 #'
@@ -24,7 +25,15 @@
 #'                        'Cabintype',
 #'                        'Survived')
 #' titanic  <- titanic  %>%
-#'   dplyr::mutate_at(columns_to_factor, list(~factor(.)))
+#'  dplyr::mutate_at(columns_to_factor, list(~factor(.))) %>%
+#'  dplyr::mutate(Age =base::ifelse(is.na(Age)==T,meanage,Age)) %>%
+#'  dplyr::mutate(Age_0_25 = prettyglm::splineit(Age,0,25),
+#'                Age_25_50 = prettyglm::splineit(Age,25,50),
+#'                Age_50_120 = prettyglm::splineit(Age,50,120)) %>%
+#'  dplyr::mutate(Fare_0_250 = prettyglm::splineit(Fare,0,250),
+#'                Fare_250_600 = prettyglm::splineit(Fare,250,600))
+#'
+#' # A simple example
 #' survival_model <- stats::glm(Survived ~
 #'                               Pclass +
 #'                               Sex +
@@ -37,6 +46,23 @@
 #'                              data = titanic,
 #'                              family = binomial(link = 'logit'))
 #' pretty_coefficients(survival_model)
+#'
+#' # A more complicated example with a spline and different importance method
+#' survival_model3 <- stats::glm(Survived ~
+#'                                         Pclass +
+#'                                         Age_0_25 +
+#'                                         Age_25_50 +
+#'                                         Age_50_120 +
+#'                                         Sex:Fare_0_250 +
+#'                                         Sex:Fare_250_600 +
+#'                                         Embarked +
+#'                                         SibSp +
+#'                                         Parch +
+#'                                         Cabintype,
+#'                               data = titanic,
+#'                               family = binomial(link = 'logit'))
+#' pretty_coefficients(survival_model3, relativity_transform = 'exp(estimate)-1', spline_seperator = '_', vimethod = 'permute', target = 'Survived', metric = 'auc', pred_wrapper = predict.glm, reference_class = 0)
+#'
 #'
 #' @export
 #' @importFrom tibble "tibble"
@@ -56,8 +82,6 @@
 
 pretty_coefficients <- function(model_object, relativity_transform = NULL, relativity_label = 'relativity', type_iii = NULL, conf.int = FALSE, return_data = FALSE, vimethod = 'model', spline_seperator = NULL, ...){
   # add other options in the if statemnt for splines
-  # document
-  # also aggregate for returning data?/?
 
   if (any(class(model_object) == 'workflow') == TRUE){
     # if model object is a workflow, pull the model fit

@@ -1,11 +1,12 @@
 #' @title clean_coefficients
 #'
-#' @description Processing to split out base levels and add variable importance to each term. Directly inspired by `tidycat::tidy_categorical()`, modified for use in prettyglm.
+#' @description Processing to split out base levels and add variable importance to each term. Inspired by `tidycat::tidy_categorical()`, modified for use in prettyglm..
 #'
-#' @param d A data frame \code{\link[tibble]{tibble}} output from \code{\link[broom]{tidy.lm}}; with one row for each term in the regression, including column `term`
-#' @param m A model object \code{\link[stats]{glm}}
+#' @param d Data frame \code{\link[tibble]{tibble}} output from \code{\link[broom]{tidy.lm}}; with one row for each term in the regression, including column `term`
+#' @param m Model object \code{\link[stats]{glm}}
 #' @param vimethod Variable importance method. Still in development
-#' @param spline_seperator sting of the spline seperator. For example AGE_0_25 would be "_"
+#' @param spline_seperator Sting of the spline separator. For example AGE_0_25 would be "_"
+#' @param ...  Any additional parameters to be past to  \code{\link[vip]{vi}}
 #'
 #' @return Expanded \code{\link[tibble]{tibble}} from the version passed to `d` including additional columns:
 #' \item{variable}{The name of the variable that the regression term belongs to.}
@@ -23,9 +24,6 @@
 #' @import dplyr
 
 clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model', spline_seperator = NULL, ...){
-  # add Mat Ls formula fix
-  # check all github notes and modify checks
-
   # Extract model object if parsnip object
   if (any(class(m) == 'model_fit') == TRUE) m <- m$fit else m <- m
 
@@ -123,7 +121,7 @@ clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model', spline_s
       dplyr::mutate(Importance = base::ifelse(is.na(Importance), 0 , Importance),
                     Sign = base::ifelse(is.na(Sign), 'NEU' , Sign))
   } else if (vimethod %in% c('permute', 'firm')){
-    vp <- vip::vi(object = survival_model, method = vimethod, ...)
+    vp <- vip::vi(object = m, method = vimethod, ...)
     vp <-  vp %>%
       dplyr::filter(Importance != 0) %>%
       dplyr::mutate(Importance = base::abs(Importance))

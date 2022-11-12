@@ -9,8 +9,10 @@ actual_expected_bucketed(
   model_object,
   data_set = NULL,
   number_of_buckets = 25,
+  ylab = "Target",
   width = 800,
   height = 500,
+  prediction_type = prediction_type,
   return_data = F,
   first_colour = "black",
   second_colour = "#cc4678",
@@ -27,9 +29,13 @@ actual_expected_bucketed(
 
 \item{number_of_buckets}{number of buckets for percentile}
 
+\item{ylab}{Y-axis label.}
+
 \item{width}{plotly plot width in pixels.}
 
 \item{height}{plotly plot height in pixels.}
+
+\item{prediction_type}{Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".}
 
 \item{return_data}{Logical to return cleaned data set instead of plot.}
 

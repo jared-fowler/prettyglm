@@ -7,6 +7,7 @@
 #' @param target_variable String of target variable name in dataset.
 #' @param data_set Data set to calculate the actual vs expected for. If no input default is to try and extract training data from model object.
 #' @param plot_type one of "Residual", "predictions" or "actuals" defaults to "predictions"
+#' @param prediction_type Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".
 #' @param plot_factor_as_numeric Set to TRUE to return \link[base]{data.frame} instead of creating \link[knitr]{kable}.
 #' @param ordering Option to change the ordering of categories on the x axis, only for discrete categories. Default to the ordering of the factor. Other options are: 'alphabetical', 'Number of records', 'Average Value'
 #' @param width Width of plot
@@ -56,7 +57,7 @@
 #' @import plotly
 #'
 
-one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set, plot_type = 'predictions', plot_factor_as_numeric = FALSE, ordering = NULL, width = 800, height = 500, number_of_buckets = NULL, first_colour = 'black', second_colour = '#cc4678', facetby = NULL, predict_function = NULL, upper_percentile_to_cut = 0, lower_percentile_to_cut = 0){
+one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set, plot_type = 'predictions', prediction_type = 'response', plot_factor_as_numeric = FALSE, ordering = NULL, width = 800, height = 500, number_of_buckets = NULL, first_colour = 'black', second_colour = '#cc4678', facetby = NULL, predict_function = NULL, upper_percentile_to_cut = 0, lower_percentile_to_cut = 0){
   # make sure to document
   # better value / target label / maybe user can choose????????
   # Make sure plots can handle residuals as a plot_type input
@@ -83,7 +84,8 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
   if (is.null(predict_function) == T){
     predicted_dataset <- prettyglm::predict_outcome(target = target_variable,
                                                     model_object = model_object,
-                                                    dataset = data_set)
+                                                    dataset = data_set,
+                                                    prediction_type = prediction_type)
   } else{
     #base::simpleError('Functionality for custom predict function not avaliable yet')
     predicted_dataset <- predict_function(target = target_variable,
@@ -164,7 +166,7 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
           plotly::layout(yaxis = list(side = 'right',
                                       title = 'Number of Recrods'),
                          yaxis2 = list(side = 'left',
-                                       title = 'Target',
+                                       title = ylabeltext,
                                        showgrid = F,
                                        overlaying = base::paste0('y', as.character((l-1)*2 + 1))),
                          legend = list(orientation = "h",
@@ -269,7 +271,7 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
         plotly::layout(yaxis = list(side = 'right',
                                     title = 'Number of Recrods'),
                        yaxis2 = list(side = 'left',
-                                     title = 'Target',
+                                     title = ylabeltext,
                                      showgrid = F,
                                      overlaying = 'y'),
                        legend = list(orientation = "h",
@@ -462,7 +464,7 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
         plotly::layout(yaxis = list(side = 'right',
                                     title = 'Density'),
                        yaxis2 = list(side = 'left',
-                                     title = 'Target',
+                                     title = ylabeltext,
                                      showgrid = F,
                                      overlaying = 'y'),
                        legend = list(orientation = "h",

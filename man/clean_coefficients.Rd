@@ -13,13 +13,15 @@ clean_coefficients(
 )
 }
 \arguments{
-\item{d}{A data frame \code{\link[tibble]{tibble}} output from \code{\link[broom]{tidy.lm}}; with one row for each term in the regression, including column `term`}
+\item{d}{Data frame \code{\link[tibble]{tibble}} output from \code{\link[broom]{tidy.lm}}; with one row for each term in the regression, including column `term`}
 
-\item{m}{A model object \code{\link[stats]{glm}}}
+\item{m}{Model object \code{\link[stats]{glm}}}
 
 \item{vimethod}{Variable importance method. Still in development}
 
-\item{spline_seperator}{sting of the spline seperator. For example AGE_0_25 would be "_"}
+\item{spline_seperator}{Sting of the spline separator. For example AGE_0_25 would be "_"}
+
+\item{...}{Any additional parameters to be past to  \code{\link[vip]{vi}}}
 }
 \value{
 Expanded \code{\link[tibble]{tibble}} from the version passed to `d` including additional columns:
@@ -27,7 +29,7 @@ Expanded \code{\link[tibble]{tibble}} from the version passed to `d` including a
 \item{level}{The level of the categorical variable that the regression term belongs to. Will be an the term name for numeric variables.}
 }
 \description{
-Processing to split out base levels and add variable importance to each term. Directly inspired by `tidycat::tidy_categorical()`, modified for use in prettyglm.
+Processing to split out base levels and add variable importance to each term. Inspired by `tidycat::tidy_categorical()`, modified for use in prettyglm..
 }
 \seealso{
 \code{\link[broom]{tidy.lm}}

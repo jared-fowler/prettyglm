@@ -10,6 +10,7 @@ one_way_ave(
   target_variable,
   data_set,
   plot_type = "predictions",
+  prediction_type = "response",
   plot_factor_as_numeric = FALSE,
   ordering = NULL,
   width = 800,
@@ -33,6 +34,8 @@ one_way_ave(
 \item{data_set}{Data set to calculate the actual vs expected for. If no input default is to try and extract training data from model object.}
 
 \item{plot_type}{one of "Residual", "predictions" or "actuals" defaults to "predictions"}
+
+\item{prediction_type}{Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".}
 
 \item{plot_factor_as_numeric}{Set to TRUE to return \link[base]{data.frame} instead of creating \link[knitr]{kable}.}
 
