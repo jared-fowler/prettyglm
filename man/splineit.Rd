@@ -20,5 +20,25 @@ Splined Column
 Splines a continous variable
 }
 \examples{
-# add an example here
+library(dplyr)
+library(prettyglm)s
+data('titanic')
+
+columns_to_factor <- c('Pclass',
+                      'Sex',
+                      'Cabin',
+                      'Embarked',
+                      'Cabintype',
+                      'Survived')
+meanage <- base::mean(titanic$Age, na.rm=T)
+
+titanic  <- titanic  \%>\%
+ dplyr::mutate_at(columns_to_factor, list(~factor(.))) \%>\%
+ dplyr::mutate(Age =base::ifelse(is.na(Age)==T,meanage,Age)) \%>\%
+ dplyr::mutate(Age_0_25 = prettyglm::splineit(Age,0,25),
+               Age_25_50 = prettyglm::splineit(Age,25,50),
+               Age_50_120 = prettyglm::splineit(Age,50,120)) \%>\%
+ dplyr::mutate(Fare_0_250 = prettyglm::splineit(Fare,0,250),
+               Fare_250_600 = prettyglm::splineit(Fare,250,600))
+
 }

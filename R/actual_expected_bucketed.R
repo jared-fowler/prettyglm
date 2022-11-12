@@ -9,12 +9,12 @@
 #' @param ylab Y-axis label.
 #' @param width plotly plot width in pixels.
 #' @param height plotly plot height in pixels.
-#' @param prediction_type Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".
-#' @param return_data Logical to return cleaned data set instead of plot.
+#' @param facetby variable user wants to facet by.
 #' @param first_colour First colour to plot, usually the colour of actual.
 #' @param second_colour Second colour to plot, usually the colour of predicted.
+#' @param prediction_type Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".
 #' @param predict_function prediction function to use. Still in development.
-#' @param facetby variable user wants to facet by.
+#' @param return_data Logical to return cleaned data set instead of plot.
 #'
 
 #' @return plot
@@ -23,8 +23,42 @@
 #' Tibble if return_data = T.
 #'
 #' @examples
-#' \dontrun{
-#' }
+#' library(dplyr)
+#' library(prettyglm)
+#'
+#' data('titanic')
+#'
+#' columns_to_factor <- c('Pclass',
+#'                        'Sex',
+#'                        'Cabin',
+#'                        'Embarked',
+#'                        'Cabintype',
+#'                        'Survived')
+#' meanage <- base::mean(titanic$Age, na.rm=T)
+#'
+#' titanic  <- titanic  %>%
+#'   dplyr::mutate_at(columns_to_factor, list(~factor(.))) %>%
+#'   dplyr::mutate(Age =base::ifelse(is.na(Age)==T,meanage,Age)) %>%
+#'   dplyr::mutate(Age_0_25 = prettyglm::splineit(Age,0,25),
+#'                 Age_25_50 = prettyglm::splineit(Age,25,50),
+#'                 Age_50_120 = prettyglm::splineit(Age,50,120)) %>%
+#'   dplyr::mutate(Fare_0_250 = prettyglm::splineit(Fare,0,250),
+#'                 Fare_250_600 = prettyglm::splineit(Fare,250,600))
+#'
+#' survival_model <- stats::glm(Survived ~
+#'                                Sex:Age +
+#'                                Fare +
+#'                                Embarked +
+#'                                SibSp +
+#'                                Parch +
+#'                                Cabintype,
+#'                              data = titanic,
+#'                              family = binomial(link = 'logit'))
+#'
+#' prettyglm::actual_expected_bucketed(target_variable = 'Survived',
+#'                                     model_object = survival_model,
+#'                                     data_set = titanic)
+#'
 #' @export
 #' @importFrom tibble "tibble"
 #' @importFrom plotly "layout"

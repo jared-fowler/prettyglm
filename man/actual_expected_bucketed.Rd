@@ -12,7 +12,7 @@ actual_expected_bucketed(
   ylab = "Target",
   width = 800,
   height = 500,
-  prediction_type = prediction_type,
+  prediction_type = "response",
   return_data = F,
   first_colour = "black",
   second_colour = "#cc4678",
@@ -57,6 +57,40 @@ Tibble if return_data = T.
 Provides a rank plot of the actual and predicted.
 }
 \examples{
-\dontrun{
-}
+library(dplyr)
+library(prettyglm)
+
+data('titanic')
+
+columns_to_factor <- c('Pclass',
+                       'Sex',
+                       'Cabin',
+                       'Embarked',
+                       'Cabintype',
+                       'Survived')
+meanage <- base::mean(titanic$Age, na.rm=T)
+
+titanic  <- titanic  \%>\%
+  dplyr::mutate_at(columns_to_factor, list(~factor(.))) \%>\%
+  dplyr::mutate(Age =base::ifelse(is.na(Age)==T,meanage,Age)) \%>\%
+  dplyr::mutate(Age_0_25 = prettyglm::splineit(Age,0,25),
+                Age_25_50 = prettyglm::splineit(Age,25,50),
+                Age_50_120 = prettyglm::splineit(Age,50,120)) \%>\%
+  dplyr::mutate(Fare_0_250 = prettyglm::splineit(Fare,0,250),
+                Fare_250_600 = prettyglm::splineit(Fare,250,600))
+
+survival_model <- stats::glm(Survived ~
+                               Sex:Age +
+                               Fare +
+                               Embarked +
+                               SibSp +
+                               Parch +
+                               Cabintype,
+                             data = titanic,
+                             family = binomial(link = 'logit'))
+
+prettyglm::actual_expected_bucketed(target_variable = 'Survived',
+                                    model_object = survival_model,
+                                    data_set = titanic)
+
 }

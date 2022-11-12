@@ -7,7 +7,6 @@
 #' @param target_variable String of target variable name in dataset.
 #' @param data_set Data set to calculate the actual vs expected for. If no input default is to try and extract training data from model object.
 #' @param plot_type one of "Residual", "predictions" or "actuals" defaults to "predictions"
-#' @param prediction_type Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".
 #' @param plot_factor_as_numeric Set to TRUE to return \link[base]{data.frame} instead of creating \link[knitr]{kable}.
 #' @param ordering Option to change the ordering of categories on the x axis, only for discrete categories. Default to the ordering of the factor. Other options are: 'alphabetical', 'Number of records', 'Average Value'
 #' @param width Width of plot
@@ -16,6 +15,7 @@
 #' @param first_colour First colour to plot, usually the colour of actual.
 #' @param second_colour Second colour to plot, usually the colour of predicted.
 #' @param facetby Variable to facet the actual vs expect plots by.
+#' @param prediction_type Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".
 #' @param predict_function A custom prediction function can be provided here.It must return a \link[base]{data.frame} with an "Actual_Values" column, and a "Predicted_Values" column.
 #' @param upper_percentile_to_cut For continuous variables this is what percentile to exclude from the upper end of the distribution. Defaults to 0.01, so the maximum percentile of the variable in the plot will be 0.99. Cutting off some of the distribution can help the views if outlier's are present in the data.
 #' @param lower_percentile_to_cut For continuous variables this is what percentile to exclude from the lower end of the distribution. Defaults to 0.01, so the mimimum percentile of the variable in the plot will be 0.01. Cutting off some of the distribution can help the views if outlier's are present in the data.
@@ -32,20 +32,59 @@
 #'                        'Embarked',
 #'                        'Cabintype',
 #'                        'Survived')
+#' meanage <- base::mean(titanic$Age, na.rm=T)
+#'
 #' titanic  <- titanic  %>%
-#'   dplyr::mutate_at(columns_to_factor, list(~factor(.)))
-#' # Fit a model without Pclass to see ave.
-#' survival_model <- stats::glm(Survived ~
-#'                               #Pclass +
-#'                               Sex +
-#'                               Age +
-#'                               Fare +
-#'                               Embarked +
-#'                               SibSp +
-#'                               Parch +
-#'                               Cabintype,
-#'                              data = titanic,
-#'                              family = binomial(link = 'logit'))
+#'   dplyr::mutate_at(columns_to_factor, list(~factor(.))) %>%
+#'   dplyr::mutate(Age =base::ifelse(is.na(Age)==T,meanage,Age)) %>%
+#'   dplyr::mutate(Age_0_25 = prettyglm::splineit(Age,0,25),
+#'                 Age_25_50 = prettyglm::splineit(Age,25,50),
+#'                 Age_50_120 = prettyglm::splineit(Age,50,120)) %>%
+#'   dplyr::mutate(Fare_0_250 = prettyglm::splineit(Fare,0,250),
+#'                 Fare_250_600 = prettyglm::splineit(Fare,250,600))
+#'
+#' # Continuous Variable Example
+#' one_way_ave(feature_to_plot = 'Age',
+#'             model_object = survival_model,
+#'             target_variable = 'Survived',
+#'             data_set = titanic,
+#'             number_of_buckets = 20,
+#'             upper_percentile_to_cut = 0.1,
+#'             lower_percentile_to_cut = 0.1)
+#'
+#' # Discrete Variable Example
+#' one_way_ave(feature_to_plot = 'Pclass',
+#'             model_object = survival_model,
+#'             target_variable = 'Survived',
+#'             data_set = titanic)
+#'
+#' # Custom Predict Function and facet
+#' a_custom_predict_function <- function(target, model_object, dataset){
+#'   dataset <- base::as.data.frame(dataset)
+#'   Actual_Values <- dplyr::pull(dplyr::select(dataset, tidyselect::all_of(c(target))))
+#'   if(class(Actual_Values) == 'factor'){
+#'     Actual_Values <- base::as.numeric(as.character(Actual_Values))
+#'   }
+#'   Predicted_Values <- base::as.numeric(stats::predict(model_object, dataset, type='response'))
+#'
+#'   to_return <-  base::data.frame(Actual_Values = Actual_Values,
+#'                                  Predicted_Values = Predicted_Values)
+#'
+#'   to_return <- to_return %>%
+#'     dplyr::mutate(Predicted_Values = base::ifelse(Predicted_Values > 0.3,0.3,Predicted_Values))
+#'   return(to_return)
+#' }
+#'
+#' one_way_ave(feature_to_plot = 'Age',
+#'             model_object = survival_model,
+#'             target_variable = 'Survived',
+#'             data_set = titanic,
+#'             number_of_buckets = 20,
+#'             upper_percentile_to_cut = 0.1,
+#'             lower_percentile_to_cut = 0.1,
+#'             predict_function = a_custom_predict_function,
+#'             facetby = 'Pclass')
+#'
 #'
 #' @export
 #' @importFrom tibble "tibble"
@@ -58,14 +97,10 @@
 #'
 
 one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set, plot_type = 'predictions', prediction_type = 'response', plot_factor_as_numeric = FALSE, ordering = NULL, width = 800, height = 500, number_of_buckets = NULL, first_colour = 'black', second_colour = '#cc4678', facetby = NULL, predict_function = NULL, upper_percentile_to_cut = 0, lower_percentile_to_cut = 0){
-  # make sure to document
-  # better value / target label / maybe user can choose????????
   # Make sure plots can handle residuals as a plot_type input
 
-  # Clean all code, update exmaples to include some interactions
-
   # Extract the actual and expected values -------------------------------------------
-  # if provided dataset is null then use the training data from model object
+  # if provided data set is null then use the training data from model object
   if (is.null(data_set)==T){
     # Extract training data from model object
     if (base::any(class(model_object) == 'workflow')){
@@ -371,7 +406,7 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
           plotly::layout(yaxis = list(side = 'right',
                                       title = 'Density'),
                          yaxis2 = list(side = 'left',
-                                       title = 'Value',
+                                       title = ylabeltext,
                                        showgrid = F,
                                        overlaying = base::paste0('y', as.character((l-1)*2 + 1))),
                          legend = list(orientation = "h",
