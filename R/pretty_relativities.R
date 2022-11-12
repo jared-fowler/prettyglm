@@ -24,27 +24,66 @@
 #' library(dplyr)
 #' library(prettyglm)
 #' data('titanic')
+#'
 #' columns_to_factor <- c('Pclass',
 #'                        'Sex',
 #'                        'Cabin',
 #'                        'Embarked',
 #'                        'Cabintype',
 #'                        'Survived')
+#' meanage <- base::mean(titanic$Age, na.rm=T)
+#'
 #' titanic  <- titanic  %>%
-#'   dplyr::mutate_at(columns_to_factor, list(~factor(.)))
-#' survival_model <- stats::glm(Survived ~
-#'                               Pclass +
-#'                               Sex +
-#'                               Age +
-#'                               Fare +
-#'                               Embarked +
-#'                               SibSp +
-#'                               Parch +
-#'                               Cabintype,
-#'                              data = titanic,
-#'                              family = binomial(link = 'logit'))
-#' pretty_relativities(feature_to_plot = 'Pclass',
-#'                     model_object = survival_model)
+#'   dplyr::mutate_at(columns_to_factor, list(~factor(.))) %>%
+#'   dplyr::mutate(Age =base::ifelse(is.na(Age)==T,meanage,Age)) %>%
+#'   dplyr::mutate(Age_0_25 = prettyglm::splineit(Age,0,25),
+#'                 Age_25_50 = prettyglm::splineit(Age,25,50),
+#'                 Age_50_120 = prettyglm::splineit(Age,50,120)) %>%
+#'   dplyr::mutate(Fare_0_250 = prettyglm::splineit(Fare,0,250),
+#'                 Fare_250_600 = prettyglm::splineit(Fare,250,600))
+#'
+#' survival_model3 <- stats::glm(Survived ~
+#'                                 Pclass:Embarked +
+#'                                 Age_0_25  +
+#'                                 Age_25_50 +
+#'                                 Age_50_120  +
+#'                                 Sex:Fare_0_250 +
+#'                                 Sex:Fare_250_600 +
+#'                                 SibSp +
+#'                                 Parch +
+#'                                 Cabintype,
+#'                               data = titanic,
+#'                               family = binomial(link = 'logit'))
+#'
+#' # categorical factor
+#' pretty_relativities(feature_to_plot = 'Cabintype',
+#'                     model_object = survival_model3)
+#'
+#' # continuous factor
+#' pretty_relativities(feature_to_plot = 'Parch',
+#'                     model_object = survival_model3)
+#'
+#' # splined continuous factor
+#' pretty_relativities(feature_to_plot = 'Age',
+#'                     model_object = survival_model3,
+#'                     spline_seperator = '_')
+#'
+#' # factor factor interaction
+#' pretty_relativities(feature_to_plot = 'Pclass:Embarked',
+#'                     model_object = survival_model3,
+#'                     iteractionplottype = 'colour',
+#'                     facetorcolourby = 'Pclass')
+#'
+#' # Continuous spline and categorical by colour
+#' pretty_relativities(feature_to_plot = 'Sex:Fare',
+#'                     model_object = survival_model3,
+#'                     spline_seperator = '_')
+#'
+#' # Continuous spline and categorical by facet
+#' pretty_relativities(feature_to_plot = 'Sex:Fare',
+#'                     model_object = survival_model3,
+#'                     spline_seperator = '_',
+#'                     iteractionplottype = 'facet')
 #' @export
 #' @importFrom tibble "tibble"
 #' @importFrom tidyselect "all_of"
@@ -265,9 +304,9 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
 
       # plot density and relativity
       fit <- training_data %>%
-        dplyr::select(., all_of(ctsvariable)) %>%
-        dplyr::filter(base::get(ctsvariable) <= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-upper_percentile_to_cut), na.rm = T))) %>%
-        dplyr::filter(base::get(ctsvariable) >= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(lower_percentile_to_cut), na.rm = T))) %>%
+        dplyr::select(., all_of(feature_to_plot)) %>%
+        dplyr::filter(base::get(feature_to_plot) <= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-upper_percentile_to_cut), na.rm = T))) %>%
+        dplyr::filter(base::get(feature_to_plot) >= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(lower_percentile_to_cut), na.rm = T))) %>%
         dplyr::pull() %>%
         stats::density()
 
