@@ -10,7 +10,6 @@ one_way_ave(
   target_variable,
   data_set,
   plot_type = "predictions",
-  prediction_type = "response",
   plot_factor_as_numeric = FALSE,
   ordering = NULL,
   width = 800,
@@ -19,6 +18,7 @@ one_way_ave(
   first_colour = "black",
   second_colour = "#cc4678",
   facetby = NULL,
+  prediction_type = "response",
   predict_function = NULL,
   upper_percentile_to_cut = 0,
   lower_percentile_to_cut = 0
@@ -35,8 +35,6 @@ one_way_ave(
 
 \item{plot_type}{one of "Residual", "predictions" or "actuals" defaults to "predictions"}
 
-\item{prediction_type}{Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".}
-
 \item{plot_factor_as_numeric}{Set to TRUE to return \link[base]{data.frame} instead of creating \link[knitr]{kable}.}
 
 \item{ordering}{Option to change the ordering of categories on the x axis, only for discrete categories. Default to the ordering of the factor. Other options are: 'alphabetical', 'Number of records', 'Average Value'}
@@ -52,6 +50,8 @@ one_way_ave(
 \item{second_colour}{Second colour to plot, usually the colour of predicted.}
 
 \item{facetby}{Variable to facet the actual vs expect plots by.}
+
+\item{prediction_type}{Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".}
 
 \item{predict_function}{A custom prediction function can be provided here.It must return a \link[base]{data.frame} with an "Actual_Values" column, and a "Predicted_Values" column.}
 

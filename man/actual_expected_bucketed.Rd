@@ -12,12 +12,12 @@ actual_expected_bucketed(
   ylab = "Target",
   width = 800,
   height = 500,
-  prediction_type = "response",
-  return_data = F,
   first_colour = "black",
   second_colour = "#cc4678",
+  facetby = NULL,
+  prediction_type = "response",
   predict_function = NULL,
-  facetby = NULL
+  return_data = F
 )
 }
 \arguments{
@@ -35,17 +35,17 @@ actual_expected_bucketed(
 
 \item{height}{plotly plot height in pixels.}
 
-\item{prediction_type}{Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".}
-
-\item{return_data}{Logical to return cleaned data set instead of plot.}
-
 \item{first_colour}{First colour to plot, usually the colour of actual.}
 
 \item{second_colour}{Second colour to plot, usually the colour of predicted.}
 
+\item{facetby}{variable user wants to facet by.}
+
+\item{prediction_type}{Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".}
+
 \item{predict_function}{prediction function to use. Still in development.}
 
-\item{facetby}{variable user wants to facet by.}
+\item{return_data}{Logical to return cleaned data set instead of plot.}
 }
 \value{
 plot

@@ -21,7 +21,7 @@ Splines a continous variable
 }
 \examples{
 library(dplyr)
-library(prettyglm)s
+library(prettyglm)
 data('titanic')
 
 columns_to_factor <- c('Pclass',

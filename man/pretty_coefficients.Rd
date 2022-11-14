@@ -10,9 +10,10 @@ pretty_coefficients(
   relativity_label = "relativity",
   type_iii = NULL,
   conf.int = FALSE,
-  return_data = FALSE,
   vimethod = "model",
   spline_seperator = NULL,
+  significance_level = 0.05,
+  return_data = FALSE,
   ...
 )
 }
@@ -27,11 +28,13 @@ pretty_coefficients(
 
 \item{conf.int}{Set to TRUE to include confidence intervals in summary table. Warning, can be computationally expensive.}
 
-\item{return_data}{Set to TRUE to return \code{\link[base]{data.frame}} instead of creating \code{\link[knitr]{kable}}.}
-
 \item{vimethod}{Variable importance method to pass to method of \code{\link[vi]{vip}}. Defaults to "model". Currently supports "permute" and "firm", pass any additional arguments to \code{\link[vi]{vip}} in ...}
 
 \item{spline_seperator}{Separator to look for to identity a spline. If this input is not null, it is assumed any features with this separator are spline columns. For example an age spline from 0 to 25 you could use: AGE_0_25 and "_".}
+
+\item{significance_level}{Significance level to P-values by in kable. Defaults to 0.05.}
+
+\item{return_data}{Set to TRUE to return \code{\link[base]{data.frame}} instead of creating \code{\link[knitr]{kable}}.}
 
 \item{...}{Any additional parameters to be past to  \code{\link[vip]{vi}}}
 }

@@ -9,9 +9,9 @@
 #' @param ylab Y-axis label.
 #' @param width plotly plot width in pixels.
 #' @param height plotly plot height in pixels.
-#' @param facetby variable user wants to facet by.
 #' @param first_colour First colour to plot, usually the colour of actual.
 #' @param second_colour Second colour to plot, usually the colour of predicted.
+#' @param facetby variable user wants to facet by.
 #' @param prediction_type Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".
 #' @param predict_function prediction function to use. Still in development.
 #' @param return_data Logical to return cleaned data set instead of plot.
@@ -68,7 +68,7 @@
 #'
 
 
-actual_expected_bucketed <- function(target_variable, model_object, data_set = NULL, number_of_buckets = 25, ylab = 'Target', width = 800, height = 500, prediction_type = 'response', return_data=F, first_colour = 'black', second_colour = '#cc4678', predict_function = NULL, facetby = NULL){
+actual_expected_bucketed <- function(target_variable, model_object, data_set = NULL, number_of_buckets = 25, ylab = 'Target', width = 800, height = 500, first_colour = 'black', second_colour = '#cc4678', facetby = NULL, prediction_type = 'response', predict_function = NULL, return_data=F){
   # make predictions on data set --------------------------------------------------------------
   # if provided data set is null then use the training data from model object
   if (is.null(data_set)==T){

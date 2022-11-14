@@ -3,13 +3,14 @@
 #' @description Creates a pretty kable of model coefficients including coefficient base levels, type III P.values, and variable importance.
 #'
 #' @param model_object Model object to create coefficient table for. Must be of type: \code{\link[stats]{glm}}, \code{\link[stats]{lm}},  \code{\link[parsnip]{linear_reg}} or \code{\link[parsnip]{logistic_reg}}.
-#' @param conf.int Set to TRUE to include confidence intervals in summary table. Warning, can be computationally expensive.
 #' @param relativity_transform String of the function to be applied to the model estimate to calculate the relativity, for example: 'exp(estimate)-1'. Default is for relativity to be excluded from output.
 #' @param relativity_label String of label to give to relativity column if you want to change the title to your use case.
 #' @param type_iii Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \code{\link[car]{Anova}}
-#' @param return_data Set to TRUE to return \code{\link[base]{data.frame}} instead of creating \code{\link[knitr]{kable}}.
+#' @param conf.int Set to TRUE to include confidence intervals in summary table. Warning, can be computationally expensive.
 #' @param vimethod Variable importance method to pass to method of \code{\link[vi]{vip}}. Defaults to "model". Currently supports "permute" and "firm", pass any additional arguments to \code{\link[vi]{vip}} in ...
 #' @param spline_seperator Separator to look for to identity a spline. If this input is not null, it is assumed any features with this separator are spline columns. For example an age spline from 0 to 25 you could use: AGE_0_25 and "_".
+#' @param significance_level Significance level to P-values by in kable. Defaults to 0.05.
+#' @param return_data Set to TRUE to return \code{\link[base]{data.frame}} instead of creating \code{\link[knitr]{kable}}.
 #' @param ... Any additional parameters to be past to  \code{\link[vip]{vi}}
 #'
 #' @return \code{\link[knitr]{kable}} if return_data = FALSE. \code{\link[base]{data.frame}} if return_data = TRUE.
@@ -80,7 +81,7 @@
 #' @import dplyr
 #'
 
-pretty_coefficients <- function(model_object, relativity_transform = NULL, relativity_label = 'relativity', type_iii = NULL, conf.int = FALSE, return_data = FALSE, vimethod = 'model', spline_seperator = NULL, ...){
+pretty_coefficients <- function(model_object, relativity_transform = NULL, relativity_label = 'relativity', type_iii = NULL, conf.int = FALSE, vimethod = 'model', spline_seperator = NULL, significance_level = 0.05, return_data = FALSE, ...){
   # add other options in the if statemnt for splines
 
   if (any(class(model_object) == 'workflow') == TRUE){
@@ -223,7 +224,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
     # Create a nice kable output of coefficients
     kable_df <- tidy_coef %>%
       dplyr::select(-c(Term, Effect))
-    kable_df$P.Value = kableExtra::cell_spec(base::round(kable_df$P.Value,5), background  = ifelse(is.na(kable_df$P.Value) |  kable_df$P.Value < 0.05, "#black", "#F08080"))
+    kable_df$P.Value = kableExtra::cell_spec(base::round(kable_df$P.Value,5), background  = ifelse(is.na(kable_df$P.Value) |  kable_df$P.Value < significance_level, "#black", "#F08080"))
     use_it <- base::lapply(base::as.list(tidy_coef$Importance), function(x) base::as.vector(base::cbind(0,x))) #importance in list for bar plot
     if(is.null(type_iii)){
       kable_table <- kable_df %>%
@@ -254,7 +255,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
                              footnote_as_chunk = TRUE,
                              title_format = c("italic", "underline"))
     } else{
-      kable_df$Type.III.P.Value = kableExtra::cell_spec(base::round(kable_df$Type.III.P.Value,5), background  = ifelse(is.na(kable_df$Type.III.P.Value) |  kable_df$Type.III.P.Value < 0.05, "#black", "#F08080"))
+      kable_df$Type.III.P.Value = kableExtra::cell_spec(base::round(kable_df$Type.III.P.Value,5), background  = ifelse(is.na(kable_df$Type.III.P.Value) |  kable_df$Type.III.P.Value < significance_level, "#black", "#F08080"))
       kable_table <- kable_df %>%
         mutate(Importance = "") %>%
         knitr::kable(. ,

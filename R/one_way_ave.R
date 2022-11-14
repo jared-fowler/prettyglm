@@ -96,7 +96,7 @@
 #' @import plotly
 #'
 
-one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set, plot_type = 'predictions', prediction_type = 'response', plot_factor_as_numeric = FALSE, ordering = NULL, width = 800, height = 500, number_of_buckets = NULL, first_colour = 'black', second_colour = '#cc4678', facetby = NULL, predict_function = NULL, upper_percentile_to_cut = 0, lower_percentile_to_cut = 0){
+one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set, plot_type = 'predictions', plot_factor_as_numeric = FALSE, ordering = NULL, width = 800, height = 500, number_of_buckets = NULL,first_colour = 'black', second_colour = '#cc4678', facetby = NULL, prediction_type = 'response', predict_function = NULL, upper_percentile_to_cut = 0, lower_percentile_to_cut = 0){
   # Make sure plots can handle residuals as a plot_type input
 
   # Extract the actual and expected values -------------------------------------------

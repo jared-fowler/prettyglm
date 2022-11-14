@@ -14,7 +14,6 @@ pretty_relativities(
   plot_factor_as_numeric = FALSE,
   width = 800,
   height = 500,
-  return_data = FALSE,
   iteractionplottype = NULL,
   facetorcolourby = NULL,
   upper_percentile_to_cut = 0,
@@ -40,8 +39,6 @@ pretty_relativities(
 \item{width}{Width of plot}
 
 \item{height}{Height of plot}
-
-\item{return_data}{Set to TRUE to return data set instead of plot}
 
 \item{iteractionplottype}{If plotting the relativity for an interaction variable you can "facet" or "colour" by one of the interaction variables. Defaults to null.}
 
@@ -105,7 +102,9 @@ pretty_relativities(feature_to_plot = 'Parch',
 # splined continuous factor
 pretty_relativities(feature_to_plot = 'Age',
                     model_object = survival_model3,
-                    spline_seperator = '_')
+                    spline_seperator = '_',
+                    upper_percentile_to_cut = 0.01,
+                    lower_percentile_to_cut = 0.01)
 
 # factor factor interaction
 pretty_relativities(feature_to_plot = 'Pclass:Embarked',

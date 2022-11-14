@@ -11,7 +11,6 @@
 #' @param plot_factor_as_numeric Set to TRUE to return \link[base]{data.frame} instead of creating \link[knitr]{kable}.
 #' @param width Width of plot
 #' @param height Height of plot
-#' @param return_data Set to TRUE to return data set instead of plot
 #' @param iteractionplottype If plotting the relativity for an interaction variable you can "facet" or "colour" by one of the interaction variables. Defaults to null.
 #' @param facetorcolourby If iteractionplottype is not Null, then this is the variable in the interaction you want to colour or facet by.
 #' @param upper_percentile_to_cut For continuous variables this is what percentile to exclude from the upper end of the distribution. Defaults to 0.01, so the maximum percentile of the variable in the plot will be 0.99. Cutting off some of the distribution can help the views if outlier's are present in the data.
@@ -66,7 +65,9 @@
 #' # splined continuous factor
 #' pretty_relativities(feature_to_plot = 'Age',
 #'                     model_object = survival_model3,
-#'                     spline_seperator = '_')
+#'                     spline_seperator = '_',
+#'                     upper_percentile_to_cut = 0.01,
+#'                     lower_percentile_to_cut = 0.01)
 #'
 #' # factor factor interaction
 #' pretty_relativities(feature_to_plot = 'Pclass:Embarked',
@@ -93,7 +94,7 @@
 #' @import plotly
 #'
 
-pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', relativity_label = 'Relativity', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, return_data = FALSE, iteractionplottype = NULL, facetorcolourby = NULL, upper_percentile_to_cut = 0, lower_percentile_to_cut = 0, spline_seperator = NULL){
+pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', relativity_label = 'Relativity', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, iteractionplottype = NULL, facetorcolourby = NULL, upper_percentile_to_cut = 0, lower_percentile_to_cut = 0, spline_seperator = NULL){
   # Fix for global variables
   tidy_workflow <- NULL
   Variable <- NULL
