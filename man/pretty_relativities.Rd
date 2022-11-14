@@ -71,7 +71,7 @@ meanage <- base::mean(titanic$Age, na.rm=TRUE)
 
 titanic  <- titanic  \%>\%
   dplyr::mutate_at(columns_to_factor, list(~factor(.))) \%>\%
-  dplyr::mutate(Age =base::ifelse(is.na(Age)==T,meanage,Age)) \%>\%
+  dplyr::mutate(Age =base::ifelse(is.na(Age)==TRUE,meanage,Age)) \%>\%
   dplyr::mutate(Age_0_25 = prettyglm::splineit(Age,0,25),
                 Age_25_50 = prettyglm::splineit(Age,25,50),
                 Age_50_120 = prettyglm::splineit(Age,50,120)) \%>\%
