@@ -29,7 +29,7 @@ Imports:
     tidyr,
     tidyselect,
     vip,
-    ggplot2
+    RColorBrewer
 Suggests: 
     rmarkdown,
     testthat
