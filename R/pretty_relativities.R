@@ -17,7 +17,7 @@
 #' @param lower_percentile_to_cut For continuous variables this is what percentile to exclude from the lower end of the distribution. Defaults to 0.01, so the mimimum percentile of the variable in the plot will be 0.01. Cutting off some of the distribution can help the views if outlier's are present in the data.
 #' @param spline_seperator string of the spline separator. For example AGE_0_25 would be "_".
 #'
-#' @return plotly plot of fitted relativities. \link[base]{data.frame} if return_data = TRUE.
+#' @return plotly plot of fitted relativities.
 #'
 #' @examples
 #' library(dplyr)
@@ -30,7 +30,7 @@
 #'                        'Embarked',
 #'                        'Cabintype',
 #'                        'Survived')
-#' meanage <- base::mean(titanic$Age, na.rm=T)
+#' meanage <- base::mean(titanic$Age, na.rm=TRUE)
 #'
 #' titanic  <- titanic  %>%
 #'   dplyr::mutate_at(columns_to_factor, list(~factor(.))) %>%
@@ -90,6 +90,7 @@
 #' @importFrom tidyselect "all_of"
 #' @importFrom tidyselect "contains"
 #' @importFrom tidyr "pivot_longer"
+#' @importFrom RColorBrewer "brewer.pal"
 #' @import dplyr
 #' @import plotly
 #'
@@ -426,7 +427,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
     # Count number in each group
     ivariable1 <- base::unlist(base::strsplit(factor_name, ':'))[1]
     ivariable2 <- base::unlist(base::strsplit(factor_name, ':'))[2]
-    count_df <- dplyr::select(training_data, c(ivariable1,ivariable2)) %>%
+    count_df <- dplyr::select(training_data, c(tidyselect::all_of(ivariable1),tidyselect::all_of(ivariable2))) %>%
         dplyr::group_by_at(c(ivariable1,ivariable2)) %>%
         dplyr::summarise(number_of_records = dplyr::n(), .groups = 'drop') %>%
         dplyr::ungroup()
@@ -761,6 +762,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                           type="scatter",
                           mode="lines+markers",
                           color = ~get(facetorcolourby),
+                          colors = RColorBrewer::brewer.pal((length(unique(dplyr::pull(dplyr::select(plot_datafacet, tidyselect::all_of(facetorcolourby)))))+1), "Set2")[1:length(unique(dplyr::pull(dplyr::select(plot_datafacet, tidyselect::all_of(facetorcolourby)))))],
                           name = ~get(facetorcolourby),
                           line = list(width = 4),
                           marker = list(size = 8)) %>%
@@ -1027,6 +1029,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                           type="scatter",
                           mode="lines",
                           color = ~Level,
+                          colors = RColorBrewer::brewer.pal((length(unique(plot_data$Level))+1), "Set2")[1:length(unique(plot_data$Level))],
                           line = list(width = 4),
                           yaxis = "y2") %>%
         plotly::add_trace(x = fit$x,
@@ -1277,6 +1280,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                            type="scatter",
                            mode="lines",
                            color = ~interaction,
+                           colors = RColorBrewer::brewer.pal((length(unique(dplyr::pull(dplyr::select(plot_data_record, interaction))))+1), "Set2")[1:length(unique(dplyr::pull(dplyr::select(plot_data_record, interaction))))],
                            line = list(width = 4),
                            yaxis = "y2") %>%
          plotly::add_trace(x = fit$x,

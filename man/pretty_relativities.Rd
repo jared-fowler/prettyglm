@@ -51,7 +51,7 @@ pretty_relativities(
 \item{spline_seperator}{string of the spline separator. For example AGE_0_25 would be "_".}
 }
 \value{
-plotly plot of fitted relativities. \link[base]{data.frame} if return_data = TRUE.
+plotly plot of fitted relativities.
 }
 \description{
 Creates a pretty html plot of model relativities including base Levels.
@@ -67,7 +67,7 @@ columns_to_factor <- c('Pclass',
                        'Embarked',
                        'Cabintype',
                        'Survived')
-meanage <- base::mean(titanic$Age, na.rm=T)
+meanage <- base::mean(titanic$Age, na.rm=TRUE)
 
 titanic  <- titanic  \%>\%
   dplyr::mutate_at(columns_to_factor, list(~factor(.))) \%>\%
