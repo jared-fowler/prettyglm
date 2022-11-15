@@ -29,7 +29,8 @@ Imports:
     tidyr,
     tidyselect,
     vip,
-    RColorBrewer
+    RColorBrewer,
+    methods
 Suggests: 
     rmarkdown,
     testthat
