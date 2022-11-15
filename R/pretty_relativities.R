@@ -920,7 +920,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
 
           # get the fit for that facet
           fit <- dplyr::filter(training_data, get(factorvariable) == as.character(facettoplot)) %>%
-            dplyr::select(., tidyselect:::all_of(ctsvariable)) %>%
+            dplyr::select(., tidyselect::all_of(ctsvariable)) %>%
             dplyr::filter(base::get(ctsvariable) <= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-upper_percentile_to_cut), na.rm = T))) %>%
             dplyr::filter(base::get(ctsvariable) >= as.numeric(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(lower_percentile_to_cut), na.rm = T))) %>%
             dplyr::pull() %>%

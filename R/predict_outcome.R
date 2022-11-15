@@ -17,6 +17,7 @@
 #'
 #' @export
 #' @import dplyr
+#' @importFrom methods "is"
 #'
 
 predict_outcome <- function(target, model_object, dataset, prediction_type = NULL, weights = NULL){
@@ -56,7 +57,7 @@ predict_outcome <- function(target, model_object, dataset, prediction_type = NUL
   # Make sure dataset is a dataframe not a tibble
   dataset <- base::as.data.frame(dataset)
   Actual_Values <- dplyr::pull(dplyr::select(dataset, tidyselect::all_of(c(target))))
-  if(class(Actual_Values) == 'factor'){
+  if(methods::is(Actual_Values,'factor') == TRUE){
     Actual_Values <- base::as.numeric(as.character(Actual_Values))
   }
 

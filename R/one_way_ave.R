@@ -43,6 +43,16 @@
 #'   dplyr::mutate(Fare_0_250 = prettyglm::splineit(Fare,0,250),
 #'                 Fare_250_600 = prettyglm::splineit(Fare,250,600))
 #'
+#' survival_model <- stats::glm(Survived ~
+#'                                Sex:Age +
+#'                                Fare +
+#'                                Embarked +
+#'                                SibSp +
+#'                                Parch +
+#'                                Cabintype,
+#'                              data = titanic,
+#'                              family = binomial(link = 'logit'))
+#'
 #' # Continuous Variable Example
 #' one_way_ave(feature_to_plot = 'Age',
 #'             model_object = survival_model,
@@ -148,7 +158,8 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
           dplyr::mutate(Actual_Values = (as.numeric(Actual_Values))) %>%
           dplyr::rename(Actual = Actual_Values) %>%
           dplyr::rename(Predicted = Predicted_Values) %>%
-          tidyr::pivot_longer(c(Actual, Predicted), names_to = 'Data_Type', values_to = 'value') %>%
+          dplyr::mutate(Residual = Actual-Predicted) %>%
+          tidyr::pivot_longer(c(Actual, Predicted, Residual), names_to = 'Data_Type', values_to = 'value') %>%
           dplyr::group_by_at(c(feature_to_plot,'Data_Type')) %>%
           dplyr::summarise(Average_value = mean(value),
                            Number_of_Records = n(),
@@ -156,17 +167,17 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
           dplyr::ungroup()
 
         if (plot_type == 'residuals'){
-          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type == 'Residual_Values')
+          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type == 'Residual')
           ylabeltext <- 'Residual'
           Plottitle <- paste('Residuals for',feature_to_plot)
         } else if (plot_type == 'predictions'){
-          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type != 'Residual_Values')
+          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type != 'Residual')
           ylabeltext <- target_variable
           Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
         } else if (plot_type == 'actuals'){
-          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type == 'Actual_Values')
+          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type == 'Actual')
           ylabeltext <- target_variable
-          Plottitle <- paste('Actual for',feature_to_plot)
+          Plottitle <- paste('Actuals for',feature_to_plot)
         } else{
           print("plot_type must be one of: 'residuals', 'predictions' or 'actuals'")
         }
@@ -234,7 +245,8 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
         dplyr::mutate(Actual_Values = (as.numeric(Actual_Values))) %>%
         dplyr::rename(Actual = Actual_Values) %>%
         dplyr::rename(Predicted = Predicted_Values) %>%
-        tidyr::pivot_longer(c(Actual, Predicted), names_to = 'Data_Type', values_to = 'value') %>%
+        dplyr::mutate(Residual = Actual-Predicted) %>%
+        tidyr::pivot_longer(c(Actual, Predicted, Residual), names_to = 'Data_Type', values_to = 'value') %>%
         dplyr::group_by_at(c(feature_to_plot,'Data_Type')) %>%
         dplyr::summarise(Average_value = mean(value),
                          Number_of_Records = n(),
@@ -243,15 +255,15 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
 
       # Create plots --------------------------------------------------------------------------------
       if (plot_type == 'residuals'){
-        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Residual_Values')
+        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Residual')
         ylabeltext <- 'Residual'
         Plottitle <- paste('Residuals for',feature_to_plot)
       } else if (plot_type == 'predictions'){
-        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual_Values')
+        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual')
         ylabeltext <- target_variable
         Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
       } else if (plot_type == 'actuals'){
-        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Actual_Values')
+        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Actual')
         ylabeltext <- target_variable
         Plottitle <- paste('Actual for',feature_to_plot)
       } else{
@@ -346,7 +358,8 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
           dplyr::mutate(Actual_Values = (as.numeric(Actual_Values))) %>%
           dplyr::rename(Actual = Actual_Values) %>%
           dplyr::rename(Predicted = Predicted_Values) %>%
-          tidyr::pivot_longer(c(Actual, Predicted), names_to = 'Data_Type', values_to = 'value') %>%
+          dplyr::mutate(Residual = Actual-Predicted) %>%
+          tidyr::pivot_longer(c(Actual, Predicted, Residual), names_to = 'Data_Type', values_to = 'value') %>%
           dplyr::group_by_at(c(base::paste0(feature_to_plot,'_cat'),'Data_Type')) %>%
           dplyr::summarise(Average_value = mean(value),
                            Number_of_Records = n(),
@@ -354,15 +367,15 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
           dplyr::ungroup()
 
         if (plot_type == 'residuals'){
-          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type == 'Residual_Values')
+          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type == 'Residual')
           ylabeltext <- 'Residual'
           Plottitle <- paste('Residuals for',feature_to_plot)
         } else if (plot_type == 'predictions'){
-          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type != 'Residual_Values')
+          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type != 'Residual')
           ylabeltext <- target_variable
           Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
         } else if (plot_type == 'actuals'){
-          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type == 'Actual_Values')
+          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type == 'Actual')
           ylabeltext <- target_variable
           Plottitle <- paste('Actual for',feature_to_plot)
         } else{
@@ -442,7 +455,8 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
         dplyr::mutate(Actual_Values = (as.numeric(Actual_Values))) %>%
         dplyr::rename(Actual = Actual_Values) %>%
         dplyr::rename(Predicted = Predicted_Values) %>%
-        tidyr::pivot_longer(c(Actual, Predicted), names_to = 'Data_Type', values_to = 'value') %>%
+        dplyr::mutate(Residual = Actual-Predicted) %>%
+        tidyr::pivot_longer(c(Actual, Predicted, Residual), names_to = 'Data_Type', values_to = 'value') %>%
         dplyr::group_by_at(c(base::paste0(feature_to_plot,'_cat'),'Data_Type')) %>%
         dplyr::summarise(Average_value = mean(value),
                          Number_of_Records = n(),
@@ -450,15 +464,15 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
         dplyr::ungroup()
 
       if (plot_type == 'residuals'){
-        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Residual_Values')
+        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Residual')
         ylabeltext <- 'Residual'
         Plottitle <- paste('Residuals for',feature_to_plot)
       } else if (plot_type == 'predictions'){
-        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual_Values')
+        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual')
         ylabeltext <- target_variable
         Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
       } else if (plot_type == 'actuals'){
-        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Actual_Values')
+        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type == 'Actual')
         ylabeltext <- target_variable
         Plottitle <- paste('Actual for',feature_to_plot)
       } else{

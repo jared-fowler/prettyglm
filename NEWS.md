@@ -1,12 +1,12 @@
-# prettyglm 0.1.1
+# prettyglm 1.0.0
 
-* Added `pretty_relativities()`
-* Documented example data sets.
+* First major release of `prettyglm`
+* Added actua
+* added ......
 
 ---
 
 # prettyglm 0.1.0
 
-* Created initial version of this package with the first function `pretty_coefficients()`
+* Created initial version of this package with first set of functions
 * Added a `NEWS.md` file to track changes to the package.
-

@@ -86,6 +86,16 @@ titanic  <- titanic  \%>\%
   dplyr::mutate(Fare_0_250 = prettyglm::splineit(Fare,0,250),
                 Fare_250_600 = prettyglm::splineit(Fare,250,600))
 
+survival_model <- stats::glm(Survived ~
+                               Sex:Age +
+                               Fare +
+                               Embarked +
+                               SibSp +
+                               Parch +
+                               Cabintype,
+                             data = titanic,
+                             family = binomial(link = 'logit'))
+
 # Continuous Variable Example
 one_way_ave(feature_to_plot = 'Age',
             model_object = survival_model,

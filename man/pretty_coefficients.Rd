@@ -91,7 +91,14 @@ survival_model3 <- stats::glm(Survived ~
                                         Cabintype,
                               data = titanic,
                               family = binomial(link = 'logit'))
-pretty_coefficients(survival_model3, relativity_transform = 'exp(estimate)-1', spline_seperator = '_', vimethod = 'permute', target = 'Survived', metric = 'auc', pred_wrapper = predict.glm, reference_class = 0)
+pretty_coefficients(survival_model3,
+                    relativity_transform = 'exp(estimate)-1',
+                    spline_seperator = '_',
+                    vimethod = 'permute',
+                    target = 'Survived',
+                    metric = 'auc',
+                    pred_wrapper = predict.glm,
+                    reference_class = 0)
 
 
 }
