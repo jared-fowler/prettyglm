@@ -21,6 +21,8 @@
 #' @importFrom stringr "str_remove"
 #' @importFrom forcats "fct_inorder"
 #' @importFrom tidycat "factor_regex"
+#' @importFrom tidyselect "all_of"
+#' @importFrom methods "is"
 #' @import dplyr
 
 clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model', spline_seperator = NULL, ...){
@@ -73,9 +75,15 @@ clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model', spline_s
         # factors and cts need to be handled different
         # not built for more than one interaction
         lev <- base::unlist(base::strsplit(as.character(x$level[i]), ':'))
-        var1 <- base::unlist(base::strsplit(x$variable[i], ':'))[1] #hopefully always factor 1
+        var1 <- base::unlist(base::strsplit(x$variable[i], ':'))[1]
         var2 <- base::unlist(base::strsplit(x$variable[i], ':'))[2]
-        termname <- base::paste0(var1,lev, ':', var2)
+        # At the moment we need to check the class of the training data, hopefully we can change this at some point
+        if (methods::is(dplyr::pull(dplyr::select(m$data, tidyselect::all_of(var1))), 'factor') == TRUE){
+          termname <- base::paste0(var1,lev, ':', var2)
+        }
+        if (methods::is(dplyr::pull(dplyr::select(m$data, tidyselect::all_of(var2))), 'factor') == TRUE){
+          termname <- base::paste0(var2,lev, ':', var1)
+        }
       } else{
         for (k in 1:base::length(base::unlist(base::strsplit(as.character(x$level[i]), ':')))){
           lev <- base::unlist(base::strsplit(as.character(x$level[i]), ':'))[k]

@@ -14,7 +14,7 @@ one_way_ave(
   ordering = NULL,
   width = 800,
   height = 500,
-  number_of_buckets = NULL,
+  number_of_buckets = 30,
   first_colour = "black",
   second_colour = "#cc4678",
   facetby = NULL,

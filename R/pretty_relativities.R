@@ -905,7 +905,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                           margin = 0.07,
                           shareY = F,
                           shareX = T) %>%
-          plotly::layout(title = base::paste(relativity_label, 'for', feature_to_plot, 'interaction', 'faceted by', facetorcolourby),
+          plotly::layout(title = base::paste(relativity_label, 'for', feature_to_plot, 'interaction', 'faceted by', factorvariable),
                          legend = list(orientation = "h",
                                        y = -0.2,
                                        x = 0.15,
@@ -992,15 +992,13 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                           margin = 0.07,
                           shareY = F,
                           shareX = T) %>%
-          plotly::layout(title = base::paste(relativity_label, 'for', feature_to_plot, 'interaction', 'faceted by', facetorcolourby),
+          plotly::layout(title = base::paste(relativity_label, 'for', feature_to_plot, 'interaction', 'faceted by', factorvariable),
                          legend = list(orientation = "h",
                                        y = -0.2,
                                        x = 0.15,
                                        title = ''))
         return(p_return)
       }
-
-
     } else if (iteractionplottype == 'colour'){
       # prep the data for plotting
       plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =100))
@@ -1055,7 +1053,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                                      title = ''),
                        xaxis = list(title = feature_to_plot,
                                     zeroline = FALSE),
-                       title = base::paste(relativity_label, 'for', feature_to_plot),
+                       title = base::paste(relativity_label, 'for', feature_to_plot, 'coloured by', factorvariable),
                        autosize = T,
                        margin = list(b = 50, l = 50, r=80))
       return(p_return)
@@ -1230,7 +1228,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                          margin = 0.07,
                          shareY = F,
                          shareX = T) %>%
-         plotly::layout(title = base::paste(relativity_label, 'for', feature_to_plot, 'interaction'),
+         plotly::layout(title = base::paste(relativity_label, 'for', feature_to_plot, 'interaction', 'faceted by', stringr::word(feature_to_plot,otherg,sep = ':')),
                         legend = list(orientation = "h",
                                       y = -0.2,
                                       x = 0.35,
@@ -1306,7 +1304,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                                       title = ''),
                         xaxis = list(title = ctsvariable,
                                      zeroline = FALSE),
-                        title = base::paste(relativity_label, 'for', feature_to_plot),
+                        title = base::paste(relativity_label, 'for', feature_to_plot, 'coloured by', stringr::word(feature_to_plot,otherg,sep = ':')),
                         autosize = T,
                         margin = list(b = 50, l = 50, r=80))
        return(p_return)

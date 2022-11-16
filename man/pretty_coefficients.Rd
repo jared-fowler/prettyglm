@@ -54,6 +54,8 @@ columns_to_factor <- c('Pclass',
                        'Embarked',
                        'Cabintype',
                        'Survived')
+meanage <- base::mean(titanic$Age, na.rm=T)
+
 titanic  <- titanic  \%>\%
  dplyr::mutate_at(columns_to_factor, list(~factor(.))) \%>\%
  dplyr::mutate(Age =base::ifelse(is.na(Age)==TRUE,meanage,Age)) \%>\%
