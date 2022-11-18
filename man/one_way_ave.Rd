@@ -20,7 +20,7 @@ one_way_ave(
   facetby = NULL,
   prediction_type = "response",
   predict_function = NULL,
-  upper_percentile_to_cut = 0,
+  upper_percentile_to_cut = 0.01,
   lower_percentile_to_cut = 0
 )
 }

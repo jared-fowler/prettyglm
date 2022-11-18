@@ -30,6 +30,10 @@ utils::globalVariables(c("conf.low",
                          "value",
                          "Data_Type",
                          "density",
-                         "Rank"
+                         "Rank",
+                         "Variable.x",
+                         "Variable.y",
+                         "Importance.x",
+                         "Importance.y",
+                         "Interacted_Importance"
                          ))
-

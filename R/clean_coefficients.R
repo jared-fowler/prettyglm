@@ -26,6 +26,7 @@
 #' @import dplyr
 
 clean_coefficients <- function(d = NULL, m  = NULL, vimethod = 'model', spline_seperator = NULL, ...){
+
   # Extract model object if parsnip object
   if (any(class(m) == 'model_fit') == TRUE) m <- m$fit else m <- m
 

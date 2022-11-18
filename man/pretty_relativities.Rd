@@ -16,7 +16,7 @@ pretty_relativities(
   height = 500,
   iteractionplottype = NULL,
   facetorcolourby = NULL,
-  upper_percentile_to_cut = 0,
+  upper_percentile_to_cut = 0.01,
   lower_percentile_to_cut = 0,
   spline_seperator = NULL
 )
