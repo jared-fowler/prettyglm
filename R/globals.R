@@ -35,5 +35,11 @@ utils::globalVariables(c("conf.low",
                          "Variable.y",
                          "Importance.x",
                          "Importance.y",
-                         "Interacted_Importance"
+                         "Interacted_Importance",
+                         "approx",
+                         "Residual",
+                         "upper_95_ci",
+                         "lower_95_ci",
+                         ":=",
+                         "product"
                          ))

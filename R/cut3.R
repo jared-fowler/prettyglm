@@ -15,7 +15,9 @@
 #'
 #' @return vector of cut
 #'
+#'
 #' @export
+#' @importFrom stats "approx"
 
 cut3 <- function(x, cuts, m=150, g, digits, minmax=TRUE,
                 oneval=TRUE, onlycuts=FALSE, formatfun = format, ...){
