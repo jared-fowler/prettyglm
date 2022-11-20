@@ -7,7 +7,7 @@
 #' @param relativity_label String of label to give to relativity column if you want to change the title to your use case.
 #' @param type_iii Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \code{\link[car]{Anova}}
 #' @param conf.int Set to TRUE to include confidence intervals in summary table. Warning, can be computationally expensive.
-#' @param vimethod Variable importance method to pass to method of \code{\link[vi]{vip}}. Defaults to "model". Currently supports "permute" and "firm", pass any additional arguments to \code{\link[vi]{vip}} in ...
+#' @param vimethod Variable importance method to pass to method of \code{\link[vip]{vi}}. Defaults to "model". Currently supports "permute" and "firm", pass any additional arguments to \code{\link[vi]{vip}} in ...
 #' @param spline_seperator Separator to look for to identity a spline. If this input is not null, it is assumed any features with this separator are spline columns. For example an age spline from 0 to 25 you could use: AGE_0_25 and "_".
 #' @param significance_level Significance level to P-values by in kable. Defaults to 0.05.
 #' @param return_data Set to TRUE to return \code{\link[base]{data.frame}} instead of creating \code{\link[knitr]{kable}}.

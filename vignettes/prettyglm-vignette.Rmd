@@ -122,7 +122,7 @@ pretty_coefficients(survival_model, type_iii = 'Wald', significance_level = 0.1)
 
 ### Changing Variable Importance Method
 
-By default `pretty_coefficients` shows "model" variable importance. But `vimethod` also accepts "permute" and "firm" methods from \link[vi]{vip}. Additional parameters for these methods should also be passed into `pretty_coefficients`.
+By default `pretty_coefficients` shows "model" variable importance. But `vimethod` also accepts "permute" and "firm" methods from \link[vip]{vi}. Additional parameters for these methods should also be passed into `pretty_coefficients`.
 
 ```{r visualise coefficients vi, echo=TRUE}
 pretty_coefficients(model_object = survival_model,

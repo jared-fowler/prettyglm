@@ -41,5 +41,6 @@ utils::globalVariables(c("conf.low",
                          "upper_95_ci",
                          "lower_95_ci",
                          ":=",
-                         "product"
+                         "product",
+                         "label<-"
                          ))
