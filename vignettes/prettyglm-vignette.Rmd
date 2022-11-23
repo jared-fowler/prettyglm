@@ -74,8 +74,7 @@ columns_to_factor <- c('Pclass',
 meanage <- base::mean(titanic$Age, na.rm=T)
 titanic  <- titanic  %>%
   dplyr::mutate_at(columns_to_factor, list(~factor(.))) %>%
-  dplyr::mutate(Age =base::ifelse(is.na(Age)==T,meanage,Age)) #%>% 
-  # dplyr::mutate(Age_Cat = Hmisc::cut2(Age, levels.mean = TRUE, g =10))
+  dplyr::mutate(Age =base::ifelse(is.na(Age)==T,meanage,Age)) 
 
 ```
 
@@ -134,11 +133,12 @@ pretty_coefficients(model_object = survival_model,
                     pred_wrapper = predict.glm, 
                     reference_class = 0)
 ```
+
 # `pretty_relativities()`
 
 `pretty_relativities()` will create a plot of the desired model variable. A different plot will be generated depending on the class of the variable.
 
-## Plot coefficeints {.tabset}
+## Plot coefficients {.tabset}
 
 A model relativity is a transform of the model estimate. By default `pretty_relativities()` uses 'exp(estimate)-1' which is useful for GLM's which use a log or logit link function. 
 

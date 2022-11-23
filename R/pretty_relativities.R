@@ -97,15 +97,15 @@
 
 pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', relativity_label = 'Relativity', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, iteractionplottype = NULL, facetorcolourby = NULL, upper_percentile_to_cut = 0.01, lower_percentile_to_cut = 0, spline_seperator = NULL){
   # Fix for global variables
-  tidy_workflow <- NULL
-  Variable <- NULL
-  Relativity <- NULL
-  relativity <- NULL
-  Std.error <- NULL
-  Approx_Upper_95CI <- NULL
-  Approx_Lower_95CI <- NULL
-  name <- NULL
-  number_of_records <- NULL
+  # tidy_workflow <- NULL
+  # Variable <- NULL
+  # Relativity <- NULL
+  # relativity <- NULL
+  # Std.error <- NULL
+  # Approx_Upper_95CI <- NULL
+  # Approx_Lower_95CI <- NULL
+  # name <- NULL
+  # number_of_records <- NULL
 
   # Create relativity function from input
   base::eval(base::parse(text = base::paste('relativity <- function(estimate) { return(' , relativity_transform , ')}', sep='')))
@@ -438,11 +438,6 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
 
     plot_data <- dplyr::left_join(plot_data, count_df, by = c('Level' = 'Level', 'Variable' = 'Variable'))
 
-    # Change the variable to numeric for plotting if needed
-    if (plot_factor_as_numeric == TRUE){
-      plot_data <- plot_data %>% dplyr::mutate_at(dplyr::vars(tidyselect::all_of('Level')), ~ as.numeric(as.character(dplyr::pull(dplyr::select(plot_data, tidyselect::all_of('Level'))))))
-    }
-
     # Change ordering if specified
     if (base::is.null(ordering) ==  FALSE){
       if (base::length(ordering) >1){
@@ -588,7 +583,10 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
         while (l <= numberoffacets){
           facettoplot <- base::unique(dplyr::pull(dplyr::select(plot_data, dplyr::all_of(facetorcolourby))))[l]
           xaxisvariable <- stringr::str_remove(stringr::str_remove(factor_name, facetorcolourby),":")
-
+          # Change the variable to numeric for plotting if needed
+          if (plot_factor_as_numeric == TRUE){
+            plot_data <- plot_data %>% dplyr::mutate_at(dplyr::vars(tidyselect::all_of(xaxisvariable)), ~ as.numeric(as.character(dplyr::pull(dplyr::select(plot_data, tidyselect::all_of(xaxisvariable))))))
+          }
           plotlist[[l]] <- plot_data %>%
             dplyr::filter(get(facetorcolourby) == facettoplot) %>%
             plotly::plot_ly(height = height,
@@ -655,7 +653,10 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
         while (l <= numberoffacets){
           facettoplot <- base::unique(dplyr::pull(dplyr::select(plot_data, dplyr::all_of(facetorcolourby))))[l]
           xaxisvariable <- stringr::str_remove(stringr::str_remove(factor_name, facetorcolourby),":")
-
+          # Change the variable to numeric for plotting if needed
+          if (plot_factor_as_numeric == TRUE){
+            plot_data <- plot_data %>% dplyr::mutate_at(dplyr::vars(tidyselect::all_of(xaxisvariable)), ~ as.numeric(as.character(dplyr::pull(dplyr::select(plot_data, tidyselect::all_of(xaxisvariable))))))
+          }
           plotlist[[l]] <- plot_data %>%
             dplyr::filter(get(facetorcolourby) == facettoplot) %>%
             plotly::plot_ly(height = height,
@@ -745,6 +746,10 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
 
       # aggregate the number of records
       xaxisvariable <- stringr::str_remove(stringr::str_remove(factor_name, facetorcolourby),":")
+      # Change the variable to numeric for plotting if needed
+      if (plot_factor_as_numeric == TRUE){
+        plot_data <- plot_data %>% dplyr::mutate_at(dplyr::vars(tidyselect::all_of(xaxisvariable)), ~ as.numeric(as.character(dplyr::pull(dplyr::select(plot_data, tidyselect::all_of(xaxisvariable))))))
+      }
       agg_number_to_plot <- plot_data %>%
         dplyr::group_by_at(xaxisvariable) %>%
         dplyr::summarise(number_of_records = sum(number_of_records), .groups = 'drop')
