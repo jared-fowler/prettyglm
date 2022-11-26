@@ -1,8 +1,6 @@
 url: https://jared-fowler.github.io/prettyglm/
 template:
   bootstrap: 5
-  #bootswatch: simplex
-#runtime: shiny
 as_is: true
 
 reference:

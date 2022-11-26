@@ -32,7 +32,7 @@ meanage <- base::mean(titanic$Age, na.rm=T)
 titanic  <- titanic  %>%
   dplyr::mutate_at(columns_to_factor, list(~factor(.))) %>%
   dplyr::mutate(Age =base::ifelse(is.na(Age)==T,meanage,Age)) %>% 
-  dplyr::mutate(Age_Cat = Hmisc::cut2(Age, levels.mean = TRUE, g =10))
+  dplyr::mutate(Age_Cat = prettyglm::cut3(Age, levels.mean = TRUE, g =10))
 
 # Build a basic glm
 survival_model <- stats::glm(Survived ~ Pclass + 
