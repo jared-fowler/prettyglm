@@ -7,7 +7,7 @@
 splineit(var, min, max)
 }
 \arguments{
-\item{var}{Continous vector to spline.}
+\item{var}{Continuous vector to spline.}
 
 \item{min}{Min of spline.}
 
@@ -17,7 +17,7 @@ splineit(var, min, max)
 Splined Column
 }
 \description{
-Splines a continous variable
+Splines a continuous variable
 }
 \examples{
 library(dplyr)

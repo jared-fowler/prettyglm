@@ -1,8 +1,8 @@
 #' @title splineit
 #'
-#' @description Splines a continous variable
+#' @description Splines a continuous variable
 #'
-#' @param var Continous vector to spline.
+#' @param var Continuous vector to spline.
 #' @param min Min of spline.
 #' @param max Max of spline.
 #'

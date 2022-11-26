@@ -239,7 +239,7 @@ pretty_relativities(feature_to_plot= 'Pclass:Fare',
 
 #### Facet
 
-You can also facet by the factor variable. ERROR HERRER
+You can also facet by the factor variable.
 
 ```{r visualise cf F, echo=TRUE, message=FALSE, warning=FALSE}
 pretty_relativities(feature_to_plot= 'Pclass:Fare',
@@ -260,7 +260,7 @@ To highlight some more of `prettyglm`'s functionality we will now build a logist
 
 `prettyglm` includes a function `splineit` to help construct splines. This can be incorporated in the dplyr workflow as follows.
 
-For splines to work nicely in `prettyglm` use the naming convention Variable#Start#End where # represents your desired seperator.
+For splines to work nicely in `prettyglm` use the naming convention Variable#Start#End where # represents your desired separator.
 
 ```{r fit the splines}
 titanic  <- titanic  %>%
@@ -365,7 +365,7 @@ one_way_ave(feature_to_plot = 'Cabintype',
             data_set = titanic)
 ```
 
-##  Customing one-way performance plots {.tabset}
+##  Customising one-way performance plots {.tabset}
 
 ### Faceting
 

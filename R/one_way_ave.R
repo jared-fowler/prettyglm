@@ -18,7 +18,7 @@
 #' @param prediction_type Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".
 #' @param predict_function A custom prediction function can be provided here.It must return a \link[base]{data.frame} with an "Actual_Values" column, and a "Predicted_Values" column.
 #' @param upper_percentile_to_cut For continuous variables this is what percentile to exclude from the upper end of the distribution. Defaults to 0.01, so the maximum percentile of the variable in the plot will be 0.99. Cutting off some of the distribution can help the views if outlier's are present in the data.
-#' @param lower_percentile_to_cut For continuous variables this is what percentile to exclude from the lower end of the distribution. Defaults to 0.01, so the mimimum percentile of the variable in the plot will be 0.01. Cutting off some of the distribution can help the views if outlier's are present in the data.
+#' @param lower_percentile_to_cut For continuous variables this is what percentile to exclude from the lower end of the distribution. Defaults to 0.01, so the minimum percentile of the variable in the plot will be 0.01. Cutting off some of the distribution can help the views if outlier's are present in the data.
 #'
 #' @return plotly plot of one way actual vs expected.
 #'
