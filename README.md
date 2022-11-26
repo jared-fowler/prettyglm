@@ -47,8 +47,9 @@ devtools::install_github("jared-fowler/prettyglm")
 
 ## Documentation
 
-Please see **website link** for more detailed documentation and
-examples.
+Please see the website
+[prettyglm](https://jared-fowler.github.io/prettyglm/) for more detailed
+documentation and examples.
 
 ## A Simple Example
 
@@ -217,7 +218,7 @@ actual_expected_bucketed(target_variable = 'T_DEPOSIT',
 ```
 
 <p align="center">
-<img src= './man/figures/bank_overall_ave.png' height="500" align="center"/>
+<img src= './man/figures/aveband.png' align="center"/>
 </p>
 
 ### Support My Work
