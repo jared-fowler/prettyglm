@@ -20,6 +20,7 @@ A critical step for this package to work is to **set all categorical predictors 
 ```{r preprocessing 1, echo=TRUE, message=FALSE, warning=FALSE}
 library(dplyr)
 library(prettyglm)
+library(Hmisc)
 data('titanic')
 
 # Easy way to convert multiple columns to a factor.
