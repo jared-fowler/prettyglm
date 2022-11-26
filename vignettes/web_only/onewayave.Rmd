@@ -1,0 +1,121 @@
+---
+title: 'One way actual vs expected plots'
+author:
+- name: Jared Fowler
+output:
+  html_document: 
+    number_sections: no
+vignette: >
+  %\VignetteIndexEntry{prettyglm: Beautiful Visualisations for Generalized Linear Models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The function `one_way_ave()` creates one-way actual vs expect plots.
+
+## Pre-processing
+
+A critical step for this package to work is to **set all categorical predictors as factors**. 
+
+```{r preprocessing 1, echo=TRUE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(prettyglm)
+data('titanic')
+
+# Easy way to convert multiple columns to a factor.
+columns_to_factor <- c('Pclass',
+                       'Sex',
+                       'Cabin', 
+                       'Embarked',
+                       'Cabintype')
+meanage <- base::mean(titanic$Age, na.rm=T)
+titanic  <- titanic  %>%
+  dplyr::mutate_at(columns_to_factor, list(~factor(.))) %>%
+  dplyr::mutate(Age =base::ifelse(is.na(Age)==T,meanage,Age)) %>% 
+  dplyr::mutate(Age_Cat = Hmisc::cut2(Age, levels.mean = TRUE, g =10))
+
+# Build a basic glm
+survival_model <- stats::glm(Survived ~ Pclass + 
+                                        Sex + 
+                                        Fare +
+                                        Age_Cat +
+                                        Embarked + 
+                                        SibSp + 
+                                        Parch, 
+                             data = titanic, 
+                             family = binomial(link = 'logit'))
+```
+
+##  Visualising one-way performance {.tabset}
+
+### Continuous Variable 
+
+For continuous variables `one_way_ave` will bucket value into 30 buckets by default, and plot the density on a dual axis.
+
+```{r oneway cts}
+one_way_ave(feature_to_plot = 'Age',
+            model_object = survival_model,
+            target_variable = 'Survived',
+            data_set = titanic,
+            upper_percentile_to_cut = 0.1,
+            lower_percentile_to_cut = 0.1)
+```
+
+### Discrete Variable
+
+```{r oneway discrete}
+one_way_ave(feature_to_plot = 'Cabintype',
+            model_object = survival_model,
+            target_variable = 'Survived',
+            data_set = titanic)
+```
+
+##  Customing one-way performance plots {.tabset}
+
+### Faceting
+
+You can facet the `one_way_ave` plot by providing a variable to facet by in `facetby`.
+
+```{r oneway cts facet}
+one_way_ave(feature_to_plot = 'Age',
+            model_object = survival_model,
+            target_variable = 'Survived',
+            facetby = 'Sex',
+            data_set = titanic,
+            upper_percentile_to_cut = 0.1,
+            lower_percentile_to_cut = 0.1)
+```
+
+
+### Custom Predict Function
+
+By default `one_way_ave` uses \link[stats]{predict.glm}. If you would like to use `one_way_ave` with another model type (which is not compatible with predict.glm), or provide modified predictions, `one_way_ave` allows a custom prediction function.
+
+This function must return a data.frame with two columns: "Actual_Values" and "Predicted_Values".
+
+```{r custom predict}
+# Custom Predict Function and facet
+a_custom_predict_function <- function(target, model_object, dataset){
+  dataset <- base::as.data.frame(dataset)
+  Actual_Values <- dplyr::pull(dplyr::select(dataset, tidyselect::all_of(c(target))))
+  if(class(Actual_Values) == 'factor'){
+    Actual_Values <- base::as.numeric(as.character(Actual_Values))
+  }
+  Predicted_Values <- base::as.numeric(stats::predict(model_object, dataset, type='response'))
+
+  to_return <-  base::data.frame(Actual_Values = Actual_Values,
+                                 Predicted_Values = Predicted_Values)
+
+  to_return <- to_return %>%
+    dplyr::mutate(Predicted_Values = base::ifelse(Predicted_Values > 0.4,0.4,Predicted_Values))
+  return(to_return)
+}
+
+one_way_ave(feature_to_plot = 'Age',
+            model_object = survival_model,
+            target_variable = 'Survived',
+            data_set = titanic,
+            upper_percentile_to_cut = 0.1,
+            lower_percentile_to_cut = 0.1,
+            predict_function = a_custom_predict_function)
+```

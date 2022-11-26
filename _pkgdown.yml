@@ -1,0 +1,54 @@
+url: https://jared-fowler.github.io/prettyglm/
+template:
+  bootstrap: 5
+  #bootswatch: simplex
+#runtime: shiny
+as_is: true
+
+reference:
+- title: Visualising fitted GLM
+- contents:
+  - pretty_coefficients
+  - pretty_relativities
+- title: Visualising model predictions
+- contents:
+  - actual_expected_bucketed
+  - one_way_ave
+- title: Tools
+- contents:
+  - cut3
+  - splineit
+- title: Internal Functions
+- contents:
+  - clean_coefficients
+  - predict_outcome
+- title: Data
+- contents:
+  - bank_data
+  - titanic
+
+navbar:
+ components:
+   articles:
+    text: Articles
+    menu:
+    - text: Visualising fitted GLM
+    - text: Creating a pretty coefficient table
+      href: articles/web_only/creating_pretty_coefficients.html
+    - text: Creating relativity plots
+      href: articles/web_only/simple_pretty_relativities.html
+    - text: Creating relativity plots for interactions
+      href: articles/web_only/interaction_pretty_relativities.html
+    - text: Creating relativity plots for splines
+      href: articles/web_only/spline_pretty_relativities.html
+    - text: -------
+    - text: Visualising model predictions
+    - text: Bucketed actual vs predicted
+      href: articles/web_only/onewayave.html
+    - text: One way actual vs expected
+      href: articles/web_only/onewayavesimple.html
+
+home:
+  title: An R package to visualise glm coefficients
+  description: >
+    Are you looking for an R package which can help you visualise the coefficients of a generalised linear model? Then prettyglm is the package for you. prettyglm helps users create beautiful coefficeint summaries which include categorical base levels, variable importance and type III p.values. prettyglm also creates beautiful relativity plots for categorical, continuous and splined coefficients.

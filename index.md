@@ -1,0 +1,178 @@
+
+# prettyglm <img src='./man/figures/logo.png' align="right" height="139" />
+
+<!-- badges: start -->
+
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/prettyglm)](https://cran.r-project.org/package=prettyglm)
+[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/prettyglm)](https://cran.r-project.org/package=prettyglm)
+[![R build
+status](https://github.com/jared-fowler/prettyglm/workflows/R-CMD-check/badge.svg)](https://github.com/jared-fowler/prettyglm/actions)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+<!-- badges: end -->
+
+## Overview
+
+prettyglm is an R package which provides a set of functions which create
+beautiful coefficient summaries of generalised linear models.
+
+## Installation
+
+You can install the latest CRAN release with:
+
+``` r
+install.packages('prettyglm')
+```
+
+## A Simple Example
+
+To explore the functionality of prettyglm we will use a data set sourced
+from
+[kaggle](https://www.kaggle.com/volodymyrgavrysh/bank-marketing-campaigns-dataset).
+To learn more about each of the provided functions please read the
+articles.
+
+### Pre-processing
+
+A critical step for this package to work well is to **set all
+categorical predictors as factors**.
+
+``` r
+library(prettyglm)
+library(dplyr)
+data("bank")
+
+# Easiest way to convert multiple columns to a factor.
+columns_to_factor <- c('job',
+                       'marital',
+                       'education',
+                       'default',
+                       'housing',
+                       'loan')
+bank_data  <- bank_data  %>%
+  dplyr::filter(loan != 'unknown') %>% 
+  dplyr::filter(default != 'yes') %>% 
+  dplyr::mutate(age = as.numeric(age)) %>% 
+  dplyr::mutate_at(columns_to_factor, list(~factor(.))) %>% # multiple columns to factor
+  dplyr::mutate(T_DEPOSIT = as.factor(base::ifelse(y=='yes',1,0))) #convert target to 0 and 1 for performance plots
+```
+
+### Building a glm
+
+For this example we will build a glm using `stats::glm()`, however
+`prettyglm` is working to support `parsnip` and `workflow` model objects
+which use the glm model engine.
+
+``` r
+deposit_model <- stats::glm(T_DEPOSIT ~ marital +
+                                        default:loan +
+                                        loan +
+                                        age,
+                             data = bank_data,
+                             family = binomial)
+```
+
+### Table of model coefficients
+
+`pretty_coefficients()` creates a neat table of the model coefficients,
+see `vignette("creating_pretty_coefficients")`.
+
+``` r
+pretty_coefficients(deposit_model, type_iii = 'Wald')
+```
+
+<p align="center">
+<img src= './man/figures/indextable.png' align="center"/>
+</p>
+
+### Create plots of the model coefficients
+
+`pretty_relativities()` creates beautiful plots of model coefficients,
+see `vignette("simple_pretty_relativities")` and
+`vignette("interaction_pretty_relativities")` to get started.
+
+#### job
+
+``` r
+pretty_relativities(feature_to_plot = 'marital',
+                    model_object = deposit_model)
+```
+
+<p align="center">
+<img src= './man/figures/maritalrel.png' align="center"/>
+</p>
+
+#### age
+
+``` r
+pretty_relativities(feature_to_plot = 'age',
+                    model_object = deposit_model)
+```
+
+<p align="center">
+<img src= './man/figures/agerel.png' align="center"/>
+</p>
+
+#### default:loan
+
+``` r
+pretty_relativities(feature_to_plot = 'default:loan',
+                    model_object = deposit_model,
+                    iteractionplottype = 'colour',
+                    facetorcolourby = 'loan')
+```
+
+<p align="center">
+<img src= './man/figures/defualtloanrel.png'  align="center"/>
+</p>
+
+### Visualising one-way model performance
+
+`one_way_ave()` creates one-way model performance plots, see
+`vignette("onewayave")` to get started.
+
+#### age
+
+``` r
+one_way_ave(feature_to_plot = 'age',
+            model_object = deposit_model,
+            target_variable = 'T_DEPOSIT',
+            data_set = bank_data)
+```
+
+<p align="center">
+<img src= './man/figures/ageave.png' align="center"/>
+</p>
+
+#### education
+
+``` r
+one_way_ave(feature_to_plot = 'education',
+            model_object = deposit_model,
+            target_variable = 'T_DEPOSIT',
+            data_set = bank_data)
+```
+
+<p align="center">
+<img src= './man/figures/educationave.png' align="center"/>
+</p>
+
+### Visualising overall actual vs expected bucketed
+
+`actual_expected_bucketed()` creates actual vs expected performance
+plots by predicted band, see `vignette("visualisingoverallave")` to get
+started.
+
+``` r
+actual_expected_bucketed(target_variable = 'T_DEPOSIT',
+                         model_object = deposit_model)
+```
+
+<p align="center">
+<img src= './man/figures/aveband.png' align="center"/>
+</p>
+
+### Support My Work
+
+[![“Buy Me A
+Coffee”](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/tictap)

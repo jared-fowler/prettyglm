@@ -1,0 +1,67 @@
+---
+title: 'Bucketed Actual vs Expected'
+author:
+- name: Jared Fowler
+output:
+  html_document: 
+    number_sections: no
+vignette: >
+  %\VignetteIndexEntry{prettyglm: Beautiful Visualisations for Generalized Linear Models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The function `one_way_ave()` creates one-way actual vs expect plots.
+
+## Pre-processing
+
+A critical step for this package to work is to **set all categorical predictors as factors**. 
+
+```{r preprocessing 1, echo=TRUE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(prettyglm)
+data('titanic')
+
+# Easy way to convert multiple columns to a factor.
+columns_to_factor <- c('Pclass',
+                       'Sex',
+                       'Cabin', 
+                       'Embarked',
+                       'Cabintype')
+meanage <- base::mean(titanic$Age, na.rm=T)
+titanic  <- titanic  %>%
+  dplyr::mutate_at(columns_to_factor, list(~factor(.))) %>%
+  dplyr::mutate(Age =base::ifelse(is.na(Age)==T,meanage,Age)) %>% 
+  dplyr::mutate(Age_Cat = Hmisc::cut2(Age, levels.mean = TRUE, g =10))
+
+# Build a basic glm
+survival_model <- stats::glm(Survived ~ Pclass + 
+                                        Sex + 
+                                        Fare +
+                                        Age_Cat +
+                                        Embarked + 
+                                        SibSp + 
+                                        Parch, 
+                             data = titanic, 
+                             family = binomial(link = 'logit'))
+```
+
+
+## Actual vs Expected Bucketed By Prediction Percentile {.tabset}
+
+### Standard
+
+```{r bucketed aves}
+actual_expected_bucketed(target_variable = 'Survived',
+                         model_object = survival_model,
+                         data_set = titanic)
+```
+
+### Faceted
+
+```{r bucketed aves facet}
+actual_expected_bucketed(target_variable = 'Survived',
+                         model_object = survival_model,
+                         data_set = titanic, 
+                         facetby = 'Sex')
+```

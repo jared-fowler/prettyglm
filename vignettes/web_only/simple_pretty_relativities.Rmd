@@ -1,0 +1,90 @@
+---
+title: 'Creating simple relativity plots'
+author:
+- name: Jared Fowler
+output:
+  html_document: 
+    number_sections: no
+vignette: >
+  %\VignetteIndexEntry{prettyglm: Beautiful Visualisations for Generalized Linear Models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The function `pretty_relativities()` creates a plot to show the fit of the desired predictor. A different plot will be generated depending on the class of the variable.
+
+## Pre-processing
+
+A critical step for this package to work is to **set all categorical predictors as factors**. 
+
+```{r preprocessing 1, echo=TRUE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(prettyglm)
+data('titanic')
+
+# Easy way to convert multiple columns to a factor.
+columns_to_factor <- c('Pclass',
+                       'Sex',
+                       'Cabin', 
+                       'Embarked',
+                       'Cabintype')
+meanage <- base::mean(titanic$Age, na.rm=T)
+titanic  <- titanic  %>%
+  dplyr::mutate_at(columns_to_factor, list(~factor(.))) %>%
+  dplyr::mutate(Age =base::ifelse(is.na(Age)==T,meanage,Age)) %>% 
+  dplyr::mutate(Age_Cat = Hmisc::cut2(Age, levels.mean = TRUE, g =10))
+
+# Build a basic glm
+survival_model <- stats::glm(Survived ~ Pclass + 
+                                        Sex + 
+                                        Fare +
+                                        Age_Cat +
+                                        Embarked + 
+                                        SibSp + 
+                                        Parch, 
+                             data = titanic, 
+                             family = binomial(link = 'logit'))
+```
+
+## Plot coefficients {.tabset}
+
+A model relativity is a transform of the model estimate. By default `pretty_relativities()` uses 'exp(estimate)-1' which is useful for GLM's which use a log or logit link function. 
+
+The term 'relativity' is some times referred to as "odds-ratio" or "Likelihood". You can customize the label with the `relativity_label` input.
+
+### Categorical Variables
+
+For categorical variables `pretty_relativities()` creates an interactive duel axis plot, which plots the fitted relativity on one y axis, and the number of records in that category on the other y axis. 
+
+```{r visualise rels, echo=TRUE, message=FALSE, warning=FALSE}
+pretty_relativities(feature_to_plot= 'Embarked',
+                    model_object = survival_model,
+                    relativity_label = 'Liklihood of Survival'
+                    )
+```
+
+### Categorical Variables With Numeric Axis
+
+If you want to plot a categorical variable on a numeric axis. You can set `plot_factor_as_numeric` equal to TRUE.
+
+```{r visualise rels num, echo=TRUE, message=FALSE, warning=FALSE}
+pretty_relativities(feature_to_plot= 'Age_Cat',
+                    model_object = survival_model,
+                    relativity_label = 'Liklihood of Survival',
+                    plot_factor_as_numeric = T
+                    )
+```
+
+
+### Continuous Variables
+
+For continuous variables `pretty_relativities()` will plot the relativity over the variables range, and the density of that variable on a duel axis.
+
+If desired you can cut off the tail end of the distributions with `upper_percentile_to_cut` or `lower_percentile_to_cut`. 
+
+```{r visualise rels 2, echo=TRUE}
+pretty_relativities(feature_to_plot= 'Fare',
+                    model_object = survival_model,
+                    relativity_label = 'Liklihood of Survival',
+                    upper_percentile_to_cut = 0.1)
+```

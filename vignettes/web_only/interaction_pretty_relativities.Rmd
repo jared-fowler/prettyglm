@@ -1,0 +1,121 @@
+---
+title: 'Creating relativity plots for interactions'
+author:
+- name: Jared Fowler
+output:
+  html_document: 
+    number_sections: no
+vignette: >
+  %\VignetteIndexEntry{prettyglm: Beautiful Visualisations for Generalized Linear Models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The function `pretty_relativities()` creates a plot to show the fit of the desired predictor. This vignette shows how to create plots for interacted variables.
+
+## Pre-processing
+
+A critical step for this package to work is to **set all categorical predictors as factors**. 
+
+```{r preprocessing 1, echo=TRUE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(prettyglm)
+data('titanic')
+
+# Easy way to convert multiple columns to a factor.
+columns_to_factor <- c('Pclass',
+                       'Sex',
+                       'Cabin', 
+                       'Embarked',
+                       'Cabintype')
+meanage <- base::mean(titanic$Age, na.rm=T)
+titanic  <- titanic  %>%
+  dplyr::mutate_at(columns_to_factor, list(~factor(.))) %>%
+  dplyr::mutate(Age =base::ifelse(is.na(Age)==T,meanage,Age)) 
+
+# Build a basic glm
+survival_model2 <- stats::glm(Survived ~ Pclass:Fare +
+                                         Age +
+                                         Embarked:Sex +
+                                         SibSp +
+                                         Parch,
+                              data = titanic,
+                              family = binomial(link = 'logit'))
+```
+
+## Plot interacted coefficients 
+
+A model relativity is a transform of the model estimate. By default `pretty_relativities()` uses 'exp(estimate)-1' which is useful for GLM's which use a log or logit link function. 
+
+`prettyglm` currently only supports interactions of two variables.
+
+
+### Factor:Factor Interactions {.tabset}
+
+#### Standard
+
+You can create these relativity plots as you would for a non-interaction.
+
+```{r visualise ff N, echo=TRUE, message=FALSE, warning=FALSE}
+pretty_relativities(feature_to_plot= 'Embarked:Sex',
+                    model_object = survival_model2,
+                    relativity_label = 'Liklihood of Survival'
+                    )
+```
+
+#### Facet
+
+You can also choose to facet the plots by one of the variables.
+
+```{r visualise ff F, echo=TRUE, message=FALSE, warning=FALSE}
+pretty_relativities(feature_to_plot= 'Embarked:Sex',
+                    model_object = survival_model2,
+                    relativity_label = 'Liklihood of Survival',
+                    iteractionplottype = 'facet',
+                    facetorcolourby = 'Sex'
+                    )
+```
+
+#### Colour
+
+You can also choose to colour the plots by one of the variables.
+
+```{r visualise ff C, echo=TRUE, message=FALSE, warning=FALSE}
+pretty_relativities(feature_to_plot= 'Embarked:Sex',
+                    model_object = survival_model2,
+                    relativity_label = 'Liklihood of Survival',
+                    iteractionplottype = 'colour',
+                    facetorcolourby = 'Embarked'
+                    )
+```
+
+
+
+### Continuous:Factor Interactions {.tabset}
+
+#### Colour
+
+By default continuous and factor interaction plots will colour by the factor variable.
+
+```{r visualise cf C, echo=TRUE, message=FALSE, warning=FALSE}
+pretty_relativities(feature_to_plot= 'Pclass:Fare',
+                    model_object = survival_model2,
+                    relativity_label = 'Liklihood of Survival',
+                    upper_percentile_to_cut = 0.03
+                    )
+```
+
+#### Facet
+
+You can also facet by the factor variable. ERROR HERRER
+
+```{r visualise cf F, echo=TRUE, message=FALSE, warning=FALSE}
+pretty_relativities(feature_to_plot= 'Pclass:Fare',
+                    model_object = survival_model2,
+                    relativity_label = 'Liklihood of Survival',
+                    iteractionplottype = 'facet',
+                    upper_percentile_to_cut = 0.03,
+                    height = 800
+                    )
+```
+

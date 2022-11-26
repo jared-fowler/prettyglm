@@ -42,5 +42,14 @@ utils::globalVariables(c("conf.low",
                          "lower_95_ci",
                          ":=",
                          "product",
-                         "label<-"
+                         "label<-",
+                         "tidy_workflow",
+                         "Variable",
+                         "Relativity",
+                         "relativity",
+                         "Std.error",
+                         "Approx_Upper_95CI",
+                         "Approx_Lower_95CI",
+                         "name",
+                         "number_of_records"
                          ))
