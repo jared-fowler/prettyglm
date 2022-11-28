@@ -42,9 +42,9 @@ navbar:
     - text: -------
     - text: Visualising model predictions
     - text: Bucketed actual vs predicted
-      href: articles/web_only/onewayave.html
+      href: articles/web_only/visualisingoverallave.html
     - text: One way actual vs expected
-      href: articles/web_only/onewayavesimple.html
+      href: articles/web_only/onewayave.html
 
 home:
   title: An R package to visualise glm coefficients
