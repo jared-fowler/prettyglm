@@ -114,7 +114,7 @@ pretty_coefficients(survival_model4,
 ```
 
 <p align="center">
-  <img src= '/Users/Jared/Documents/Learning and Projects/prettyglm/man/figures/splinetable.png' align="center"/>
+  <img src= './splinetable.png' align="center"/>
 </p>
 
 ### Create plots of fitted coefficients using pretty_relativities

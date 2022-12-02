@@ -56,7 +56,7 @@ pretty_coefficients(model_object = survival_model)
 ```
 
 <p align="center">
-  <img src= '/Users/Jared/Documents/Learning and Projects/prettyglm/man/figures/simpletable.png' align="center"/>
+  <img src= './simpletable.png' align="center"/>
 </p>
 
 
@@ -73,7 +73,7 @@ pretty_coefficients(survival_model,
 ```
 
 <p align="center">
-  <img src= '/Users/Jared/Documents/Learning and Projects/prettyglm/man/figures/type3table.png' align="center"/>
+  <img src= './type3table.png' align="center"/>
 </p>
 
 
@@ -93,5 +93,5 @@ pretty_coefficients(model_object = survival_model,
 ```
 
 <p align="center">
-  <img src= '/Users/Jared/Documents/Learning and Projects/prettyglm/man/figures/importancetable.png' align="center"/>
+  <img src= './importancetable.png' align="center"/>
 </p>
