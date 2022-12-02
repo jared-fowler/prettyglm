@@ -107,11 +107,15 @@ survival_model4 <- stats::glm(Survived ~ Pclass +
 
 For interactions variables are grouped on the left pane under `Variables`. It is important to provide the correct `spline_seperator`
 
-```{r visualise coefficients type spline, echo=TRUE}
+```{r visualise coefficients type spline, echo=TRUE, , eval=FALSE, include=TRUE}
 pretty_coefficients(survival_model4, 
                     significance_level = 0.1,
                     spline_seperator = '_')
 ```
+
+<p align="center">
+  <img src= '/Users/Jared/Documents/Learning and Projects/prettyglm/man/figures/splinetable.png' align="center"/>
+</p>
 
 ### Create plots of fitted coefficients using pretty_relativities
 
