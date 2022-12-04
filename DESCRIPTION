@@ -9,7 +9,7 @@ Description: One of the main advantages of using Generalised Linear Models
     is their interpretability.  The goal of 'prettyglm' is to provide a
     set of functions which easily create beautiful coefficient summaries
     which can readily be shared and explained. prettyglm helps users
-    create coefficeint summaries which include categorical base levels,
+    create coefficient summaries which include categorical base levels,
     variable importance and type III p.values. prettyglm also creates
     beautiful relativity plots for categorical, continuous and splined
     coefficients.
