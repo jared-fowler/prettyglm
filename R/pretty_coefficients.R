@@ -16,6 +16,7 @@
 #' @return \code{\link[knitr]{kable}} if return_data = FALSE. \code{\link[base]{data.frame}} if return_data = TRUE.
 #'
 #' @examples
+#'
 #' library(dplyr)
 #' library(prettyglm)
 #' data('titanic')

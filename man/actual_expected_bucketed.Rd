@@ -57,6 +57,7 @@ Tibble if return_data = T.
 Provides a rank plot of the actual and predicted.
 }
 \examples{
+
 library(dplyr)
 library(prettyglm)
 

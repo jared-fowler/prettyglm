@@ -8,3 +8,10 @@
 ^pkgdown$
 ^CRAN-RELEASE$
 ^index
+^docs
+^man/figures/simpletable$
+^man/figures/type3table$
+^man/figures/importancetable$
+^man/figures/splinetable$
+^vignettes/web_only$
+^/vignettes/web_only$

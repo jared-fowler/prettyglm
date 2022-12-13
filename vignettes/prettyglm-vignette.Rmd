@@ -30,6 +30,8 @@ vignette: >
 
 When working with Generalized Linear Models it is often useful to create informative and beautiful summaries of the fitted model coefficients. The goal of `prettyglm` is to provide a set of functions to visualize the Generalized Linear Models coefficients and performance in interactive plots which can easily be embedded in rmarkdown reports or separately exported and shared with stakeholders. This document introduces `prettyglm`’s main sets of functions, and shows you how to apply them.
 
+Please see the website [prettyglm]( https://jared-fowler.github.io/prettyglm/) for more detailed documentation with html outputs, some of the outputs have been excluded from this documentation for publication on CRAN.
+
 If you don't find the function you are looking for in `prettyglm` consider checking out some other great packages which help visualize the output from glms:
 
   * `tidycat` 
@@ -48,7 +50,7 @@ install.packages('prettyglm')
 
 ### Model Building
 
-To explore the functionality of `prettyglm` we will use the titanic data set to perform logistic regression. This data set was sourced from https://www.kaggle.com/c/titanic/data and contains information about passengers aboard the titanic, and a target variable which indicates if they survived. 
+To explore the functionality of `prettyglm` we will use the titanic data set to perform logistic regression. This data set was sourced from [kaggle](https://www.kaggle.com/c/titanic/data)  and contains information about passengers aboard the titanic, and a target variable which indicates if they survived. 
 
 ```{r load data, echo=TRUE, message=FALSE, warning=FALSE}
 library(dplyr)
@@ -105,7 +107,7 @@ The function `pretty_coefficients()` allows you to create a pretty table of mode
 
 The simplest way to call this function is just with the model object.
 
-```{r visualise coefficients, echo=TRUE, message=FALSE, warning=FALSE}
+```{r visualise coefficients, echo=TRUE, eval=FALSE, include=TRUE}
 pretty_coefficients(model_object = survival_model)
 ```
 
@@ -115,7 +117,7 @@ You can also complete a type III test on the coefficients by specifying a `type_
 
 You can change the significance level highlighted in the table with `significance_level`.
 
-```{r visualise coefficients type iii, echo=TRUE}
+```{r visualise coefficients type iii, echo=TRUE, eval=FALSE, include=TRUE}
 pretty_coefficients(survival_model, type_iii = 'Wald', significance_level = 0.1)
 ```
 
@@ -123,7 +125,7 @@ pretty_coefficients(survival_model, type_iii = 'Wald', significance_level = 0.1)
 
 By default `pretty_coefficients` shows "model" variable importance. But `vimethod` also accepts "permute" and "firm" methods from \link[vip]{vi}. Additional parameters for these methods should also be passed into `pretty_coefficients`.
 
-```{r visualise coefficients vi, echo=TRUE}
+```{r visualise coefficients vi,echo=TRUE, eval=FALSE, include=TRUE}
 pretty_coefficients(model_object = survival_model,
                     type_iii = 'Wald', 
                     significance_level = 0.1, 
@@ -148,7 +150,7 @@ The term 'relativity' is some times referred to as "odds-ratio" or "Likelihood".
 
 For categorical variables `pretty_relativities()` creates an interactive duel axis plot, which plots the fitted relativity on one y axis, and the number of records in that category on the other y axis. 
 
-```{r visualise rels, echo=TRUE, message=FALSE, warning=FALSE}
+```{r visualise rels, echo=TRUE, eval=FALSE, include=TRUE}
 pretty_relativities(feature_to_plot= 'Embarked',
                     model_object = survival_model,
                     relativity_label = 'Liklihood of Survival'
@@ -161,7 +163,7 @@ For continuous variables `pretty_relativities` will plot the relativity over the
 
 If desired you can cut off the tail end of the distributions with `upper_percentile_to_cut` or `lower_percentile_to_cut`. 
 
-```{r visualise rels 2, echo=TRUE}
+```{r visualise rels 2, echo=TRUE, eval=FALSE, include=TRUE}
 pretty_relativities(feature_to_plot= 'Fare',
                     model_object = survival_model,
                     relativity_label = 'Liklihood of Survival',
@@ -186,22 +188,11 @@ survival_model2 <- stats::glm(Survived ~ Pclass:Fare +
 
 ### Factor:Factor Interactions {.tabset}
 
-#### Standard
-
-You can create these relativity plots as you would for a non-interaction.
-
-```{r visualise ff N, echo=TRUE, message=FALSE, warning=FALSE}
-pretty_relativities(feature_to_plot= 'Embarked:Sex',
-                    model_object = survival_model2,
-                    relativity_label = 'Liklihood of Survival'
-                    )
-```
-
 #### Facet
 
 You can also choose to facet the plots by one of the variables.
 
-```{r visualise ff F, echo=TRUE, message=FALSE, warning=FALSE}
+```{r visualise ff F, echo=TRUE, eval=FALSE, include=TRUE}
 pretty_relativities(feature_to_plot= 'Embarked:Sex',
                     model_object = survival_model2,
                     relativity_label = 'Liklihood of Survival',
@@ -214,12 +205,23 @@ pretty_relativities(feature_to_plot= 'Embarked:Sex',
 
 You can also choose to colour the plots by one of the variables.
 
-```{r visualise ff C, echo=TRUE, message=FALSE, warning=FALSE}
+```{r visualise ff C, echo=TRUE, eval=FALSE, include=TRUE}
 pretty_relativities(feature_to_plot= 'Embarked:Sex',
                     model_object = survival_model2,
                     relativity_label = 'Liklihood of Survival',
                     iteractionplottype = 'colour',
                     facetorcolourby = 'Embarked'
+                    )
+```
+
+#### Standard
+
+You can create these relativity plots as you would for a non-interaction.
+
+```{r visualise ff N, echo=TRUE, eval=FALSE, include=TRUE}
+pretty_relativities(feature_to_plot= 'Embarked:Sex',
+                    model_object = survival_model2,
+                    relativity_label = 'Liklihood of Survival'
                     )
 ```
 
@@ -229,7 +231,7 @@ pretty_relativities(feature_to_plot= 'Embarked:Sex',
 
 By default continuous and factor interaction plots will colour by the factor variable.
 
-```{r visualise cf C, echo=TRUE, message=FALSE, warning=FALSE}
+```{r visualise cf C, echo=TRUE, eval=FALSE, include=TRUE}
 pretty_relativities(feature_to_plot= 'Pclass:Fare',
                     model_object = survival_model2,
                     relativity_label = 'Liklihood of Survival',
@@ -241,7 +243,7 @@ pretty_relativities(feature_to_plot= 'Pclass:Fare',
 
 You can also facet by the factor variable.
 
-```{r visualise cf F, echo=TRUE, message=FALSE, warning=FALSE}
+```{r visualise cf F, echo=TRUE, eval=FALSE, include=TRUE}
 pretty_relativities(feature_to_plot= 'Pclass:Fare',
                     model_object = survival_model2,
                     relativity_label = 'Liklihood of Survival',
@@ -292,7 +294,7 @@ survival_model4 <- stats::glm(Survived ~ Pclass +
 
 For interactions variables are grouped on the left pane.
 
-```{r visualise coefficients type spline, echo=TRUE}
+```{r visualise coefficients type spline, echo=TRUE, eval=FALSE, include=TRUE}
 pretty_coefficients(survival_model4, significance_level = 0.1, spline_seperator = '_')
 ```
 
@@ -302,7 +304,7 @@ pretty_coefficients(survival_model4, significance_level = 0.1, spline_seperator 
 
 You also need to provide a `spline_seperator` input in `pretty_relativities`. 
 
-```{r visualise age spine, echo=TRUE, message=FALSE, warning=FALSE}
+```{r visualise age spine, echo=TRUE, eval=FALSE, include=TRUE}
 pretty_relativities(feature_to_plot= 'Age',
                     model_object = survival_model4,
                     relativity_label = 'Liklihood of Survival',
@@ -316,7 +318,7 @@ pretty_relativities(feature_to_plot= 'Age',
 
 By default `pretty_relativities` will colour by the factor variable.
 
-```{r visualise fare spine, echo=TRUE, message=FALSE, warning=FALSE}
+```{r visualise fare spine, echo=TRUE, eval=FALSE, include=TRUE}
 pretty_relativities(feature_to_plot= 'Sex:Fare',
                     model_object = survival_model4,
                     relativity_label = 'Liklihood of Survival',
@@ -329,7 +331,7 @@ pretty_relativities(feature_to_plot= 'Sex:Fare',
 
 If you prefer to facet by the factor variable, change `iteractionplottype` to "facet" 
 
-```{r visualise fare Facet, echo=TRUE, message=FALSE, warning=FALSE}
+```{r visualise fare Facet, echo=TRUE, eval=FALSE, include=TRUE}
 pretty_relativities(feature_to_plot= 'Sex:Fare',
                     model_object = survival_model4,
                     relativity_label = 'Liklihood of Survival',
@@ -347,7 +349,7 @@ pretty_relativities(feature_to_plot= 'Sex:Fare',
 
 For continuous variables `one_way_ave` will bucket value into 30 buckets by default, and plot the density on a dual axis.
 
-```{r oneway cts}
+```{r oneway cts, echo=TRUE, eval=FALSE, include=TRUE}
 one_way_ave(feature_to_plot = 'Age',
             model_object = survival_model4,
             target_variable = 'Survived',
@@ -358,7 +360,7 @@ one_way_ave(feature_to_plot = 'Age',
 
 ### Discrete Variable
 
-```{r oneway discrete}
+```{r oneway discrete, echo=TRUE, eval=FALSE, include=TRUE}
 one_way_ave(feature_to_plot = 'Cabintype',
             model_object = survival_model4,
             target_variable = 'Survived',
@@ -371,7 +373,7 @@ one_way_ave(feature_to_plot = 'Cabintype',
 
 You can facet the `one_way_ave` plot by providing a variable to facet by in `facetby`.
 
-```{r oneway cts facet}
+```{r oneway cts facet, echo=TRUE, eval=FALSE, include=TRUE}
 one_way_ave(feature_to_plot = 'Age',
             model_object = survival_model4,
             target_variable = 'Survived',
@@ -388,7 +390,7 @@ By default `one_way_ave` uses \link[stats]{predict.glm}. If you would like to us
 
 This function must return a data.frame with two columns: "Actual_Values" and "Predicted_Values".
 
-```{r custom predict}
+```{r custom predict, echo=TRUE, eval=FALSE, include=TRUE}
 # Custom Predict Function and facet
 a_custom_predict_function <- function(target, model_object, dataset){
   dataset <- base::as.data.frame(dataset)
@@ -421,7 +423,7 @@ one_way_ave(feature_to_plot = 'Age',
 
 ### Standard
 
-```{r bucketed aves}
+```{r bucketed aves, echo=TRUE, eval=FALSE, include=TRUE}
 actual_expected_bucketed(target_variable = 'Survived',
                          model_object = survival_model4,
                          data_set = titanic)
@@ -429,57 +431,9 @@ actual_expected_bucketed(target_variable = 'Survived',
 
 ### Faceted
 
-```{r bucketed aves facet}
+```{r bucketed aves facet, echo=TRUE, eval=FALSE, include=TRUE}
 actual_expected_bucketed(target_variable = 'Survived',
                          model_object = survival_model4,
                          data_set = titanic, 
                          facetby = 'Sex')
 ```
-
-<!-- #### Bucketed Continous Variables -->
-
-<!-- If the variable you are plotting is a continuous variable which has been split into buckets, you can set `plot_factor_as_numeric` equal to `TRUE` to plot the x axis on a numerical scale. In this case there is no bucketed variable fitted, but we can illustrate the functionality with the Pclass variable. -->
-
-<!-- ```{r visualise rels 2, echo=TRUE} -->
-<!-- pretty_relativities(feature_to_plot= 'Age_Cat', -->
-<!--                     model_object = survival_model, -->
-<!--                     relativity_label = 'Liklihood of Survival', -->
-<!--                     plot_factor_as_numeric = T) -->
-<!-- ``` -->
-
-<!-- ### Support My Work -->
-
-<!-- [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/tictap) -->
-
-
-<!-- ## Building a tidymodel -->
-
-<!-- ### parsnip model object -->
-
-<!-- ```{r build tidymodel} -->
-<!-- # parsnip model -->
-<!-- pasnip_model <- linear_reg() %>% -->
-<!--   set_engine("lm") %>% -->
-<!--   fit(Survived ~ Pclass + Sex + Age + Fare + Embarked + SibSp + Parch + Cabintype, data = titanic) -->
-<!-- ``` -->
-
-
-<!-- ### workflow model  -->
-
-<!-- ```{r workflow} -->
-<!-- # workflow object -->
-<!-- titanic$Survived <- as.factor(titanic$Survived) -->
-<!-- model_recipe <- recipe(Survived ~ Pclass + Sex + Age + Fare + Embarked + SibSp + Parch + Cabintype, data = titanic) -->
-
-<!-- Model_type <- logistic_reg()  %>% -->
-<!--   set_engine("glm") %>% -->
-<!--   set_mode("classification") -->
-
-<!-- tidy_workflow <- workflow() %>% -->
-<!--   add_recipe(model_recipe) %>% -->
-<!--   add_model(Model_type) %>% -->
-<!--   fit(titanic) -->
-<!-- ``` -->
-
-
-

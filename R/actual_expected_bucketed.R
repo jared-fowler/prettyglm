@@ -23,6 +23,7 @@
 #' Tibble if return_data = T.
 #'
 #' @examples
+#'
 #' library(dplyr)
 #' library(prettyglm)
 #'

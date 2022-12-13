@@ -45,6 +45,7 @@ pretty_coefficients(
 Creates a pretty kable of model coefficients including coefficient base levels, type III P.values, and variable importance.
 }
 \examples{
+
 library(dplyr)
 library(prettyglm)
 data('titanic')
