@@ -10,7 +10,7 @@
 [![R build
 status](https://github.com/jared-fowler/prettyglm/workflows/R-CMD-check/badge.svg)](https://github.com/jared-fowler/prettyglm/actions)
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 <!-- badges: end -->
 
 One of the main advantages of using Generalised Linear Models is their
@@ -38,12 +38,10 @@ You can install the latest CRAN release with:
 install.packages('prettyglm')
 ```
 
-You can install the development version from
-[GitHub](https://github.com/) with:
-
-``` r
-devtools::install_github("jared-fowler/prettyglm")
-```
+<!-- You can install the development version from [GitHub](https://github.com/) with: -->
+<!-- ``` r -->
+<!-- devtools::install_github("jared-fowler/prettyglm") -->
+<!-- ``` -->
 
 ## Documentation
 

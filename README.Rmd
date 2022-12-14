@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/prettyglm)](https://cran.r-project.org/package=prettyglm)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/prettyglm)](https://cran.r-project.org/package=prettyglm)
 [![R build status](https://github.com/jared-fowler/prettyglm/workflows/R-CMD-check/badge.svg)](https://github.com/jared-fowler/prettyglm/actions)
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 <!-- badges: end -->
 
 One of the main advantages of using Generalised Linear Models is their interpretability.  The goal of prettyglm is to provide a set of functions which easily create beautiful coefficient summaries which can readily be shared and explained.
@@ -38,11 +38,11 @@ You can install the latest CRAN release with:
 install.packages('prettyglm')
 ```
 
-You can install the development version from [GitHub](https://github.com/) with:
+<!-- You can install the development version from [GitHub](https://github.com/) with: -->
 
-``` r
-devtools::install_github("jared-fowler/prettyglm")
-```
+<!-- ``` r -->
+<!-- devtools::install_github("jared-fowler/prettyglm") -->
+<!-- ``` -->
 
 ## Documentation
 
