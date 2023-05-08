@@ -1,7 +1,7 @@
 Type: Package
 Package: prettyglm
 Title: Pretty Summaries of Generalized Linear Model Coefficients
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: 
     person("Jared", "Fowler", , "jared.fowler8@gmail.com", role = c("cre", "aut"))
 Maintainer: Jared Fowler <jared.fowler8@gmail.com>

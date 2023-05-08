@@ -1,3 +1,5 @@
+# prettyglm 1.0.1
+
 # prettyglm 1.0.0
 
 * Important: If you are using an older version of `prettyglm` please upgrade.
