@@ -32,8 +32,7 @@ Imports:
     tidycat,
     tidyr,
     tidyselect,
-    vip,
-    knitr
+    vip
 Suggests: 
     rmarkdown,
     testthat
