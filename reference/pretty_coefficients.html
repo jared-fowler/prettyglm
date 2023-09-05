@@ -634,10 +634,553 @@
 <span class="r-in"><span>                    spline_seperator <span class="op">=</span> <span class="st">'_'</span>,</span></span>
 <span class="r-in"><span>                    vimethod <span class="op">=</span> <span class="st">'permute'</span>,</span></span>
 <span class="r-in"><span>                    target <span class="op">=</span> <span class="st">'Survived'</span>,</span></span>
-<span class="r-in"><span>                    metric <span class="op">=</span> <span class="st">'auc'</span>,</span></span>
+<span class="r-in"><span>                    metric <span class="op">=</span> <span class="fu">yardstick</span><span class="fu">::</span><span class="va"><a href="https://yardstick.tidymodels.org/reference/roc_auc.html" class="external-link">roc_auc_vec</a></span>,</span></span>
 <span class="r-in"><span>                    pred_wrapper <span class="op">=</span> <span class="va">predict.glm</span>,</span></span>
+<span class="r-in"><span>                    smaller_is_better <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                    train <span class="op">=</span> <span class="va">survival_model3</span><span class="op">$</span><span class="va">data</span>, <span class="co"># need to supply training data for vip importance</span></span></span>
 <span class="r-in"><span>                    reference_class <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> Training data cannot be extracted from fitted model object. Please supply the raw training data using the `train` argument.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;table class="table" style="margin-left: auto; margin-right: auto;border-bottom: 0;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;thead&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;th style="text-align:left;"&gt; Variable &lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;th style="text-align:left;"&gt; Level &lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;th style="text-align:left;"&gt; Importance &lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;th style="text-align:right;"&gt; Estimate &lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;th style="text-align:right;"&gt; Std.error &lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;th style="text-align:right;"&gt; Relativity &lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;th style="text-align:right;"&gt; P.Value &lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  &lt;/thead&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;tbody&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; (Intercept) &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; (Intercept) &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 3.42,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 2.9939893 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.7390224 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 18.9651706 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #black !important;"&gt;5e-05&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Pclass &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; 1 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 10.41,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="157.28px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.033499410693239)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0000000 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0000000 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0000000 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #black !important;"&gt;NA&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Pclass &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; 2 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 10.41,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="157.28px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.033499410693239)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.1968365 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.4640097 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.2175450 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.67141&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Pclass &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; 3 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 10.41,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="157.28px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.033499410693239)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.8373909 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.4732294 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.5671616 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.07681&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Age &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Age_0_25 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 11.33,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="164.92px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.0379433194042644)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.0932714 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0184680 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.0890537 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #black !important;"&gt;0&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Age &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Age_25_50 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 4.79,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="172.56px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.00657880638594235)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.0167502 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0152050 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.0166107 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.27063&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Age &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Age_50_120 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 3.48,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="180.19px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.000275902710811099)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.0500033 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0420905 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.0487738 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.23484&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Embarked &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; C &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 8.68,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="157.28px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.025200900032144)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0000000 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0000000 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0000000 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #black !important;"&gt;NA&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Embarked &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Q &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 8.68,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="157.28px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.025200900032144)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.4151234 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.3398956 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.5145577 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.22196&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Embarked &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; S &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 8.68,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="157.28px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.025200900032144)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.5942634 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.2398745 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.4480310 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #black !important;"&gt;0.01323&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; SibSp &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; SibSp &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 6.05,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="157.28px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.012611164684453)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.5080500 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.1178176 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.3983323 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #black !important;"&gt;2e-05&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Parch &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Parch &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 3.59,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="172.56px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.00079556412729026)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.1604124 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.1369624 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.1482075 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.24151&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Cabintype &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; A &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 8.61,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="164.92px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.0248660666452373)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0000000 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0000000 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0000000 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #black !important;"&gt;NA&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Cabintype &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; B &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 8.61,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="164.92px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.0248660666452373)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.0566639 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.7580796 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.0550884 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.94042&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Cabintype &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; C &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 8.61,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="164.92px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.0248660666452373)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.4178996 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.7019732 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.3415717 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.55163&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Cabintype &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; D &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 8.61,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="164.92px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.0248660666452373)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.4916346 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.7572964 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.6349866 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.51621&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Cabintype &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; E &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 8.61,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="164.92px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.0248660666452373)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.9706608 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.7440859 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 1.6396882 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.19206&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Cabintype &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; F &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 8.61,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="164.92px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.0248660666452373)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.0772653 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.9482161 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.0743558 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.93506&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Cabintype &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; G &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 8.61,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="164.92px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.0248660666452373)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.8464852 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 1.3575986 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.5710801 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.53295&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Cabintype &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Missing &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 8.61,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="164.92px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.0248660666452373)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.9716536 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.6953293 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.6215433 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.16229&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Cabintype &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; T &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 8.61,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="164.92px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.0248660666452373)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -14.0675600 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 882.7435793 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.9999992 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.98729&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Sex:Fare &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; female:Fare_0_250 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 44.58,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="157.28px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.197463302260795)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0744651 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0117103 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0773077 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #black !important;"&gt;0&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Sex:Fare &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; male:Fare_0_250 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 44.58,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="157.28px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.197463302260795)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.0065196 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0049329 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.0064984 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.18628&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Sex:Fare &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; female:Fare_250_600 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 41.29,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="157.28px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.181675238401371)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.0150270 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 2.7914016 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; -0.0149147 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.9957&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; Sex:Fare &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt; male:Fare_250_600 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:left;"&gt;  &lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svglite" width="48.00pt" height="12.00pt" viewbox="0 0 48.00 12.00"&gt;&lt;defs&gt;&lt;style type="text/css"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       fill: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke: #000000;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linecap: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-linejoin: round;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       stroke-miterlimit: 10.00;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     .svglite text {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       white-space: pre;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/style&gt;&lt;/defs&gt;&lt;rect width="100%" height="100%" style="stroke: none; fill: none;"&gt;&lt;/rect&gt;&lt;defs&gt;&lt;clippath id="cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw"&gt;&lt;rect x="0.00" y="0.00" width="48.00" height="12.00"&gt;&lt;/rect&gt;&lt;/clippath&gt;&lt;/defs&gt;&lt;g clip-path="url(#cpMC4wMHw0OC4wMHwwLjAwfDEyLjAw)"&gt;&lt;polyline points="3.42,6.00 41.29,6.00 " style="stroke-width: 7.50; stroke: #D3D3D3;"&gt;&lt;/polyline&gt;&lt;text x="24.00" y="66.72" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="157.28px" lengthadjust="spacingAndGlyphs"&gt;c(0, 0.181675238401371)&lt;/text&gt;&lt;text transform="translate(-46.08,6.00) rotate(-90)" text-anchor="middle" style='font-size: 12.00px; font-family: "Liberation Sans";' textlength="38.87px" lengthadjust="spacingAndGlyphs"&gt;c(1, 1)&lt;/text&gt;&lt;/g&gt;&lt;/svg&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0289567 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0622836 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; 0.0293800 &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;td style="text-align:right;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #F08080 !important;"&gt;0.64199&lt;/span&gt; &lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/tbody&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;tfoot&gt;&lt;tr&gt;&lt;td style="padding: 0; " colspan="100%"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;span style="font-style: italic;text-decoration: underline;"&gt;Goodness-of-Fit:&lt;/span&gt; &lt;sup&gt;&lt;/sup&gt;  AIC: 870.9 , Devience : 826.9 , Null Devience:  1182.8&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/table&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
