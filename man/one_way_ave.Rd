@@ -27,7 +27,7 @@ one_way_ave(
 \arguments{
 \item{feature_to_plot}{A string of the variable to plot.}
 
-\item{model_object}{Model object to create coefficient table for. Must be of type: \link[stats]{glm}, \link[stats]{lm},  \link[parsnip]{linear_reg} or \link[parsnip]{logistic_reg}}
+\item{model_object}{Model object to create coefficient table for. Must be of type: \link[stats]{glm}, \link[stats]{lm}}
 
 \item{target_variable}{String of target variable name in dataset.}
 
