@@ -2,7 +2,7 @@
 #'
 #' @description Creates a pretty kable of model coefficients including coefficient base levels, type III P.values, and variable importance.
 #'
-#' @param model_object Model object to create coefficient table for. Must be of type: \code{\link[stats]{glm}}, \code{\link[stats]{lm}},  \code{\link[parsnip]{linear_reg}} or \code{\link[parsnip]{logistic_reg}}.
+#' @param model_object Model object to create coefficient table for. Must be of type: \code{\link[stats]{glm}}, \code{\link[stats]{lm}}.
 #' @param relativity_transform String of the function to be applied to the model estimate to calculate the relativity, for example: 'exp(estimate)-1'. Default is for relativity to be excluded from output.
 #' @param relativity_label String of label to give to relativity column if you want to change the title to your use case.
 #' @param type_iii Type III statistical test to perform. Default is none. Options are 'Wald' or 'LR'. Warning 'LR' can be computationally expensive. Test performed via \code{\link[car]{Anova}}

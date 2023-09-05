@@ -51,5 +51,6 @@ utils::globalVariables(c("conf.low",
                          "Approx_Upper_95CI",
                          "Approx_Lower_95CI",
                          "name",
-                         "number_of_records"
+                         "number_of_records",
+                         "Number_of_Records"
                          ))

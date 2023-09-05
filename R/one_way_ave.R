@@ -3,7 +3,7 @@
 #' @description Creates a pretty html plot of one way actual vs expected by specified predictor.
 #'
 #' @param feature_to_plot A string of the variable to plot.
-#' @param model_object Model object to create coefficient table for. Must be of type: \link[stats]{glm}, \link[stats]{lm},  \link[parsnip]{linear_reg} or \link[parsnip]{logistic_reg}
+#' @param model_object Model object to create coefficient table for. Must be of type: \link[stats]{glm}, \link[stats]{lm}
 #' @param target_variable String of target variable name in dataset.
 #' @param data_set Data set to calculate the actual vs expected for. If no input default is to try and extract training data from model object.
 #' @param plot_type one of "Residual", "predictions" or "actuals" defaults to "predictions"
@@ -171,7 +171,7 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
           ylabeltext <- 'Residual'
           Plottitle <- paste('Residuals for',feature_to_plot)
         } else if (plot_type == 'predictions'){
-          Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual') %>%
+          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type != 'Residual') %>%
             dplyr::mutate(Number_of_Records = base::ifelse(Data_Type == 'Predicted',0,Number_of_Records))
           ylabeltext <- target_variable
           Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
@@ -373,7 +373,7 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
           ylabeltext <- 'Residual'
           Plottitle <- paste('Residuals for',feature_to_plot)
         } else if (plot_type == 'predictions'){
-          Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual') %>%
+          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type != 'Residual') %>%
             dplyr::mutate(Number_of_Records = base::ifelse(Data_Type == 'Predicted',0,Number_of_Records))
           ylabeltext <- target_variable
           Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)

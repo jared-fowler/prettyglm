@@ -3,7 +3,7 @@
 #' @description Creates a pretty html plot of model relativities including base Levels.
 #'
 #' @param feature_to_plot A string of the variable to plot.
-#' @param model_object Model object to create coefficient table for. Must be of type: \link[stats]{glm}, \link[stats]{lm},  \link[parsnip]{linear_reg} or \link[parsnip]{logistic_reg}
+#' @param model_object Model object to create coefficient table for. Must be of type: \link[stats]{glm}, \link[stats]{lm}
 #' @param plot_approx_ci Set to TRUE to include confidence intervals in summary table. Warning, can be computationally expensive.
 #' @param relativity_transform String of the function to be applied to the model estimate to calculate the relativity, for example: 'exp(estimate)'. Default is for relativity to be 'exp(estimate)-1'.
 #' @param relativity_label String of label to give to relativity column if you want to change the title to your use case, some users may prefer to refer to this as odds ratio.
