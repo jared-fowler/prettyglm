@@ -171,7 +171,8 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
           ylabeltext <- 'Residual'
           Plottitle <- paste('Residuals for',feature_to_plot)
         } else if (plot_type == 'predictions'){
-          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type != 'Residual')
+          Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual') %>%
+            dplyr::mutate(Number_of_Records = base::ifelse(Data_Type == 'Predicted',0,Number_of_Records))
           ylabeltext <- target_variable
           Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
         } else if (plot_type == 'actuals'){
@@ -259,7 +260,8 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
         ylabeltext <- 'Residual'
         Plottitle <- paste('Residuals for',feature_to_plot)
       } else if (plot_type == 'predictions'){
-        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual')
+        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual') %>%
+          dplyr::mutate(Number_of_Records = base::ifelse(Data_Type == 'Predicted',0,Number_of_Records))
         ylabeltext <- target_variable
         Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
       } else if (plot_type == 'actuals'){
@@ -371,7 +373,8 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
           ylabeltext <- 'Residual'
           Plottitle <- paste('Residuals for',feature_to_plot)
         } else if (plot_type == 'predictions'){
-          Plot_data_to_plot <- dplyr::filter(Plot_data_inside, Data_Type != 'Residual')
+          Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual') %>%
+            dplyr::mutate(Number_of_Records = base::ifelse(Data_Type == 'Predicted',0,Number_of_Records))
           ylabeltext <- target_variable
           Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
         } else if (plot_type == 'actuals'){
@@ -468,7 +471,8 @@ one_way_ave <- function(feature_to_plot, model_object, target_variable, data_set
         ylabeltext <- 'Residual'
         Plottitle <- paste('Residuals for',feature_to_plot)
       } else if (plot_type == 'predictions'){
-        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual')
+        Plot_data_to_plot <- dplyr::filter(Plot_data, Data_Type != 'Residual') %>%
+          dplyr::mutate(Number_of_Records = base::ifelse(Data_Type == 'Predicted',0,Number_of_Records))
         ylabeltext <- target_variable
         Plottitle <- paste('Actual Vs Predicted for',feature_to_plot)
       } else if (plot_type == 'actuals'){
