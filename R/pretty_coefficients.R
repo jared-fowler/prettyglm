@@ -70,8 +70,10 @@
 #'                     spline_seperator = '_',
 #'                     vimethod = 'permute',
 #'                     target = 'Survived',
-#'                     metric = 'auc',
+#'                     metric = yardstick::roc_auc_vec,
 #'                     pred_wrapper = predict.glm,
+#'                     smaller_is_better = FALSE,
+#'                     train = survival_model3$data, # need to supply training data for vip importance
 #'                     reference_class = 0)
 #'
 #'
