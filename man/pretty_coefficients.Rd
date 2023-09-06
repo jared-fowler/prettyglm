@@ -100,6 +100,7 @@ pretty_coefficients(survival_model3,
                     vimethod = 'permute',
                     target = 'Survived',
                     metric = "roc_auc",
+                    event_level = 'second',
                     pred_wrapper = predict.glm,
                     smaller_is_better = FALSE,
                     train = survival_model3$data, # need to supply training data for vip importance

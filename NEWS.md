@@ -1,5 +1,9 @@
 # prettyglm 1.0.1
 
+* Various bug fixes including double counting number of rows on one way aves.
+* Updated code to use the new release of `vip` package.
+* Please increase R version >= 4.1.0 to continue to use `prettyglm`.
+
 # prettyglm 1.0.0
 
 * Important: If you are using an older version of `prettyglm` please upgrade.

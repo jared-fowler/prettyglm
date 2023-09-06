@@ -4,3 +4,5 @@
 
 No paper to reference, just wrangling and visualise fitted model coefficients.
 
+Resubmitting to CRAN to handle new release of vip package.
+
