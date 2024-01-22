@@ -237,7 +237,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
     # Create a nice kable output of coefficients
     kable_df <- tidy_coef %>%
       dplyr::select(-c(Term, Effect))
-    kable_df$P.Value = kableExtra::cell_spec(base::round(kable_df$P.Value,5), background  = ifelse(is.na(kable_df$P.Value) |  kable_df$P.Value < significance_level, "#black", "#F08080"))
+    kable_df$P.Value = kableExtra::cell_spec(base::round(kable_df$P.Value,5), background  = ifelse(is.na(kable_df$P.Value) |  kable_df$P.Value < significance_level, "#FFFFFF", "#F08080"))
     use_it <- base::lapply(base::as.list(tidy_coef$Importance), function(x) base::as.vector(base::cbind(0,x))) #importance in list for bar plot
     if(is.null(type_iii)){
       kable_table <- kable_df %>%
@@ -268,7 +268,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
                              footnote_as_chunk = TRUE,
                              title_format = c("italic", "underline"))
     } else{
-      kable_df$Type.III.P.Value = kableExtra::cell_spec(base::round(kable_df$Type.III.P.Value,5), background  = ifelse(is.na(kable_df$Type.III.P.Value) |  kable_df$Type.III.P.Value < significance_level, "#black", "#F08080"))
+      kable_df$Type.III.P.Value = kableExtra::cell_spec(base::round(kable_df$Type.III.P.Value,5), background  = ifelse(is.na(kable_df$Type.III.P.Value) |  kable_df$Type.III.P.Value < significance_level, "#FFFFFF", "#F08080"))
       kable_table <- kable_df %>%
         mutate(Importance = "") %>%
         knitr::kable(. ,
