@@ -14,7 +14,8 @@ Description: One of the main advantages of using Generalised Linear Models
     beautiful relativity plots for categorical, continuous and splined
     coefficients.
 License: GPL-3
-URL: https://jared-fowler.github.io/prettyglm/
+URL: https://jared-fowler.github.io/prettyglm/, https://github.com/jared-fowler/prettyglm
+BugReports: https://github.com/jared-fowler/prettyglm/issues
 Depends: 
     R (>= 4.1.0)
 Imports: 
