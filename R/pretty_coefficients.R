@@ -241,11 +241,11 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
     use_it <- base::lapply(base::as.list(tidy_coef$Importance), function(x) base::as.vector(base::cbind(0,x))) #importance in list for bar plot
     if(is.null(type_iii)){
       kable_table <- kable_df %>%
-        mutate(Importance = "") %>%
-        knitr::kable(. ,
-                     escape = FALSE,
-                     booktabs = TRUE,
-                     align = c("l","l","l","r", "r", "r", "r", "r"))%>%
+        dplyr::mutate(Importance = "") %>%
+        kableExtra::kbl(. ,
+                        escape = FALSE,
+                        booktabs = TRUE,
+                        align = c("l","l","l","r", "r", "r", "r", "r"))%>%
         kableExtra::kable_styling() %>%
         kableExtra::column_spec(3, image = kableExtra::spec_plot(x = use_it,
                                                                  y = rep(list(c(1,1)),base::nrow(tidy_coef)),
@@ -270,11 +270,11 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
     } else{
       kable_df$Type.III.P.Value = kableExtra::cell_spec(base::round(kable_df$Type.III.P.Value,5), background  = ifelse(is.na(kable_df$Type.III.P.Value) |  kable_df$Type.III.P.Value < significance_level, "#FFFFFF", "#F08080"))
       kable_table <- kable_df %>%
-        mutate(Importance = "") %>%
-        knitr::kable(. ,
-                     escape = FALSE,
-                     booktabs = TRUE,
-                     align = c("l","l","l","r", "r", "r", "r", "r"))%>%
+        dplyr::mutate(Importance = "") %>%
+          kableExtra::kbl(. ,
+                          escape = FALSE,
+                          booktabs = TRUE,
+                          align = c("l","l","l","r", "r", "r", "r", "r"))%>%
         kableExtra::kable_styling() %>%
         kableExtra::column_spec(3, image = kableExtra::spec_plot(x = use_it,
                                                                  y = rep(list(c(1,1)),base::nrow(tidy_coef)),
