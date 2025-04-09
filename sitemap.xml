@@ -1,72 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/404.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/articles/prettyglm-vignette.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/articles/web_only/creating_pretty_coefficients.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/articles/web_only/interaction_pretty_relativities.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/articles/web_only/onewayave.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/articles/web_only/simple_pretty_relativities.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/articles/web_only/spline_pretty_relativities.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/articles/web_only/visualisingoverallave.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/index.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/reference/actual_expected_bucketed.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/reference/bank_data.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/reference/clean_coefficients.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/reference/cut3.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/reference/one_way_ave.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/reference/predict_outcome.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/reference/pretty_coefficients.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/reference/pretty_relativities.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/reference/splineit.html</loc>
-  </url>
-  <url>
-    <loc>https://jared-fowler.github.io/prettyglm/reference/titanic.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://jared-fowler.github.io/prettyglm/404.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/articles/index.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/articles/prettyglm-vignette.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/articles/web_only/creating_pretty_coefficients.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/articles/web_only/interaction_pretty_relativities.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/articles/web_only/onewayave.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/articles/web_only/simple_pretty_relativities.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/articles/web_only/spline_pretty_relativities.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/articles/web_only/visualisingoverallave.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/authors.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/index.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/news/index.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/reference/actual_expected_bucketed.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/reference/bank_data.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/reference/clean_coefficients.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/reference/cut3.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/reference/index.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/reference/one_way_ave.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/reference/predict_outcome.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/reference/pretty_coefficients.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/reference/pretty_relativities.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/reference/splineit.html</loc></url>
+<url><loc>https://jared-fowler.github.io/prettyglm/reference/titanic.html</loc></url>
 </urlset>
+

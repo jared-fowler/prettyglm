@@ -1,16 +1,15 @@
-pandoc: 2.19.2
-pkgdown: 2.0.7
+pandoc: 3.1.11
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
+  web_only/creating_pretty_coefficients: web_only/creating_pretty_coefficients.html
+  web_only/interaction_pretty_relativities: web_only/interaction_pretty_relativities.html
+  web_only/onewayave: web_only/onewayave.html
   prettyglm-vignette: prettyglm-vignette.html
-  creating_pretty_coefficients: web_only/creating_pretty_coefficients.html
-  interaction_pretty_relativities: web_only/interaction_pretty_relativities.html
-  onewayave: web_only/onewayave.html
-  simple_pretty_relativities: web_only/simple_pretty_relativities.html
-  spline_pretty_relativities: web_only/spline_pretty_relativities.html
-  visualisingoverallave: web_only/visualisingoverallave.html
-last_built: 2024-01-24T06:06Z
+  web_only/simple_pretty_relativities: web_only/simple_pretty_relativities.html
+  web_only/spline_pretty_relativities: web_only/spline_pretty_relativities.html
+  web_only/visualisingoverallave: web_only/visualisingoverallave.html
+last_built: 2025-04-09T04:58Z
 urls:
   reference: https://jared-fowler.github.io/prettyglm/reference
   article: https://jared-fowler.github.io/prettyglm/articles
-
