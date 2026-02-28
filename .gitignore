@@ -19,3 +19,4 @@ vignettes/*.pdf
 .Renviron
 .DS_Store
 docs
+.notes/ideas.md
