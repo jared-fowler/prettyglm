@@ -1,7 +1,7 @@
 Type: Package
 Package: prettyglm
 Title: Pretty Summaries of Generalized Linear Model Coefficients
-Version: 1.0.1
+Version: 2.0.0
 Authors@R: 
     person("Jared", "Fowler", , "jared.fowler8@gmail.com", role = c("cre", "aut"))
 Maintainer: Jared Fowler <jared.fowler8@gmail.com>
@@ -10,7 +10,7 @@ Description: One of the main advantages of using Generalised Linear Models
     set of functions which easily create beautiful coefficient summaries
     which can readily be shared and explained. 'prettyglm' helps users
     create coefficient summaries which include categorical base levels,
-    variable importance and type III p.values. 'prettyglm' also creates
+    variable importance and type III statistical tests. 'prettyglm' also creates
     beautiful relativity plots for categorical, continuous and splined
     coefficients.
 License: GPL-3
@@ -31,8 +31,7 @@ Imports:
     tibble,
     tidycat,
     tidyr,
-    tidyselect,
-    vip
+    tidyselect
 Suggests: 
     rmarkdown,
     testthat
