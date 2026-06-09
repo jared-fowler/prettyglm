@@ -20,3 +20,5 @@ vignettes/*.pdf
 .DS_Store
 docs
 .notes/ideas.md
+./notes
+.notes/sandbox.R

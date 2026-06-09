@@ -205,17 +205,25 @@ one_way_ave <- function(
 
     if (is.null(facetby) == F) {
       # faceted code ---------------------------------------------------------------------------
-      numberoffacets <- base::length(base::unique(dplyr::pull(dplyr::select(
+    if (sum(is.na(Plot_data[[facetby]])) > 0) {
+        base::warning(base::paste(
+          str(sum(is.na(Plot_data[[facetby]]))),
+          'NA values detected in facet variable ',
+          facetby,
+          'which are being removed. To plot this data, force NAs to be a categorical level'
+        ))
+      }
+      numberoffacets <- base::length(na.omit(base::unique(dplyr::pull(dplyr::select(
         Plot_data,
         dplyr::all_of(facetby)
-      ))))
+      )))))
       l <- 1
       plotlist <- list()
       while (l <= numberoffacets) {
-        facettoplot <- base::unique(dplyr::pull(dplyr::select(
+        facettoplot <- na.omit(base::unique(dplyr::pull(dplyr::select(
           Plot_data,
           dplyr::all_of(facetby)
-        )))[l]
+        ))))[l]
 
         # prep the data--------------------------------------------------------------
         Plot_data_inside <- Plot_data %>%
@@ -229,7 +237,7 @@ one_way_ave <- function(
             names_to = 'Data_Type',
             values_to = 'value'
           ) %>%
-          dplyr::group_by_at(c(feature_to_plot, 'Data_Type')) %>%
+          dplyr::group_by_at(c(feature_to_plot, facetby, 'Data_Type')) %>%
           dplyr::summarise(
             Average_value = mean(value),
             Number_of_Records = n(),
