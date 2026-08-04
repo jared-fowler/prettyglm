@@ -6,9 +6,9 @@
 \usage{
 one_way_ave(
   feature_to_plot,
-  model_object,
-  target_variable,
   data_set,
+  target_variable,
+  model_object = NULL,
   plot_type = "predictions",
   plot_factor_as_numeric = FALSE,
   ordering = NULL,
@@ -18,6 +18,7 @@ one_way_ave(
   first_colour = "black",
   second_colour = "#cc4678",
   facetby = NULL,
+  facet_direction = "vertical",
   prediction_type = "response",
   predict_function = NULL,
   upper_percentile_to_cut = 0.01,
@@ -27,11 +28,11 @@ one_way_ave(
 \arguments{
 \item{feature_to_plot}{A string of the variable to plot.}
 
-\item{model_object}{Model object to create coefficient table for. Must be of type: \link[stats]{glm}, \link[stats]{lm}}
+\item{data_set}{Data set to calculate the actual vs expected for. If no input default is to try and extract training data from model object.}
 
 \item{target_variable}{String of target variable name in dataset.}
 
-\item{data_set}{Data set to calculate the actual vs expected for. If no input default is to try and extract training data from model object.}
+\item{model_object}{Model object to create coefficient table for. Must be of type: \link[stats]{glm}, \link[stats]{lm}. If NULL, only actual values are plotted (no predictions or residuals).}
 
 \item{plot_type}{one of "Residual", "predictions" or "actuals" defaults to "predictions"}
 
@@ -39,9 +40,9 @@ one_way_ave(
 
 \item{ordering}{Option to change the ordering of categories on the x axis, only for discrete categories. Default to the ordering of the factor. Other options are: 'alphabetical', 'Number of records', 'Average Value'}
 
-\item{width}{Width of plot}
+\item{width}{Width of plot. When faceting horizontally this is a minimum: the plot is widened if needed so each facet keeps a readable width.}
 
-\item{height}{Height of plot}
+\item{height}{Height of plot. When faceting vertically this is a minimum: the plot is made taller if needed so each facet keeps a readable height.}
 
 \item{number_of_buckets}{Number of buckets for continuous variable plots}
 
@@ -51,9 +52,11 @@ one_way_ave(
 
 \item{facetby}{Variable to facet the actual vs expect plots by.}
 
+\item{facet_direction}{Direction to facet plots: "vertical" (default, stacked rows) or "horizontal" (side-by-side columns).}
+
 \item{prediction_type}{Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".}
 
-\item{predict_function}{A custom prediction function can be provided here.It must return a \link[base]{data.frame} with an "Actual_Values" column, and a "Predicted_Values" column.}
+\item{predict_function}{A custom prediction function can be provided here. It must return a \link[base]{data.frame} with an "Actual_Values" column, and a "Predicted_Values" column.}
 
 \item{upper_percentile_to_cut}{For continuous variables this is what percentile to exclude from the upper end of the distribution. Defaults to 0.01, so the maximum percentile of the variable in the plot will be 0.99. Cutting off some of the distribution can help the views if outlier's are present in the data.}
 
@@ -95,6 +98,12 @@ survival_model <- stats::glm(Survived ~
                                Cabintype,
                              data = titanic,
                              family = binomial(link = 'logit'))
+
+# Actuals Only (no model)
+one_way_ave(feature_to_plot = 'Age',
+            target_variable = 'Survived',
+            data_set = titanic,
+            number_of_buckets = 20)
 
 # Continuous Variable Example
 one_way_ave(feature_to_plot = 'Age',

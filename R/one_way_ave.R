@@ -9,8 +9,8 @@
 #' @param plot_type one of "Residual", "predictions" or "actuals" defaults to "predictions"
 #' @param plot_factor_as_numeric Set to TRUE to return \link[base]{data.frame} instead of creating \link[knitr]{kable}.
 #' @param ordering Option to change the ordering of categories on the x axis, only for discrete categories. Default to the ordering of the factor. Other options are: 'alphabetical', 'Number of records', 'Average Value'
-#' @param width Width of plot
-#' @param height Height of plot
+#' @param width Width of plot. When faceting horizontally this is a minimum: the plot is widened if needed so each facet keeps a readable width.
+#' @param height Height of plot. When faceting vertically this is a minimum: the plot is made taller if needed so each facet keeps a readable height.
 #' @param number_of_buckets Number of buckets for continuous variable plots
 #' @param first_colour First colour to plot, usually the colour of actual.
 #' @param second_colour Second colour to plot, usually the colour of predicted.
@@ -205,10 +205,10 @@ one_way_ave <- function(
 
     if (is.null(facetby) == F) {
       # faceted code ---------------------------------------------------------------------------
-    if (sum(is.na(Plot_data[[facetby]])) > 0) {
+      if (sum(is.na(Plot_data[[facetby]])) > 0) {
         base::warning(base::paste(
-          str(sum(is.na(Plot_data[[facetby]]))),
-          'NA values detected in facet variable ',
+          base::sum(base::is.na(Plot_data[[facetby]])),
+          'NA values detected in facet variable',
           facetby,
           'which are being removed. To plot this data, force NAs to be a categorical level'
         ))
@@ -327,7 +327,7 @@ one_way_ave <- function(
             )
           ) %>%
           plotly::layout(
-            yaxis = list(side = 'right', title = 'Number of Recrods'),
+            yaxis = list(side = 'right', title = 'Number of Records'),
             yaxis2 = list(
               side = 'left',
               title = ylabeltext,
@@ -340,42 +340,29 @@ one_way_ave <- function(
             autosize = T,
             margin = list(b = 50, l = 50, r = 80)
           ) %>%
+          # Sits on the top edge of its own panel, clear of the figure title.
           plotly::add_annotations(
             x = 0.5,
-            y = 1.05,
+            y = 1,
             xref = "paper",
             yref = "paper",
-            text = base::paste0('<b>', facettoplot, '<b>'), #"<b>paper reference = [0.5, 1]</b>",
+            yanchor = 'bottom',
+            text = base::paste0('<b>', facettoplot, '</b>'),
             showarrow = F
           )
         l <- l + 1
       }
       plotlist <- plotlist[!sapply(plotlist, is.null)]
-      if (facet_direction == 'horizontal') {
-        p_return <- plotly::subplot(
-          plotlist,
-          nrows = 1,
-          titleY = T,
-          titleX = T,
-          margin = 0.07,
-          # shareY must stay FALSE: each facet carries its own overlaid
-          # secondary y-axis, and sharing collapses them onto one axis
-          shareY = F,
-          shareX = F,
-          widths = rep(1 / length(plotlist), length(plotlist))
-        )
-      } else {
-        p_return <- plotly::subplot(
-          plotlist,
-          nrows = length(plotlist),
-          titleY = T,
-          titleX = T,
-          margin = 0.07,
-          shareY = F,
-          shareX = T,
-          heights = rep(1 / length(plotlist), length(plotlist))
-        )
-      }
+      p_return <- assemble_facet_subplot(
+        plotlist = plotlist,
+        facet_direction = facet_direction,
+        width = width,
+        height = height,
+        left_title = ylabeltext,
+        right_title = 'Number of Records',
+        x_title = feature_to_plot,
+        plot_title = Plottitle
+      )
     } else {
       Plot_data <- Plot_data %>%
         dplyr::mutate(Actual_Values = (as.numeric(Actual_Values))) %>%
@@ -497,7 +484,7 @@ one_way_ave <- function(
           )
         ) %>%
         plotly::layout(
-          yaxis = list(side = 'right', title = 'Number of Recrods'),
+          yaxis = list(side = 'right', title = 'Number of Records'),
           yaxis2 = list(
             side = 'left',
             title = ylabeltext,
@@ -558,6 +545,10 @@ one_way_ave <- function(
         dplyr::all_of(facetby)
       ))))
       l <- 1
+      # Facets can be skipped (see the density check below), so panels are
+      # indexed separately: the overlaying axis names below depend on a panel's
+      # position in the final list, not on which facet it came from.
+      plot_index <- 1
       plotlist <- list()
       while (l <= numberoffacets) {
         facettoplot <- base::unique(dplyr::pull(dplyr::select(
@@ -680,12 +671,12 @@ one_way_ave <- function(
           next
         }
 
-        plotlist[[l]] <- Plot_data_to_plot %>%
+        plotlist[[plot_index]] <- Plot_data_to_plot %>%
           plotly::plot_ly(
             colors = c(first_colour, second_colour),
             height = height,
             width = width,
-            showlegend = base::ifelse(l == 1, T, F)
+            showlegend = base::ifelse(plot_index == 1, T, F)
           ) %>%
           plotly::add_trace(
             x = ~ get(base::paste0(feature_to_plot, '_cat')),
@@ -712,7 +703,10 @@ one_way_ave <- function(
               side = 'left',
               title = ylabeltext,
               showgrid = F,
-              overlaying = base::paste0('y', as.character((l - 1) * 2 + 1))
+              overlaying = base::paste0(
+                'y',
+                as.character((plot_index - 1) * 2 + 1)
+              )
             ),
             legend = list(orientation = "h", y = -0.2, x = 0.32, title = ''),
             xaxis = list(title = feature_to_plot),
@@ -720,34 +714,29 @@ one_way_ave <- function(
             autosize = T,
             margin = list(b = 50, l = 50, r = 80)
           ) %>%
+          # Sits on the top edge of its own panel, clear of the figure title.
           plotly::add_annotations(
             x = 0.5,
-            y = 1.05,
+            y = 1,
             xref = "paper",
             yref = "paper",
-            text = base::paste0('<b>', facettoplot, '<b>'), #"<b>paper reference = [0.5, 1]</b>",
+            yanchor = 'bottom',
+            text = base::paste0('<b>', facettoplot, '</b>'),
             showarrow = F
           )
+        plot_index <- plot_index + 1
         l <- l + 1
       }
       plotlist <- plotlist[!sapply(plotlist, is.null)]
-      p_return <- plotly::subplot(
-        plotlist,
-        nrows = base::ifelse(
-          facet_direction == 'horizontal',
-          1,
-          length(plotlist)
-        ),
-        titleY = T,
-        titleX = T,
-        margin = 0.07,
-        shareY = F,
-        shareX = T,
-        heights = if (facet_direction == 'horizontal') {
-          NULL
-        } else {
-          rep(1 / length(plotlist), length(plotlist))
-        }
+      p_return <- assemble_facet_subplot(
+        plotlist = plotlist,
+        facet_direction = facet_direction,
+        width = width,
+        height = height,
+        left_title = ylabeltext,
+        right_title = 'Density',
+        x_title = feature_to_plot,
+        plot_title = Plottitle
       )
     } else {
       # non faceted code -----------------------------------------------------------------------
@@ -882,4 +871,142 @@ one_way_ave <- function(
     }
   }
   return(p_return)
+}
+
+#' Assemble faceted one-way plots into a single subplot
+#'
+#' Each facet panel is a dual-axis figure (bars/density on `yaxis`, averages on
+#' an overlaid `yaxis2`), so the panels must not share axes. This helper handles
+#' the layout concerns that are easy to get wrong as the number of facets grows:
+#' inter-panel spacing, equal panel sizes, a single set of axis titles rather
+#' than one per panel, and a figure large enough that panels stay legible.
+#'
+#' @param plotlist List of plotly panels, one per facet.
+#' @param facet_direction "vertical" or "horizontal".
+#' @param width,height Requested figure size; grown if needed to keep panels readable.
+#' @param left_title,right_title,x_title Axis titles, drawn once for the whole figure.
+#' @param plot_title Figure title.
+#'
+#' @return A single plotly object.
+#' @noRd
+assemble_facet_subplot <- function(
+  plotlist,
+  facet_direction,
+  width,
+  height,
+  left_title,
+  right_title,
+  x_title,
+  plot_title
+) {
+  n <- base::length(plotlist)
+  if (n == 0) {
+    base::stop(
+      "No facets could be plotted. Check the facet variable has levels with enough data."
+    )
+  }
+
+  # Spacing between panels, as a fraction of the figure. plotly applies this to
+  # each side of a panel, so a fixed value larger than half a panel's slot makes
+  # panels collapse once there are more than a handful of facets.
+  panel_margin <- base::min(0.07, 0.2 / n)
+
+  # plotly applies the margin between panels but not at the outer edges, which
+  # leaves interior panels smaller than the two end ones. Pad the interior slots
+  # so every panel is drawn the same size.
+  drawn <- (1 - 2 * panel_margin * (n - 1)) / n
+  if (n == 1) {
+    sizes <- 1
+  } else {
+    sizes <- c(
+      drawn + panel_margin,
+      base::rep(drawn + 2 * panel_margin, base::max(n - 2, 0)),
+      drawn + panel_margin
+    )
+  }
+
+  # Grow the figure so panels keep a usable size as facets are added, rather
+  # than squeezing more panels into the requested width/height.
+  if (facet_direction == 'horizontal') {
+    total_width <- base::max(width, 260 * n)
+    total_height <- height
+    p_return <- plotly::subplot(
+      plotlist,
+      nrows = 1,
+      titleY = FALSE,
+      titleX = FALSE,
+      margin = panel_margin,
+      shareY = FALSE,
+      shareX = FALSE,
+      widths = sizes
+    )
+  } else {
+    total_width <- width
+    total_height <- base::max(height, 200 * n)
+    p_return <- plotly::subplot(
+      plotlist,
+      nrows = n,
+      titleY = FALSE,
+      titleX = FALSE,
+      margin = panel_margin,
+      shareY = FALSE,
+      shareX = TRUE,
+      heights = sizes
+    )
+  }
+
+  # Annotation positions are paper fractions of the plotting area, so convert
+  # from pixels to keep the offsets constant however large the figure grows.
+  plot_margins <- list(t = 90, b = 130, l = 90, r = 90)
+  area_width <- base::max(total_width - plot_margins$l - plot_margins$r, 1)
+  area_height <- base::max(total_height - plot_margins$t - plot_margins$b, 1)
+
+  p_return %>%
+    plotly::layout(
+      title = plot_title,
+      width = total_width,
+      height = total_height,
+      autosize = FALSE,
+      margin = plot_margins,
+      legend = list(
+        orientation = "h",
+        xanchor = 'center',
+        x = 0.5,
+        y = -90 / area_height,
+        title = ''
+      )
+    ) %>%
+    # One set of axis titles for the whole figure, instead of one per panel.
+    plotly::add_annotations(
+      x = -70 / area_width,
+      y = 0.5,
+      text = left_title,
+      textangle = -90,
+      xref = "paper",
+      yref = "paper",
+      xanchor = 'center',
+      yanchor = 'middle',
+      showarrow = FALSE
+    ) %>%
+    plotly::add_annotations(
+      x = 1 + 70 / area_width,
+      y = 0.5,
+      text = right_title,
+      textangle = 90,
+      xref = "paper",
+      yref = "paper",
+      xanchor = 'center',
+      yanchor = 'middle',
+      showarrow = FALSE
+    ) %>%
+    plotly::add_annotations(
+      x = 0.5,
+      y = -45 / area_height,
+      text = x_title,
+      xref = "paper",
+      yref = "paper",
+      xanchor = 'center',
+      yanchor = 'top',
+      showarrow = FALSE
+    )
 }
