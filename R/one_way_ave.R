@@ -358,7 +358,9 @@ one_way_ave <- function(
           titleY = T,
           titleX = T,
           margin = 0.07,
-          shareY = T,
+          # shareY must stay FALSE: each facet carries its own overlaid
+          # secondary y-axis, and sharing collapses them onto one axis
+          shareY = F,
           shareX = F,
           widths = rep(1 / length(plotlist), length(plotlist))
         )
