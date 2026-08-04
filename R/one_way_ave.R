@@ -961,11 +961,9 @@ assemble_facet_subplot <- function(
   area_width <- base::max(total_width - plot_margins$l - plot_margins$r, 1)
   area_height <- base::max(total_height - plot_margins$t - plot_margins$b, 1)
 
-  p_return %>%
+  p_return <- p_return %>%
     plotly::layout(
       title = plot_title,
-      width = total_width,
-      height = total_height,
       autosize = FALSE,
       margin = plot_margins,
       legend = list(
@@ -1009,4 +1007,15 @@ assemble_facet_subplot <- function(
       yanchor = 'top',
       showarrow = FALSE
     )
+
+  # Set the size directly rather than through layout(), which deprecated
+  # width/height. Both slots are needed: the widget fields size the container,
+  # and the layout fields would otherwise keep the per-panel size the individual
+  # panels carried into the subplot, undoing the growth applied above.
+  p_return$x$layout$width <- total_width
+  p_return$x$layout$height <- total_height
+  p_return$width <- total_width
+  p_return$height <- total_height
+
+  p_return
 }
