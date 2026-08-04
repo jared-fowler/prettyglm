@@ -360,7 +360,7 @@ one_way_ave <- function(
           margin = 0.07,
           shareY = T,
           shareX = F,
-          widths = rep(1 / length(plotlist), length(plotlist)),
+          widths = rep(1 / length(plotlist), length(plotlist))
         )
       } else {
         p_return <- plotly::subplot(
@@ -371,7 +371,7 @@ one_way_ave <- function(
           margin = 0.07,
           shareY = F,
           shareX = T,
-          heights = rep(1 / length(plotlist), length(plotlist)),
+          heights = rep(1 / length(plotlist), length(plotlist))
         )
       }
     } else {
