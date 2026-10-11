@@ -14,6 +14,10 @@
 #' @param ... Any additional parameters to be past to  \code{\link[vip]{vi}}
 #'
 #' @return \code{\link[knitr]{kable}} if return_data = FALSE. \code{\link[base]{data.frame}} if return_data = TRUE.
+#' @details The kable footnote reports goodness-of-fit statistics: AIC, BIC, number of observations, residual and null deviance with their degrees of freedom, and a dispersion estimate.
+#' For poisson and binomial models the dispersion is the Pearson chi-squared statistic divided by the residual degrees of freedom; values well above 1 suggest overdispersion
+#' (consider a quasi family or negative binomial model). It is not reported for binary (0/1) logistic regression, where overdispersion is not identifiable.
+#' For other families the estimated dispersion parameter from \code{summary()} is shown.
 #'
 #' @examples
 #'
@@ -224,15 +228,38 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
   if (return_data == FALSE){
 
     # Extract goodness of fit metrics
-    if (any(class(model_object) == 'model_fit') == TRUE){
-      aic_print <- base::ifelse(base::is.null(model_object$fit$aic), NA, model_object$fit$aic)
-      deviance_print <- base::ifelse(base::is.null(model_object$fit$deviance), NA, model_object$fit$deviance)
-      null_deviance_print <- base::ifelse(base::is.null(model_object$fit$null.deviance ), NA, model_object$fit$null.deviance)
-    } else{
-      aic_print <- base::ifelse(base::is.null(model_object$aic), NA, model_object$aic)
-      deviance_print <- base::ifelse(base::is.null(model_object$deviance ), NA, model_object$deviance)
-      null_deviance_print <- base::ifelse(base::is.null(model_object$null.deviance), NA, model_object$null.deviance)
-    }
+    safe_stat <- function(expr) base::tryCatch(expr, error = function(e) NA)
+    aic_print <- safe_stat(stats::AIC(model_object))
+    bic_print <- safe_stat(stats::BIC(model_object))
+    n_print <- safe_stat(stats::nobs(model_object))
+    deviance_print <- safe_stat(stats::deviance(model_object))
+    df_resid_print <- safe_stat(stats::df.residual(model_object))
+    null_deviance_print <- base::ifelse(base::is.null(model_object$null.deviance), NA, model_object$null.deviance)
+    df_null_print <- base::ifelse(base::is.null(model_object$df.null), NA, model_object$df.null)
+
+    # Dispersion: pearson chi-sq / df for poisson and binomial, estimated dispersion otherwise
+    is_binary <- FALSE
+    dispersion_print <- safe_stat({
+      if (any(class(model_object) == 'glm') == TRUE){
+        family_name <- model_object$family$family
+        if (family_name %in% c('poisson', 'binomial')){
+          is_binary <- family_name == 'binomial' & all(model_object$prior.weights == 1) & all(model_object$y %in% c(0, 1))
+          if (is_binary) NA else base::sum(stats::residuals(model_object, type = 'pearson')^2) / df_resid_print
+        } else{
+          base::summary(model_object)$dispersion
+        }
+      } else{
+        base::summary(model_object)$sigma^2
+      }
+    })
+    dispersion_text <- base::ifelse(is_binary, 'n/a (binary)', base::round(dispersion_print, 3))
+
+    gof_text <- base::paste0(' AIC: ', base::round(aic_print, 1),
+                             ', BIC: ', base::round(bic_print, 1),
+                             ', N: ', n_print,
+                             ', Deviance: ', base::round(deviance_print, 1), ' on ', df_resid_print, ' df',
+                             ', Null Deviance: ', base::round(null_deviance_print, 1), ' on ', df_null_print, ' df',
+                             ', Dispersion: ', dispersion_text)
 
     # Create a nice kable output of coefficients
     kable_df <- tidy_coef %>%
@@ -258,12 +285,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
                                                                  xlim = c(0,base::max(tidy_coef$Importance)),
                                                                  ylim = c(1,1))) %>%
         kableExtra::collapse_rows(columns = 1) %>%
-        kableExtra::footnote(general = base::paste(' AIC:',
-                                                   base::round(aic_print,1),
-                                                   ', Devience :',
-                                                   base::round(deviance_print,1),
-                                                   ', Null Devience: ',
-                                                   base::round(null_deviance_print,1)),
+        kableExtra::footnote(general = gof_text,
                              general_title = 'Goodness-of-Fit:',
                              footnote_as_chunk = TRUE,
                              title_format = c("italic", "underline"))
@@ -287,12 +309,7 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
                                                                  xlim = c(0,base::max(tidy_coef$Importance)),
                                                                  ylim = c(1,1))) %>%
         kableExtra::collapse_rows(columns = c(1, base::ncol(kable_df)), target = 1) %>%
-        kableExtra::footnote(general = base::paste(' AIC:',
-                                                   base::round(aic_print,1),
-                                                   ', Devience :',
-                                                   base::round(deviance_print,1),
-                                                   ', Null Devience: ',
-                                                   base::round(null_deviance_print,1)),
+        kableExtra::footnote(general = gof_text,
                              general_title = 'Goodness-of-Fit:',
                              footnote_as_chunk = TRUE,
                              title_format = c("italic", "underline"))

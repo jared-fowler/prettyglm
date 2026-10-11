@@ -19,10 +19,12 @@ one_way_ave(
   second_colour = "#cc4678",
   facetby = NULL,
   facet_direction = "vertical",
+  shared_axis = TRUE,
   prediction_type = "response",
   predict_function = NULL,
   upper_percentile_to_cut = 0.01,
-  lower_percentile_to_cut = 0
+  lower_percentile_to_cut = 0,
+  rounding_preference = 2
 )
 }
 \arguments{
@@ -54,6 +56,8 @@ one_way_ave(
 
 \item{facet_direction}{Direction to facet plots: "vertical" (default, stacked rows) or "horizontal" (side-by-side columns).}
 
+\item{shared_axis}{When faceting, set to TRUE (default) so every facet uses the same scale on both y axes (target on the left, number of records / density on the right). FALSE lets each facet scale independently.}
+
 \item{prediction_type}{Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".}
 
 \item{predict_function}{A custom prediction function can be provided here. It must return a \link[base]{data.frame} with an "Actual_Values" column, and a "Predicted_Values" column.}
@@ -61,6 +65,8 @@ one_way_ave(
 \item{upper_percentile_to_cut}{For continuous variables this is what percentile to exclude from the upper end of the distribution. Defaults to 0.01, so the maximum percentile of the variable in the plot will be 0.99. Cutting off some of the distribution can help the views if outlier's are present in the data.}
 
 \item{lower_percentile_to_cut}{For continuous variables this is what percentile to exclude from the lower end of the distribution. Defaults to 0.01, so the minimum percentile of the variable in the plot will be 0.01. Cutting off some of the distribution can help the views if outlier's are present in the data.}
+
+\item{rounding_preference}{Number of decimal places to round numbers to in the hover tooltips. Defaults to 2.}
 }
 \value{
 plotly plot of one way actual vs expected.

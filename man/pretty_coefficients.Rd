@@ -44,6 +44,12 @@ pretty_coefficients(
 \description{
 Creates a pretty kable of model coefficients including coefficient base levels, type III P.values, and variable importance.
 }
+\details{
+The kable footnote reports goodness-of-fit statistics: AIC, BIC, number of observations, residual and null deviance with their degrees of freedom, and a dispersion estimate.
+For poisson and binomial models the dispersion is the Pearson chi-squared statistic divided by the residual degrees of freedom; values well above 1 suggest overdispersion
+(consider a quasi family or negative binomial model). It is not reported for binary (0/1) logistic regression, where overdispersion is not identifiable.
+For other families the estimated dispersion parameter from \code{summary()} is shown.
+}
 \examples{
 
 library(dplyr)

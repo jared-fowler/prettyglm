@@ -16,10 +16,12 @@
 #' @param second_colour Second colour to plot, usually the colour of predicted.
 #' @param facetby Variable to facet the actual vs expect plots by.
 #' @param facet_direction Direction to facet plots: "vertical" (default, stacked rows) or "horizontal" (side-by-side columns).
+#' @param shared_axis When faceting, set to TRUE (default) so every facet uses the same scale on both y axes (target on the left, number of records / density on the right). FALSE lets each facet scale independently.
 #' @param prediction_type Prediction type to be pasted to predict.glm if predict_function is NULL. Defaults to "response".
 #' @param predict_function A custom prediction function can be provided here. It must return a \link[base]{data.frame} with an "Actual_Values" column, and a "Predicted_Values" column.
 #' @param upper_percentile_to_cut For continuous variables this is what percentile to exclude from the upper end of the distribution. Defaults to 0.01, so the maximum percentile of the variable in the plot will be 0.99. Cutting off some of the distribution can help the views if outlier's are present in the data.
 #' @param lower_percentile_to_cut For continuous variables this is what percentile to exclude from the lower end of the distribution. Defaults to 0.01, so the minimum percentile of the variable in the plot will be 0.01. Cutting off some of the distribution can help the views if outlier's are present in the data.
+#' @param rounding_preference Number of decimal places to round numbers to in the hover tooltips. Defaults to 2.
 #'
 #' @return plotly plot of one way actual vs expected.
 #'
@@ -128,12 +130,27 @@ one_way_ave <- function(
   second_colour = '#cc4678',
   facetby = NULL,
   facet_direction = 'vertical',
+  shared_axis = TRUE,
   prediction_type = 'response',
   predict_function = NULL,
   upper_percentile_to_cut = 0.01,
-  lower_percentile_to_cut = 0
+  lower_percentile_to_cut = 0,
+  rounding_preference = 2
 ) {
   # Make sure plots can handle residuals as a plot_type input
+
+  # Legend is centred under the plot area via xanchor; without it x positions
+  # the legend's left edge, so it drifts off-centre as entry widths change.
+  legend_layout <- list(
+    orientation = "h",
+    xanchor = 'center',
+    x = 0.5,
+    y = -0.2,
+    title = list(text = '')
+  )
+
+  # d3 number format used in tooltips, e.g. ':.2f' for 2 decimal places
+  num_fmt <- base::paste0(':.', rounding_preference, 'f')
 
   # Extract the actual and expected values -------------------------------------------
   # if provided data set is null then use the training data from model object
@@ -219,6 +236,8 @@ one_way_ave <- function(
       )))))
       l <- 1
       plotlist <- list()
+      facet_y_values <- c()
+      facet_right_values <- c()
       while (l <= numberoffacets) {
         facettoplot <- na.omit(base::unique(dplyr::pull(dplyr::select(
           Plot_data,
@@ -290,9 +309,12 @@ one_way_ave <- function(
             )
         }
 
+        facet_y_values <- c(facet_y_values, Plot_data_to_plot$Average_value)
+
         Count_data <- Plot_data_to_plot %>%
           dplyr::select(c(feature_to_plot, 'Number_of_Records')) %>%
           base::unique()
+        facet_right_values <- c(facet_right_values, Count_data$Number_of_Records)
 
         plotlist[[l]] <- Plot_data_to_plot %>%
           plotly::plot_ly(
@@ -307,7 +329,11 @@ one_way_ave <- function(
             type = "scatter",
             mode = "lines+markers",
             color = ~Data_Type,
-            yaxis = "y2"
+            yaxis = "y2",
+            hovertemplate = base::paste0(
+              feature_to_plot, ': %{x}<br>',
+              ylabeltext, ': %{y', num_fmt, '}'
+            )
           ) %>%
           plotly::add_bars(
             data = Count_data,
@@ -320,6 +346,7 @@ one_way_ave <- function(
               tidyselect::all_of('Number_of_Records')
             )),
             name = 'Number of records',
+            hovertemplate = base::paste0(feature_to_plot, ': %{x}<br>Number of records: %{y:,}'),
             yaxis = 'y',
             marker = list(
               color = '#dddddd',
@@ -334,7 +361,7 @@ one_way_ave <- function(
               showgrid = F,
               overlaying = base::paste0('y', as.character((l - 1) * 2 + 1))
             ),
-            legend = list(orientation = "h", y = -0.2, x = 0.32, title = ''),
+            legend = legend_layout,
             xaxis = list(title = feature_to_plot),
             title = Plottitle,
             autosize = T,
@@ -353,6 +380,13 @@ one_way_ave <- function(
         l <- l + 1
       }
       plotlist <- plotlist[!sapply(plotlist, is.null)]
+      if (shared_axis) {
+        plotlist <- apply_shared_y_range(
+          plotlist,
+          facet_y_values,
+          facet_right_values
+        )
+      }
       p_return <- assemble_facet_subplot(
         plotlist = plotlist,
         facet_direction = facet_direction,
@@ -471,12 +505,17 @@ one_way_ave <- function(
           type = "scatter",
           mode = "lines+markers",
           color = ~Data_Type,
-          yaxis = "y2"
+          yaxis = "y2",
+          hovertemplate = base::paste0(
+            feature_to_plot, ': %{x}<br>',
+            ylabeltext, ': %{y', num_fmt, '}'
+          )
         ) %>%
         plotly::add_bars(
           x = ~ get(feature_to_plot),
           y = ~Number_of_Records,
           name = 'Number of records',
+          hovertemplate = base::paste0(feature_to_plot, ': %{x}<br>Number of records: %{y:,}'),
           yaxis = 'y',
           marker = list(
             color = '#dddddd',
@@ -491,7 +530,7 @@ one_way_ave <- function(
             showgrid = F,
             overlaying = 'y'
           ),
-          legend = list(orientation = "h", y = -0.2, x = 0.3, title = ''),
+          legend = legend_layout,
           xaxis = list(title = feature_to_plot),
           title = Plottitle,
           autosize = T,
@@ -550,6 +589,8 @@ one_way_ave <- function(
       # position in the final list, not on which facet it came from.
       plot_index <- 1
       plotlist <- list()
+      facet_y_values <- c()
+      facet_right_values <- c()
       while (l <= numberoffacets) {
         facettoplot <- base::unique(dplyr::pull(dplyr::select(
           Plot_data,
@@ -670,6 +711,8 @@ one_way_ave <- function(
           l <- l + 1
           next
         }
+        facet_y_values <- c(facet_y_values, Plot_data_to_plot$Average_value)
+        facet_right_values <- c(facet_right_values, fit$y)
 
         plotlist[[plot_index]] <- Plot_data_to_plot %>%
           plotly::plot_ly(
@@ -684,7 +727,11 @@ one_way_ave <- function(
             type = "scatter",
             mode = "lines+markers",
             color = ~Data_Type,
-            yaxis = "y2"
+            yaxis = "y2",
+            hovertemplate = base::paste0(
+              feature_to_plot, ': %{x', num_fmt, '}<br>',
+              ylabeltext, ': %{y', num_fmt, '}'
+            )
           ) %>%
           plotly::add_trace(
             x = fit$x,
@@ -694,6 +741,9 @@ one_way_ave <- function(
             fill = "tozeroy",
             yaxis = "y",
             name = "Density",
+            hovertemplate = base::paste0(
+              feature_to_plot, ': %{x', num_fmt, '}<br>Density: %{y:.3~g}'
+            ),
             fillcolor = 'rgba(221,221,221,0.5)',
             line = list(color = 'rgba(221,221,221,0.7)')
           ) %>%
@@ -708,7 +758,7 @@ one_way_ave <- function(
                 as.character((plot_index - 1) * 2 + 1)
               )
             ),
-            legend = list(orientation = "h", y = -0.2, x = 0.32, title = ''),
+            legend = legend_layout,
             xaxis = list(title = feature_to_plot),
             title = Plottitle,
             autosize = T,
@@ -728,6 +778,13 @@ one_way_ave <- function(
         l <- l + 1
       }
       plotlist <- plotlist[!sapply(plotlist, is.null)]
+      if (shared_axis) {
+        plotlist <- apply_shared_y_range(
+          plotlist,
+          facet_y_values,
+          facet_right_values
+        )
+      }
       p_return <- assemble_facet_subplot(
         plotlist = plotlist,
         facet_direction = facet_direction,
@@ -840,7 +897,11 @@ one_way_ave <- function(
           type = "scatter",
           mode = "lines+markers",
           color = ~Data_Type,
-          yaxis = "y2"
+          yaxis = "y2",
+          hovertemplate = base::paste0(
+            feature_to_plot, ': %{x', num_fmt, '}<br>',
+            ylabeltext, ': %{y', num_fmt, '}'
+          )
         ) %>%
         plotly::add_trace(
           x = fit$x,
@@ -850,6 +911,9 @@ one_way_ave <- function(
           fill = "tozeroy",
           yaxis = "y",
           name = "Density",
+          hovertemplate = base::paste0(
+            feature_to_plot, ': %{x', num_fmt, '}<br>Density: %{y:.3~g}'
+          ),
           fillcolor = 'rgba(221,221,221,0.5)',
           line = list(color = 'rgba(221,221,221,0.7)')
         ) %>%
@@ -861,7 +925,7 @@ one_way_ave <- function(
             showgrid = F,
             overlaying = 'y'
           ),
-          legend = list(orientation = "h", y = -0.2, x = 0.32, title = ''),
+          legend = legend_layout,
           xaxis = list(title = feature_to_plot),
           title = Plottitle,
           autosize = T,
@@ -871,6 +935,43 @@ one_way_ave <- function(
     }
   }
   return(p_return)
+}
+
+#' Give every facet panel the same y axis ranges
+#'
+#' @param plotlist List of plotly panels, one per facet.
+#' @param y_values All values plotted on the left axis (`yaxis2`), across every facet.
+#' @param right_values All values plotted on the right axis (`yaxis`: counts or
+#'   density), across every facet.
+#'
+#' @return plotlist with common `yaxis` and `yaxis2` ranges set on each panel.
+#' @noRd
+apply_shared_y_range <- function(plotlist, y_values, right_values) {
+  layout_args <- list()
+
+  y_values <- y_values[base::is.finite(y_values)]
+  if (base::length(y_values) > 0) {
+    y_lim <- base::range(y_values)
+    # Pad so the extreme markers aren't clipped at the panel edge.
+    pad <- base::diff(y_lim) * 0.05
+    if (pad == 0) {
+      pad <- base::max(base::abs(y_lim[1]) * 0.05, 0.01)
+    }
+    layout_args$yaxis2 <- list(range = y_lim + c(-pad, pad))
+  }
+
+  # Counts and density are never negative, so anchor the right axis at zero.
+  right_values <- right_values[base::is.finite(right_values)]
+  if (base::length(right_values) > 0 && base::max(right_values) > 0) {
+    layout_args$yaxis <- list(range = c(0, base::max(right_values) * 1.05))
+  }
+
+  if (base::length(layout_args) == 0) {
+    return(plotlist)
+  }
+  base::lapply(plotlist, function(p) {
+    base::do.call(plotly::layout, c(list(p), layout_args))
+  })
 }
 
 #' Assemble faceted one-way plots into a single subplot
@@ -955,29 +1056,33 @@ assemble_facet_subplot <- function(
     )
   }
 
-  # Annotation positions are paper fractions of the plotting area, so convert
-  # from pixels to keep the offsets constant however large the figure grows.
-  plot_margins <- list(t = 90, b = 130, l = 90, r = 90)
-  area_width <- base::max(total_width - plot_margins$l - plot_margins$r, 1)
-  area_height <- base::max(total_height - plot_margins$t - plot_margins$b, 1)
+  # Offsets are given in pixels (xshift/yshift, and a legend positioned against
+  # the whole figure) rather than as paper fractions, so they hold even when
+  # width/height are NULL and the final figure size isn't known here.
+  plot_margins <- list(t = 90, b = 100, l = 90, r = 90)
 
   p_return <- p_return %>%
     plotly::layout(
       title = plot_title,
       autosize = FALSE,
       margin = plot_margins,
+      # Pinned to the bottom of the figure, inside the bottom margin and below
+      # the x axis title.
       legend = list(
         orientation = "h",
         xanchor = 'center',
         x = 0.5,
-        y = -90 / area_height,
+        yref = 'container',
+        yanchor = 'bottom',
+        y = 0,
         title = ''
       )
     ) %>%
     # One set of axis titles for the whole figure, instead of one per panel.
     plotly::add_annotations(
-      x = -70 / area_width,
+      x = 0,
       y = 0.5,
+      xshift = -70,
       text = left_title,
       textangle = -90,
       xref = "paper",
@@ -987,8 +1092,9 @@ assemble_facet_subplot <- function(
       showarrow = FALSE
     ) %>%
     plotly::add_annotations(
-      x = 1 + 70 / area_width,
+      x = 1,
       y = 0.5,
+      xshift = 70,
       text = right_title,
       textangle = 90,
       xref = "paper",
@@ -999,7 +1105,8 @@ assemble_facet_subplot <- function(
     ) %>%
     plotly::add_annotations(
       x = 0.5,
-      y = -45 / area_height,
+      y = 0,
+      yshift = -45,
       text = x_title,
       xref = "paper",
       yref = "paper",
