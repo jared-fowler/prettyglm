@@ -15,3 +15,6 @@
 ^man/figures/splinetable$
 ^vignettes/web_only$
 ^/vignettes/web_only$
+^\.claude$
+^CLAUDE\.md$
+^\.notes$

@@ -97,7 +97,6 @@
 
 pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = TRUE, relativity_transform = 'exp(estimate)-1', relativity_label = 'Relativity', ordering = NULL, plot_factor_as_numeric = FALSE, width = 800, height = 500, iteractionplottype = NULL, facetorcolourby = NULL, upper_percentile_to_cut = 0.01, lower_percentile_to_cut = 0, spline_seperator = NULL){
   # Fix for global variables
-  # tidy_workflow <- NULL
   # Variable <- NULL
   # Relativity <- NULL
   # relativity <- NULL
@@ -116,7 +115,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
   # Extract training data from model object
   if (base::any(class(model_object) == 'workflow')){
     # workflow model objects here
-    training_data <- tidy_workflow$fit$fit$fit$data
+    training_data <- model_object$fit$fit$fit$data
   } else if(base::any(class(model_object) == 'model_fit')){
     # pasnip model objects here
     training_data <- model_object$fit$data

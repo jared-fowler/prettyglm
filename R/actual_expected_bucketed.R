@@ -76,7 +76,7 @@ actual_expected_bucketed <- function(target_variable, model_object, data_set = N
     # Extract training data from model object
     if (base::any(class(model_object) == 'workflow')){
       # Workflow model objects here
-      data_set <- tidy_workflow$fit$fit$fit$data
+      data_set <- model_object$fit$fit$fit$data
     } else if(base::any(class(model_object) == 'model_fit')){
       # pasnip model objects here
       data_set <- model_object$fit$data

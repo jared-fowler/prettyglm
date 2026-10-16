@@ -31,10 +31,13 @@ Imports:
     tibble,
     tidycat,
     tidyr,
-    tidyselect
+    tidyselect,
+    vip
 Suggests: 
+    parsnip,
     rmarkdown,
-    testthat
+    testthat,
+    workflows
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

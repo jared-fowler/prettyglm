@@ -42,7 +42,7 @@ If you don't find the function you are looking for in `prettyglm` consider check
 
 You can install the latest CRAN release with:
 
-```{r}
+```{r eval=FALSE}
 install.packages('prettyglm')
 ```
 

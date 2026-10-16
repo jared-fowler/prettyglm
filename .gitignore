@@ -22,3 +22,5 @@ docs
 .notes/ideas.md
 ./notes
 .notes/sandbox.R
+/CLAUDE.md
+.claude/

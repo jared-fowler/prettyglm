@@ -158,7 +158,7 @@ one_way_ave <- function(
     # Extract training data from model object
     if (base::any(class(model_object) == 'workflow')) {
       # Workflow model objects here
-      data_set <- tidy_workflow$fit$fit$fit$data
+      data_set <- model_object$fit$fit$fit$data
     } else if (base::any(class(model_object) == 'model_fit')) {
       # pasnip model objects here
       data_set <- model_object$fit$data
@@ -230,7 +230,7 @@ one_way_ave <- function(
           'which are being removed. To plot this data, force NAs to be a categorical level'
         ))
       }
-      numberoffacets <- base::length(na.omit(base::unique(dplyr::pull(dplyr::select(
+      numberoffacets <- base::length(stats::na.omit(base::unique(dplyr::pull(dplyr::select(
         Plot_data,
         dplyr::all_of(facetby)
       )))))
@@ -239,7 +239,7 @@ one_way_ave <- function(
       facet_y_values <- c()
       facet_right_values <- c()
       while (l <= numberoffacets) {
-        facettoplot <- na.omit(base::unique(dplyr::pull(dplyr::select(
+        facettoplot <- stats::na.omit(base::unique(dplyr::pull(dplyr::select(
           Plot_data,
           dplyr::all_of(facetby)
         ))))[l]
