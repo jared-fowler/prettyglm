@@ -32,20 +32,6 @@ clean_coefficients <- function(
   spline_seperator = NULL,
   ...
 ) {
-  # Extract model object if parsnip object
-  if (any(class(m) == 'model_fit') == TRUE) {
-    m <- m$fit
-  } else {
-    m <- m
-  }
-
-  # Extract model object if workflow object
-  if (any(class(m) == 'workflow') == TRUE) {
-    m <- m$fit$fit$fit
-  } else {
-    m <- m
-  }
-
   #Split terms and get base levels
   x <- m %>%
     stats::dummy.coef() %>%

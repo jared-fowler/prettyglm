@@ -81,7 +81,7 @@ titanic <- titanic %>%
 
 ### Building a glm
 
-For this vignette we will use `stats::glm()` to build a logistic regression model. Currently working on support for `parsnip` and `workflow` model objects which use the `glm` model engine.
+For this vignette we will use `stats::glm()` to build a logistic regression model.
 
 ```{r build model, echo=TRUE}
 survival_model <- stats::glm(

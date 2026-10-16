@@ -34,10 +34,8 @@ Imports:
     tidyselect,
     vip
 Suggests: 
-    parsnip,
     rmarkdown,
-    testthat,
-    workflows
+    testthat
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

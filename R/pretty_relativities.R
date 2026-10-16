@@ -113,16 +113,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
   complete_factor_summary_df <- prettyglm::pretty_coefficients(model_object = model_object, relativity_transform = relativity_transform, return_data = T, spline_seperator = spline_seperator)
 
   # Extract training data from model object
-  if (base::any(class(model_object) == 'workflow')){
-    # workflow model objects here
-    training_data <- model_object$fit$fit$fit$data
-  } else if(base::any(class(model_object) == 'model_fit')){
-    # pasnip model objects here
-    training_data <- model_object$fit$data
-  } else{
-    #stats::glm objects here
-    training_data <- model_object$data
-  }
+  training_data <- model_object$data
 
   # make sure the variable is in the p-file
   if (base::nrow(base::unique(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot)))==0){

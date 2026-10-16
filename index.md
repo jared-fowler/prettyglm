@@ -59,9 +59,8 @@ bank_data  <- bank_data  %>%
 
 ### Building a glm
 
-For this example we will build a glm using `stats::glm()`, however
-`prettyglm` is working to support `parsnip` and `workflow` model objects
-which use the glm model engine.
+For this example we will build a glm using `stats::glm()`. `prettyglm`
+currently supports `stats::glm()` and `stats::lm()` model objects.
 
 ``` r
 deposit_model <- stats::glm(T_DEPOSIT ~ marital +
@@ -82,6 +81,7 @@ pretty_coefficients(deposit_model, type_iii = 'Wald')
 ```
 
 <p align="center">
+
 <img src= './man/figures/indextable.png' align="center"/>
 </p>
 
@@ -91,7 +91,7 @@ pretty_coefficients(deposit_model, type_iii = 'Wald')
 see `vignette("simple_pretty_relativities")` and
 `vignette("interaction_pretty_relativities")` to get started.
 
-#### job
+#### marital
 
 ``` r
 pretty_relativities(feature_to_plot = 'marital',
@@ -99,6 +99,7 @@ pretty_relativities(feature_to_plot = 'marital',
 ```
 
 <p align="center">
+
 <img src= './man/figures/maritalrel.png' align="center"/>
 </p>
 
@@ -110,6 +111,7 @@ pretty_relativities(feature_to_plot = 'age',
 ```
 
 <p align="center">
+
 <img src= './man/figures/agerel.png' align="center"/>
 </p>
 
@@ -123,6 +125,7 @@ pretty_relativities(feature_to_plot = 'default:loan',
 ```
 
 <p align="center">
+
 <img src= './man/figures/defualtloanrel.png'  align="center"/>
 </p>
 
@@ -141,6 +144,7 @@ one_way_ave(feature_to_plot = 'age',
 ```
 
 <p align="center">
+
 <img src= './man/figures/ageave.png' align="center"/>
 </p>
 
@@ -154,6 +158,7 @@ one_way_ave(feature_to_plot = 'education',
 ```
 
 <p align="center">
+
 <img src= './man/figures/educationave.png' align="center"/>
 </p>
 
@@ -169,6 +174,7 @@ actual_expected_bucketed(target_variable = 'T_DEPOSIT',
 ```
 
 <p align="center">
+
 <img src= './man/figures/aveband.png' align="center"/>
 </p>
 

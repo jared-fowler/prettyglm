@@ -101,16 +101,8 @@
 pretty_coefficients <- function(model_object, relativity_transform = NULL, relativity_label = 'relativity', type_iii = NULL, conf.int = FALSE, vimethod = 'model', spline_seperator = NULL, significance_level = 0.05, return_data = FALSE, ...){
   # add other options in the if statemnt for splines
 
-  if (any(class(model_object) == 'workflow') == TRUE){
-    # if model object is a workflow, pull the model fit
-    model_object <- model_object$fit$fit$fit
-  } else if (any(class(model_object) == 'model_fit') == TRUE){
-    # if model object is a parsnip model, pull the model fit
-    model_object <- model_object$fit
-  } else{
-    # stats lm or glm fit
-    model_object$call$formula <- model_object$formula
-  }
+  # stats lm or glm fit
+  model_object$call$formula <- model_object$formula
 
   # tidy coefficients
   model_tidy_df <- broom::tidy(model_object, conf.int=conf.int)

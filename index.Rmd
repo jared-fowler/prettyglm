@@ -62,7 +62,7 @@ bank_data  <- bank_data  %>%
 
 ### Building a glm
 
-For this example we will build a glm using `stats::glm()`, however `prettyglm` is working to support `parsnip` and `workflow` model objects which use the glm model engine.
+For this example we will build a glm using `stats::glm()`. `prettyglm` currently supports `stats::glm()` and `stats::lm()` model objects.
 
 ```{r build model, echo=TRUE}
 deposit_model <- stats::glm(T_DEPOSIT ~ marital +

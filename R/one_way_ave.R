@@ -156,16 +156,7 @@ one_way_ave <- function(
   # if provided data set is null then use the training data from model object
   if (is.null(data_set) == T) {
     # Extract training data from model object
-    if (base::any(class(model_object) == 'workflow')) {
-      # Workflow model objects here
-      data_set <- model_object$fit$fit$fit$data
-    } else if (base::any(class(model_object) == 'model_fit')) {
-      # pasnip model objects here
-      data_set <- model_object$fit$data
-    } else {
-      #stats::glm objects here
-      data_set <- model_object$data
-    }
+    data_set <- model_object$data
   }
 
   # make predictions

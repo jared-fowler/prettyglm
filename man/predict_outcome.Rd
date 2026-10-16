@@ -15,7 +15,7 @@ predict_outcome(
 \arguments{
 \item{target}{String of target variable name.}
 
-\item{model_object}{Model object. prettyglm currently supports}
+\item{model_object}{\code{\link[stats]{glm}} or \code{\link[stats]{lm}} model object.}
 
 \item{dataset}{This is used to plot the number in each class as a barchart if plotly is TRUE.}
 
