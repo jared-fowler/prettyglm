@@ -197,12 +197,12 @@ pretty_coefficients <- function(model_object, relativity_transform = NULL, relat
   # some cleaning for spline columns
   tidy_coef <- tidy_coef %>%
     dplyr::mutate(Variable = base::ifelse(Effect %in% c('ctsspline'),
-                                          yes = stringr::str_extract(Variable, "[^_]+"),
+                                          yes = spline_parts(Variable, spline_seperator)$variable,
                                           no = as.character(Variable)))
 
   tidy_coef <- tidy_coef %>%
     dplyr::mutate(Variable = base::ifelse(Effect %in% c('factorandctsinteractionspline'),
-                                          yes = base::paste0(stringr::word(Variable,1,sep = ":"),':',stringr::str_extract(stringr::word(Variable,2,sep = ":"), "[^_]+")),
+                                          yes = base::paste0(stringr::word(Variable,1,sep = ":"),':',spline_parts(stringr::word(Variable,2,sep = ":"), spline_seperator)$variable),
                                           no = as.character(Variable))) %>%
     dplyr::mutate(Level = base::ifelse(Effect %in% c('factorandctsinteractionspline'),
                                           yes = base::paste0(Level, ':',stringr::word(Term,2,sep = ":")),

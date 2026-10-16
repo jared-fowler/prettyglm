@@ -12,6 +12,7 @@ format:
     code-summary: "Show code"
     highlight-style: github
     embed-resources: true
+    #page-layout: full
 ---
 
 ## Introduction
@@ -30,10 +31,6 @@ library(dplyr)
 
 Load the example data and fit a simple model:
 
-```{r}
-
-```
-
 
 # EDA
 
@@ -43,7 +40,9 @@ one_way_ave(
   feature_to_plot = 'Age',
   target_variable = 'Survived',
   data_set = titanic,
-  plot_type = 'actuals'
+  plot_type = 'actuals',
+  width = NULL,
+  height = NULL
 )
 ```
 
@@ -55,55 +54,57 @@ one_way_ave(
   data_set = titanic,
   plot_type = 'actuals',
   facetby = 'Embarked',
-  facet_direction =  'horizontal'
+  facet_direction =  'horizontal',
+  width = NULL,
+  height = NULL
 )
 ```
 
 ```{r}
-# one_way_ave(
-#   feature_to_plot = 'Age',
-#   target_variable = 'Survived',
-#   data_set = titanic,
-#   plot_type = 'actuals'
-# )
+one_way_ave(
+  feature_to_plot = 'Age',
+  target_variable = 'Survived',
+  data_set = titanic,
+  plot_type = 'actuals'
+)
 
-# # This errors
-# one_way_ave(
-#   feature_to_plot = 'Sex',
-#   target_variable = 'Survived',
-#   data_set = titanic,
-#   plot_type = 'actuals',
-#   facetby = 'Embarked'
-#   #facet_direction =  'horizontal'
-# )
+ # This errors
+one_way_ave(
+  feature_to_plot = 'Sex',
+  target_variable = 'Survived',
+  data_set = titanic,
+  plot_type = 'actuals',
+  facetby = 'Embarked'
+  #facet_direction =  'horizontal'
+)
 
 # # space is not event and labels overlap
-# one_way_ave(
-#   feature_to_plot = 'Age',
-#   target_variable = 'Survived',
-#   data_set = titanic,
-#   plot_type = 'actuals',
-#   facetby = 'Embarked',
-#   facet_direction = 'horizontal'
-# )
+one_way_ave(
+  feature_to_plot = 'Age',
+  target_variable = 'Survived',
+  data_set = titanic,
+  plot_type = 'actuals',
+  facetby = 'Embarked',
+  facet_direction = 'horizontal'
+)
 
-# one_way_ave(
-#   feature_to_plot = 'Pclass',
-#   target_variable = 'Survived',
-#   data_set = titanic,
-#   plot_type = 'actuals',
-#   facetby = 'Cabintype' #,
-#   # facet_direction = 'horizontal'
-# )
+one_way_ave(
+  feature_to_plot = 'Pclass',
+  target_variable = 'Survived',
+  data_set = titanic,
+  plot_type = 'actuals',
+  facetby = 'Cabintype' #,
+  # facet_direction = 'horizontal'
+)
 
-# one_way_ave(
-#   feature_to_plot = 'Age',
-#   target_variable = 'Survived',
-#   data_set = titanic,
-#   plot_type = 'actuals',
-#   facetby = 'Cabintype',
-#   facet_direction = 'horizontal'
-# )
+one_way_ave(
+  feature_to_plot = 'Age',
+  target_variable = 'Survived',
+  data_set = titanic,
+  plot_type = 'actuals',
+  facetby = 'Cabintype',
+  facet_direction = 'horizontal'
+)
 ```
 
 Fit a logistic regression model:
@@ -143,20 +144,29 @@ Fit a model with splines and interactions:
 
 ```{r}
 survival_model_spline <- glm(
-  Survived ~ Pclass +
+  Survived ~ 
+     Pclass +
     Age_0_25 +
     Age_25_50 +
-    Age_50_120 +
-    Sex:Fare_0_250 +
-    Sex:Fare_250_600 +
-    Embarked +
-    SibSp +
-    Parch +
-    Cabintype,
+    Age_50_120 
+    # Sex:Fare_0_250 +
+    # Sex:Fare_250_600 +
+    # Embarked +
+    # SibSp +
+    # Parch +
+    # Cabintype,
+  ,
   data = titanic,
   family = binomial(link = 'logit')
 )
 ```
+
+```{r}
+pretty_relativities(feature_to_plot ="Age",
+              model_object = survival_model_spline,
+              spline_seperator = "_")
+```
+
 
 ### Custom Transformations and Variable Importance
 

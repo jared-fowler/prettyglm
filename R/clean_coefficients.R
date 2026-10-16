@@ -73,6 +73,14 @@ clean_coefficients <- function(
       )
     )
 
+  # Numeric main effects, taken from the model terms rather than dummy.coef() names.
+  # dummy.coef() only repeats the name (e.g. 'Age.Age') when the model has a factor term,
+  # so comparing variable to level misclassifies everything in all-numeric models.
+  numeric_variables <- c(
+    '(Intercept)',
+    names(which(attr(m$terms, "dataClasses") == 'numeric'))
+  )
+
   # count rows to to help categorise effects
   number_of_rows <- x %>%
     dplyr::group_by(variable) %>%
@@ -94,12 +102,18 @@ clean_coefficients <- function(
       effect = base::ifelse(
         effect == 'main',
         yes = base::ifelse(
-          variable == level,
+          variable %in% numeric_variables,
           yes = 'ctsmain',
           no = 'factormain'
         ),
         no = effect
-      )
+      ),
+      level = base::ifelse(
+        effect == 'ctsmain',
+        yes = variable,
+        no = as.character(level)
+      ),
+      level = forcats::fct_inorder(level)
     )
 
   # Re-create term field for join
@@ -179,7 +193,7 @@ clean_coefficients <- function(
           (effect == 'ctsmain') &
             (stringr::str_detect(
               string = variable,
-              pattern = spline_seperator
+              pattern = spline_suffix_regex(spline_seperator)
             ) ==
               T),
           yes = 'ctsspline',
@@ -191,7 +205,7 @@ clean_coefficients <- function(
           (effect == 'factorandctsinteraction') &
             (stringr::str_detect(
               string = variable,
-              pattern = spline_seperator
+              pattern = spline_suffix_regex(spline_seperator)
             ) ==
               T),
           yes = 'factorandctsinteractionspline',

@@ -134,7 +134,12 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
     if (base::nrow(base::unique(dplyr::filter(complete_factor_summary_df, Variable == new_feature_to_plot)))>0){
       feature_to_plot <- new_feature_to_plot
     } else{
-      # else throw error
+      # else throw error, with a hint if the feature looks like an undetected spline
+      if (base::any(base::startsWith(as.character(complete_factor_summary_df$Variable), feature_to_plot))) {
+        base::stop(base::paste0(feature_to_plot, " not found in p-file, but some variables start with '", feature_to_plot,
+                                "'. If these are splines, set spline_seperator so names like ", feature_to_plot, "_0_25 are detected. Variables found: ",
+                                base::paste(unique(complete_factor_summary_df$Variable), collapse = " ")))
+      }
       base::stop(base::paste(feature_to_plot , "not found in p-file. Try one of the following:", base::paste(unique(complete_factor_summary_df$Variable), collapse = " ")))
     }
   }
@@ -1067,9 +1072,8 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
     # spline no interaction
     spine_estimates <- complete_factor_summary_df %>%
       dplyr::filter(Variable == feature_to_plot) %>%
-      dplyr::mutate(SP_Min = stringr::word(Level,2,sep = spline_seperator)) %>%
-      dplyr::mutate(SP_Max = stringr::word(Level,3,sep = spline_seperator)) %>%
-      dplyr::mutate(SP_Max = stringr::word(Level,3,sep = spline_seperator))
+      dplyr::mutate(SP_Min = spline_parts(Level, spline_seperator)$min) %>%
+      dplyr::mutate(SP_Max = spline_parts(Level, spline_seperator)$max)
 
     plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =1000))
     for (i in 1:nrow(spine_estimates)){
@@ -1132,9 +1136,8 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
      # get spline estimates
      spine_estimates <- complete_factor_summary_df %>%
       dplyr::filter(Variable == feature_to_plot) %>%
-      dplyr::mutate(SP_Min = stringr::word(Level,2,sep = spline_seperator)) %>%
-      dplyr::mutate(SP_Max = stringr::word(Level,3,sep = spline_seperator)) %>%
-      dplyr::mutate(SP_Max = stringr::word(Level,3,sep = spline_seperator))
+      dplyr::mutate(SP_Min = spline_parts(Level, spline_seperator)$min) %>%
+      dplyr::mutate(SP_Max = spline_parts(Level, spline_seperator)$max)
 
      if (is.null(iteractionplottype) == T){
        iteractionplottype <- 'colour'
