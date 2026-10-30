@@ -168,6 +168,16 @@ one_way_ave <- function(
     data_set <- data_set[!na_target, , drop = FALSE]
   }
 
+  # drop rows with a missing feature, these can't be bucketed or plotted
+  na_feature <- base::is.na(data_set[[feature_to_plot]])
+  if (base::any(na_feature)) {
+    warning(base::paste0(
+      'Dropping ', base::sum(na_feature), ' rows where ', feature_to_plot,
+      ' is NA. To plot this data, force NAs to be a categorical level.'
+    ))
+    data_set <- data_set[!na_feature, , drop = FALSE]
+  }
+
   # make predictions
   if (is.null(model_object)) {
     # No model provided: only actuals are available
