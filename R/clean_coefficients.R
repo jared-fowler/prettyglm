@@ -255,7 +255,8 @@ clean_coefficients <- function(
       estimate,
       std.error,
       statistic,
-      p.value
+      p.value,
+      tidyselect::any_of(c('conf.low', 'conf.high'))
     ))
 
   return(x)

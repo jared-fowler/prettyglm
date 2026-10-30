@@ -72,9 +72,13 @@
 actual_expected_bucketed <- function(target_variable, model_object, data_set = NULL, number_of_buckets = 25, ylab = 'Target', width = 800, height = 500, first_colour = 'black', second_colour = '#cc4678', facetby = NULL, prediction_type = 'response', predict_function = NULL, return_data=F){
   # make predictions on data set --------------------------------------------------------------
   # if provided data set is null then use the training data from model object
-  if (is.null(data_set)==T){
-    # Extract training data from model object
-    data_set <- model_object$data
+  data_set <- get_model_data(model_object, data_set)
+
+  # drop rows with a missing target, otherwise bucket actuals are NA
+  na_target <- base::is.na(data_set[[target_variable]])
+  if (base::any(na_target)){
+    base::warning(base::paste0('Dropping ', base::sum(na_target), ' rows where ', target_variable, ' is NA.'))
+    data_set <- data_set[!na_target, , drop = FALSE]
   }
 
   # make predictions

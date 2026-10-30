@@ -109,11 +109,11 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
   # Create relativity function from input
   base::eval(base::parse(text = base::paste('relativity <- function(estimate) { return(' , relativity_transform , ')}', sep='')))
 
+  # Extract training data from model object (errors clearly on unsupported models / predictor types)
+  training_data <- get_model_data(model_object, check_predictors = TRUE)
+
   # Tidy model coefficients
   complete_factor_summary_df <- prettyglm::pretty_coefficients(model_object = model_object, relativity_transform = relativity_transform, return_data = T, spline_seperator = spline_seperator)
-
-  # Extract training data from model object
-  training_data <- model_object$data
 
   # make sure the variable is in the p-file
   if (base::nrow(base::unique(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot)))==0){
@@ -157,23 +157,23 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
 
     # Change ordering if specified
     if (base::is.null(ordering) ==  FALSE){
-      if (base::length(ordering) >1){
-        order_option <- ordering
-        plot_data <- plot_data %>%
-          dplyr::mutate_at(.vars = c('Level'), .funs = ~factor(. ,Levels = order_option))
-      } else{
-        if (ordering == 'alphabetical'){
-          order_option <-  'Level'
-        } else if (ordering == 'relativity'){
-          order_option <- 'Relativity'
-        } else if (ordering == 'pvalue'){
-          order_option <- 'P.Value'
-        } else{
-          base::warning('You have entered an incorrect ordering option. Please enter: alphabetical, relativity, pvalue or a vector of level names')
-        }
+      if (base::length(ordering) == 1 && ordering %in% c('alphabetical', 'relativity', 'pvalue')){
+        order_option <- base::switch(ordering, alphabetical = 'Level', relativity = 'Relativity', pvalue = 'P.Value')
         plot_data <- plot_data %>%
           dplyr::arrange(get(order_option)) %>%
           dplyr::mutate_at(.vars = c('Level'), .funs = ~base::factor(., base::unique(.)))
+      } else{
+        # vector of level names, any levels not given are added at the end
+        plot_levels <- base::as.character(base::unique(plot_data$Level))
+        unknown_levels <- base::setdiff(ordering, plot_levels)
+        if (base::length(unknown_levels) > 0){
+          base::stop(base::paste0('ordering must be one of alphabetical, relativity, pvalue or a vector of level names. Levels not found: ',
+                                  base::paste(unknown_levels, collapse = ', '), '. Available levels: ', base::paste(plot_levels, collapse = ', ')))
+        }
+        order_option <- c(ordering, base::setdiff(plot_levels, ordering))
+        plot_data <- plot_data %>%
+          dplyr::mutate_at(.vars = c('Level'), .funs = ~base::factor(., levels = order_option)) %>%
+          dplyr::arrange(Level)
       }
     } else{
       if (plot_factor_as_numeric == FALSE & (base::is.null(ordering) ==  FALSE) == FALSE){
@@ -435,23 +435,23 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
 
     # Change ordering if specified
     if (base::is.null(ordering) ==  FALSE){
-      if (base::length(ordering) >1){
-        order_option <- ordering
-        plot_data <- plot_data %>%
-          dplyr::mutate_at(.vars = c('Level'), .funs = ~factor(. ,Levels = order_option))
-      } else{
-        if (ordering == 'alphabetical'){
-          order_option <-  'Level'
-        } else if (ordering == 'relativity'){
-          order_option <- 'Relativity'
-        } else if (ordering == 'pvalue'){
-          order_option <- 'P.Value'
-        } else{
-          base::warning('You have entered an incorrect ordering option. Please enter: alphabetical, relativity, pvalue or a vector of level names')
-        }
+      if (base::length(ordering) == 1 && ordering %in% c('alphabetical', 'relativity', 'pvalue')){
+        order_option <- base::switch(ordering, alphabetical = 'Level', relativity = 'Relativity', pvalue = 'P.Value')
         plot_data <- plot_data %>%
           dplyr::arrange(get(order_option)) %>%
           dplyr::mutate_at(.vars = c('Level'), .funs = ~base::factor(., base::unique(.)))
+      } else{
+        # vector of level names, any levels not given are added at the end
+        plot_levels <- base::as.character(base::unique(plot_data$Level))
+        unknown_levels <- base::setdiff(ordering, plot_levels)
+        if (base::length(unknown_levels) > 0){
+          base::stop(base::paste0('ordering must be one of alphabetical, relativity, pvalue or a vector of level names. Levels not found: ',
+                                  base::paste(unknown_levels, collapse = ', '), '. Available levels: ', base::paste(plot_levels, collapse = ', ')))
+        }
+        order_option <- c(ordering, base::setdiff(plot_levels, ordering))
+        plot_data <- plot_data %>%
+          dplyr::mutate_at(.vars = c('Level'), .funs = ~base::factor(., levels = order_option)) %>%
+          dplyr::arrange(Level)
       }
     } else{
       if (plot_factor_as_numeric == FALSE & (base::is.null(ordering) ==  FALSE) == FALSE){
@@ -756,16 +756,32 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
       p_return <- plot_datafacet %>%
         plotly::plot_ly(height = height,
                         width = width,
-                        showlegend = T) %>%
+                        showlegend = T,
+                        colors = RColorBrewer::brewer.pal((length(unique(dplyr::pull(dplyr::select(plot_datafacet, tidyselect::all_of(facetorcolourby)))))+1), "Set2")[1:length(unique(dplyr::pull(dplyr::select(plot_datafacet, tidyselect::all_of(facetorcolourby)))))]) %>%
         plotly::add_trace(x = ~get(xaxisvariable),
                           y = ~Relativity,
                           type="scatter",
                           mode="lines+markers",
                           color = ~get(facetorcolourby),
-                          colors = RColorBrewer::brewer.pal((length(unique(dplyr::pull(dplyr::select(plot_datafacet, tidyselect::all_of(facetorcolourby)))))+1), "Set2")[1:length(unique(dplyr::pull(dplyr::select(plot_datafacet, tidyselect::all_of(facetorcolourby)))))],
+                          legendgroup = ~get(facetorcolourby),
                           name = ~get(facetorcolourby),
                           line = list(width = 4),
-                          marker = list(size = 8)) %>%
+                          marker = list(size = 8))
+      if (plot_approx_ci == TRUE){
+        # CI lines share the legend entry of their level, so clicking the level toggles both
+        for (ci_col in c('Approx_Upper_95CI', 'Approx_Lower_95CI')){
+          p_return <- p_return %>%
+            plotly::add_trace(x = ~get(xaxisvariable),
+                              y = stats::as.formula(base::paste0('~', ci_col)),
+                              type="scatter",
+                              mode="lines",
+                              color = ~get(facetorcolourby),
+                              legendgroup = ~get(facetorcolourby),
+                              showlegend = FALSE,
+                              line = list(width = 2, dash = 'dot'))
+        }
+      }
+      p_return <- p_return %>%
         plotly::add_bars(
           x = ~get(xaxisvariable),
           y = ~number_of_records,
@@ -797,7 +813,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
   } else if (base::unique(dplyr::filter(complete_factor_summary_df, Variable == feature_to_plot)$Effect) == "factorandctsinteraction"){
     if (is.null(iteractionplottype) == T){
       iteractionplottype <- 'colour'
-      base::message("Factor and Continuous interaction detected, defualting to iteractionplottype = colour")
+      base::message("Factor and Continuous interaction detected, defaulting to iteractionplottype = colour")
     }
 
     # separate the relativities
@@ -882,7 +898,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                                          y = -0.2,
                                          x = 0.15,
                                          title = ''),
-                           xaxis = list(title = feature_to_plot,
+                           xaxis = list(title = ctsvariable,
                                         zeroline = FALSE),
                            title = base::paste(relativity_label, 'for', feature_to_plot),
                            autosize = T,
@@ -969,7 +985,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                                          y = -0.2,
                                          x = 0.15,
                                          title = ''),
-                           xaxis = list(title = feature_to_plot,
+                           xaxis = list(title = ctsvariable,
                                         zeroline = FALSE),
                            title = base::paste(relativity_label, 'for', feature_to_plot),
                            autosize = T,
@@ -1000,16 +1016,21 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
         return(p_return)
       }
     } else if (iteractionplottype == 'colour'){
-      # prep the data for plotting
-      plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =100))
-      for (k in 1:length(factor_levels)){
-        plot_data[,as.character(factor_levels[k])] <- dplyr::pull(dplyr::select(dplyr::filter(dplyr::filter(complete_factor_summary_df, Variable == feature_rearragned), Level == base::as.character(factor_levels[k])), "Relativity"))
-        plot_data[,base::paste0(as.character(factor_levels[k])," ", relativity_label)] <- plot_data$var_range * plot_data[,as.character(factor_levels[k])]
-      }
-      plot_data <- plot_data %>%
-        tidyr::pivot_longer(cols = tidyselect::contains(relativity_label),
-                            names_to = "Level",
-                            values_to = "feature_relativity")
+      # prep the data for plotting, one curve (and CI) per factor level
+      level_estimates <- complete_factor_summary_df %>%
+        dplyr::filter(Variable == feature_rearragned) %>%
+        dplyr::mutate(Approx_Upper_95CI = (Relativity + 2*relativity(Std.error)),
+                      Approx_Lower_95CI = (Relativity - 2*relativity(Std.error)))
+      cts_range <- base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(ctsvariable)), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =100)
+      plot_data <- dplyr::bind_rows(base::lapply(base::as.character(factor_levels), function(lvl){
+        lvl_estimate <- level_estimates[level_estimates$Level == lvl, ]
+        tibble::tibble(var_range = cts_range,
+                       Level = lvl,
+                       feature_relativity = cts_range*lvl_estimate$Relativity,
+                       feature_upper_95_ci = cts_range*lvl_estimate$Approx_Upper_95CI,
+                       feature_lower_95_ci = cts_range*lvl_estimate$Approx_Lower_95CI)
+      }))
+      plot_data$Level <- base::factor(plot_data$Level, levels = base::as.character(factor_levels))
 
       # plot density and relativity
       fit <- training_data %>%
@@ -1021,15 +1042,32 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
 
       p_return <- plotly::plot_ly(plot_data,
                                   height = height,
-                                  width = width) %>%
+                                  width = width,
+                                  colors = RColorBrewer::brewer.pal((length(unique(plot_data$Level))+1), "Set2")[1:length(unique(plot_data$Level))]) %>%
         plotly::add_trace(x = ~var_range,
                           y = ~feature_relativity,
                           type="scatter",
                           mode="lines",
                           color = ~Level,
-                          colors = RColorBrewer::brewer.pal((length(unique(plot_data$Level))+1), "Set2")[1:length(unique(plot_data$Level))],
+                          legendgroup = ~Level,
                           line = list(width = 4),
-                          yaxis = "y2") %>%
+                          yaxis = "y2")
+      if (plot_approx_ci == TRUE){
+        # CI lines share the legend entry of their level, so clicking the level toggles both
+        for (ci_col in c('feature_upper_95_ci', 'feature_lower_95_ci')){
+          p_return <- p_return %>%
+            plotly::add_trace(x = ~var_range,
+                              y = stats::as.formula(base::paste0('~', ci_col)),
+                              type="scatter",
+                              mode="lines",
+                              color = ~Level,
+                              legendgroup = ~Level,
+                              showlegend = FALSE,
+                              line = list(width = 2, dash = 'dot'),
+                              yaxis = "y2")
+        }
+      }
+      p_return <- p_return %>%
         plotly::add_trace(x = fit$x,
                           y = fit$y,
                           type = "scatter",
@@ -1051,7 +1089,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
                                      y = -0.2,
                                      x = 0.2,
                                      title = ''),
-                       xaxis = list(title = feature_to_plot,
+                       xaxis = list(title = ctsvariable,
                                     zeroline = FALSE),
                        title = base::paste(relativity_label, 'for', feature_to_plot, 'coloured by', factorvariable),
                        autosize = T,
@@ -1064,6 +1102,12 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
       dplyr::filter(Variable == feature_to_plot) %>%
       dplyr::mutate(SP_Min = spline_parts(Level, spline_seperator)$min) %>%
       dplyr::mutate(SP_Max = spline_parts(Level, spline_seperator)$max)
+
+    # the curve and density are drawn over the raw variable, so it must be in the training data
+    if (!(feature_to_plot %in% base::names(training_data))){
+      base::stop(base::paste0("To plot the spline for ", feature_to_plot, ", the raw column ", feature_to_plot,
+                              " must be in the training data (not only the spline columns like ", spine_estimates$Level[1], ")."))
+    }
 
     plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::select(training_data, tidyselect::all_of(feature_to_plot)), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =1000))
     for (i in 1:nrow(spine_estimates)){
@@ -1131,7 +1175,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
 
      if (is.null(iteractionplottype) == T){
        iteractionplottype <- 'colour'
-       base::message("Factor and Continuous Spine interaction detected, defualting to iteractionplottype = colour")
+       base::message("Factor and Continuous Spine interaction detected, defaulting to iteractionplottype = colour")
      }
 
      if (iteractionplottype == 'facet'){
@@ -1140,7 +1184,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
        for (interactionk in base::unique(stringr::word(spine_estimates$Level,1,sep = ':'))){
          # Get the data for that interaction will need to change based on facet or colour
          for (g in 1:2) {
-           if (base::class(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':')))) == 'numeric') {
+           if (base::is.numeric(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))))) {
              plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =100))
              # get whatever is not g and then filter to that interaction
              ctsvariable <- stringr::word(feature_to_plot,g,sep = ':')
@@ -1235,7 +1279,7 @@ pretty_relativities <- function(feature_to_plot, model_object, plot_approx_ci = 
      } else if (iteractionplottype == 'colour'){
        # Get the data for that interaction will need to change based on facet or colour
        for (g in 1:2) {
-         if (base::class(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':')))) == 'numeric') {
+         if (base::is.numeric(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))))) {
            plot_data <- tibble::tibble(var_range = base::seq(stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(lower_percentile_to_cut), na.rm = T), stats::quantile(dplyr::pull(dplyr::select(training_data, stringr::word(feature_to_plot,g,sep = ':'))), probs=c(1-upper_percentile_to_cut), na.rm = T),length.out =100))
            # get whatever is not g and then filter to that interaction
            ctsvariable <- stringr::word(feature_to_plot,g,sep = ':')

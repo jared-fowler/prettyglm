@@ -117,7 +117,7 @@
 
 one_way_ave <- function(
   feature_to_plot,
-  data_set,
+  data_set = NULL,
   target_variable,
   model_object = NULL,
   plot_type = 'predictions',
@@ -154,9 +154,18 @@ one_way_ave <- function(
 
   # Extract the actual and expected values -------------------------------------------
   # if provided data set is null then use the training data from model object
-  if (is.null(data_set) == T) {
-    # Extract training data from model object
-    data_set <- model_object$data
+  data_set <- get_model_data(model_object, data_set)
+  if (!(feature_to_plot %in% base::names(data_set))) {
+    stop(base::paste0(feature_to_plot, " is not a column in data_set."))
+  }
+
+  # drop rows with a missing target, otherwise the actual line is NA
+  na_target <- base::is.na(data_set[[target_variable]])
+  if (base::any(na_target)) {
+    warning(base::paste0(
+      'Dropping ', base::sum(na_target), ' rows where ', target_variable, ' is NA.'
+    ))
+    data_set <- data_set[!na_target, , drop = FALSE]
   }
 
   # make predictions
@@ -167,9 +176,7 @@ one_way_ave <- function(
       dataset_df,
       tidyselect::all_of(c(target_variable))
     ))
-    if (methods::is(actual_vals, 'factor')) {
-      actual_vals <- base::as.numeric(as.character(actual_vals))
-    }
+    actual_vals <- target_to_numeric(actual_vals)
     predicted_dataset <- base::data.frame(
       Actual_Values = actual_vals,
       Predicted_Values = actual_vals
@@ -196,11 +203,13 @@ one_way_ave <- function(
 
   # tidy data for plotting different if factor or continuous -----------------------------------
   Plot_data <- dplyr::bind_cols(list(data_set, predicted_dataset))
+  # integers with few unique values are plotted as categories, otherwise bucketed like continuous
+  feature_values <- Plot_data[[feature_to_plot]]
   if (
-    class(dplyr::select(Plot_data, tidyselect::matches(feature_to_plot))[[
-      1
-    ]]) %in%
-      c('factor', 'integer', 'character')
+    base::is.factor(feature_values) ||
+      base::is.character(feature_values) ||
+      (base::is.integer(feature_values) &&
+        base::length(base::unique(feature_values)) <= 20)
   ) {
     # categorical logic
     if (

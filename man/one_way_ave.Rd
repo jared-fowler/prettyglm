@@ -6,7 +6,7 @@
 \usage{
 one_way_ave(
   feature_to_plot,
-  data_set,
+  data_set = NULL,
   target_variable,
   model_object = NULL,
   plot_type = "predictions",

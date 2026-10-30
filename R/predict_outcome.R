@@ -35,9 +35,7 @@ predict_outcome <- function(target, model_object, dataset, prediction_type = NUL
   # Make sure dataset is a dataframe not a tibble
   dataset <- base::as.data.frame(dataset)
   Actual_Values <- dplyr::pull(dplyr::select(dataset, tidyselect::all_of(c(target))))
-  if(methods::is(Actual_Values,'factor') == TRUE){
-    Actual_Values <- base::as.numeric(as.character(Actual_Values))
-  }
+  Actual_Values <- target_to_numeric(Actual_Values)
 
   # Make predictions --------------------------------------------------------------------------
   Predicted_Values <- base::as.numeric(stats::predict(model_object, dataset, type=prediction_type))
